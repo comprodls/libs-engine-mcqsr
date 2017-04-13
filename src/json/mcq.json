@@ -1,0 +1,70 @@
+{
+  "meta": {
+    "type": "MCQTEST",
+    "score": {
+      "default": 0,
+      "max": 1,
+      "min": 0
+    }
+  },
+  "content": {
+    "instructions": [
+      {
+        "tag": ""
+      } 
+    ],
+    "stimulus": [
+      {
+        "tag": "audio",
+        "audio": "../test/audios/capes_2_1_1.mp3"
+      }
+    ],
+    "canvas": {
+      "layout": "MCQTEST",
+      "data": {
+        "questiondata": [
+          {
+            "text": "   What's the matter with this patient? <a href='http://www.comprodls.com/m1.0/interaction/mcqsc'>i1</a> "
+          }
+        ]
+      },
+      "raw": ""
+    },     
+    "interactions": {
+      "i1": {
+        "type": "MCQTEST",
+        "MCQTEST": [
+          {
+            "choiceA": "She has the flu." 
+          },
+          {
+            "choiceB": "She has the measles."
+          },
+          {
+            "choiceC": "She has malaria."
+          },
+          {
+            "choiceD": "She has a toothache."
+          }          
+        ]
+      }
+    },
+    "hint": {}
+  },
+  "feedback": {
+    "global": {
+      "correct": "",
+      "incorrect": "",
+      "empty": ""
+    }
+  },
+  "responses": {
+    "i1": {
+      "correct": "choiceC"
+    }
+  },
+  "learning-objectives": [],
+  "tags": [
+    "test"
+  ]
+}

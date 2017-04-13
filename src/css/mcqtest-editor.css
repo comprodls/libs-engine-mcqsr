@@ -1,0 +1,39 @@
+#mcq-editor .smart-form li{
+	padding: 10px;
+}
+
+.option-value{
+	position: static!important;
+}
+
+div.option-value{
+	display: inline-block;
+}
+
+.ques-text-editor{
+	position: absolute;
+	right: 97px;
+}
+
+.question-text-viewer{
+	border-bottom: 1px solid black;
+	font-weight: 700;
+	font-size: 18px;
+}
+.question-text-editor{
+	font-weight: 700;
+	font-size: 18px;
+}
+.questions-editor{
+	padding-top: 10px;
+}
+
+.editor-icon {
+	cursor: pointer;
+}
+
+.editor-icon.mcq-edit{
+	position: absolute;
+	right: -50px;
+	top: 10px;
+}

@@ -1,0 +1,39 @@
+{{#with content}}
+<div class="activity-body mcq-body"> 
+   <h2><strong>{{getAdapterParams "activityName"}}</strong></h2> 
+   <p class="instructions">{{{directions}}}</p> 
+   <div class="row">   
+      <div class="col-md-12">      
+         <div class="smart-form">       
+            <p>
+               {{#with canvas.data}}
+                  {{#each questiondata}}
+                     {{{this.text}}}
+                  {{/each}}
+               {{/with}}
+            </p>       
+            <ul class="list-unstyled nested-list">
+               {{#each interactions}}
+                  {{#with this}}
+                     {{#each this}}
+                        {{#each this}}
+                           {{#each this}}         
+                              <li>
+                                 <label class="radio radio-lg">
+                                    <span id="answer{{@index}}" class="invisible wrong pull-left"></span>
+                                    <input type="radio" name="optionsRadios" class="option" id="option{{@index}}" value="{{{this}}}">
+                                    <i></i>
+                                    <span class="content">{{this}}</span>
+                                 </label>
+                              </li>
+                           {{/each}} 
+                        {{/each}}
+                     {{/each}}
+                  {{/with}}
+               {{/each}}       
+            </ul> 
+         </div>   
+      </div>  
+   </div>
+</div>
+{{/with}}
