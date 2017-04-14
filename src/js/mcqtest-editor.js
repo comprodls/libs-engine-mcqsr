@@ -1,10 +1,11 @@
 /*
  * -------------------
- * Engine Module
+ * Engine Module Editor
  * -------------------
  * 
- * Name: MCQ Single Choice Quesion engine
- * Description: A HTML5 activity template for a MCQ Single Choice type activity.
+ * Item Type: MCQ Single Choice Quesion engine
+ * Code: MCQTEST
+ * Interface: Editor
  *  
  * Interfaces / Modes :->
  * 
@@ -15,31 +16,33 @@
  *          getConfig()
  *      }
  * 
- * ENGINE - SHELL interface : ->
- *
- * This engine assume that a module "shell.js" loads first, and establishes interface with the platform. The shell in
- * turn instantiates [ engine.init() ] this engine with necessary configuration paramters and a reference to platform Adapter
+ * ENGINE-EDITOR - SHELL interface : ->
+ * 
+ * This "engine editor" loaded by another module/js "shell.js" which  establishes interface with the platform. The shell instantiates
+ * this engine [ engine.init() ]  with necessary configuration paramters and a reference to platform Adapter
  * object which allows subsequent communuication with the platform.
  *
- * SHELL calls engine.getStatus() to check if SUBMIT has been pressed or not - the response from the engine is 
- * used to enable / disable LMS controls.
  *
  * SHELL calls engine.getConfig() to request SIZE information - the response from the engine is 
  * used to resize the container iframe.
  *
- *
+ * 
  * EXTERNAL JS DEPENDENCIES : ->
- * Following are shared/common dependencies (specified in index.html), and assumed to loaded via the platform)
- * 1. JQuery
- * 2. Handlebars
- * 3. LMS Adapter
- * 4. Utils (for activity resize etc.)
- * 5. SHELL
+ * Following are shared/common dependencies and assumed to loaded via the platform. The engine code can use/reference
+ * these as needed
+ * 1. JQuery ...? (TODO: version)
+ * 2. Handlebars (TODO: version)
+ * 3. Boostrap  (TODO: version)
+ * 5. Rivets (TODO: version / decide if common)
  *
+
  *
  */
 
-define(['text!../html/mcqtest-editor.html','css!../css/mcqtest-editor.css','rivets','sightglass'], function (mcqTemplateRef) {
+define(['text!../html/mcqtest-editor.html', //Layout of the Editor
+        'css!../css/mcqtest-editor.css', //Custom CSS of the Editor
+        'rivets',
+        'sightglass'], function (mcqTemplateRef) {
 
     mcqtestEditor = function() {
     "use strict";
@@ -53,7 +56,6 @@ define(['text!../html/mcqtest-editor.html','css!../css/mcqtest-editor.css','rive
      * Internal Engine Config.
      */ 
     var __config = {
-        MAX_RETRIES: 10, /* Maximum number of retries for sending results to platform for a particular activity. */ 
         RESIZE_MODE: "auto", /* Possible values - "manual"/"auto". Default value is "auto". */
         RESIZE_HEIGHT: "580" /* Applicable, if RESIZE_MODE is manual. If RESIZE_HEIGHT is defined in TOC then that will overrides. */
         /* If both config RESIZE_HEIGHT and TOC RESIZE_HEIGHT are not defined then RESIZE_MODE is set to "auto"*/
@@ -63,14 +65,10 @@ define(['text!../html/mcqtest-editor.html','css!../css/mcqtest-editor.css','rive
      * Internal Engine State.
      */ 
     var __state = {
-        currentTries: 0, /* Current try of sending results to platform */
-        activityPariallySubmitted: false, /* State whether activity has been partially submitted. Possible Values: true/false(Boolean) */
-        activitySubmitted: false, /* State whether activity has been submitted. Possible Values: true/false(Boolean) */
-        radioButtonClicked: false /* State whether radio button is clicked.  Possible Values: true/false(Boolean) */   
     };  
     
     /*
-     * Content (loaded / initialized during init() ).
+     * Content (JSON) which was loaded into the editor for editing (loaded / initialized during init() ).
      */ 
     var __content = {
         directionsXML: "",
@@ -82,10 +80,10 @@ define(['text!../html/mcqtest-editor.html','css!../css/mcqtest-editor.css','rive
     };
 
     /*
-     * Constants.
+     * Constants 
      */
     var __constants = {
-        /* CONSTANT for HTML selectors */ 
+        /* CONSTANT for HTML selectors - defined in the layout */ 
         DOM_SEL_ACTIVITY_BODY: ".activity-body",
         
         /* CONSTANT for identifier in which Adaptor Instance will be stored */

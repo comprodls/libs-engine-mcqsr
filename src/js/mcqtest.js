@@ -1,12 +1,13 @@
 /*
  * -------------------
- * Engine Module
+ * Engine Module Renderer
  * -------------------
  * 
- * Name: MCQ Single Choice Quesion engine
- * Description: A HTML5 activity template for a MCQ Single Choice type activity.
+ * Item Type: MCQ Single Choice Quesion engine
+ * Code: MCQTEST
+ * Interface: Renderer
  *  
- * Interfaces / Modes :->
+ * Item Render Interfaces / Modes :->
  * 
  *  1. Supports Standard ENGINE-SHELL interface
  *      {
@@ -17,11 +18,11 @@
  * 
  * ENGINE - SHELL interface : ->
  *
- * This engine assume that a module "shell.js" loads first, and establishes interface with the platform. The shell in
- * turn instantiates [ engine.init() ] this engine with necessary configuration paramters and a reference to platform Adapter
+ * This engine loaded by another module/js "shell.js" which  establishes interface with the platform. The shell instantiates
+ * this engine [ engine.init() ]  with necessary configuration paramters and a reference to platform Adapter
  * object which allows subsequent communuication with the platform.
  *
- * SHELL calls engine.getStatus() to check if SUBMIT has been pressed or not - the response from the engine is 
+ * SHELL calls [ engine.getStatus() ] to check if SUBMIT has been pressed or not - the response from the engine is 
  * used to enable / disable LMS controls.
  *
  * SHELL calls engine.getConfig() to request SIZE information - the response from the engine is 
@@ -29,19 +30,22 @@
  *
  *
  * EXTERNAL JS DEPENDENCIES : ->
- * Following are shared/common dependencies (specified in index.html), and assumed to loaded via the platform)
- * 1. JQuery
- * 2. Handlebars
- * 3. LMS Adapter
- * 4. Utils (for activity resize etc.)
- * 5. SHELL
+ * Following are shared/common dependencies and assumed to loaded via the platform. The engine code can use/reference
+ * these as needed
+ * 1. JQuery ...? (TODO: version)
+ * 2. Handlebars (TODO: version)
+ * 3. Boostrap  (TODO: version)
+ * 5. Rivets (TODO: version / decide if common)
  *
  *
  */
 
-define(['text!../html/mcqtest.html','css!../css/mcqtest.css'], function (mcqTemplateRef) {
+define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebar/rivets) reprenting the rendering UX
+        'css!../css/mcqtest.css'], //Custom styles of the engine (applied over bootstrap & front-end-core)
+        function (mcqTemplateRef) {
 
     mcqtest = function() {
+    
     "use strict";
         
     /*
