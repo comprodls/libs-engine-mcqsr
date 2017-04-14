@@ -1,17 +1,14 @@
 'use strict';
-var bowerjson = require('./bower.json');
+
 var engine_src = "src/js";
-var adaptor_src = "src/adaptor/js/";
 var bower_components = "../../bower_components/"
 var dist = "master/dist/";
-var requireLib = "bower_components/requirejs/";
 
 module.exports = function(grunt) {
-    // Grunt project configuration.
+
+    // Grunt configuration.
     grunt.initConfig({
-        // Task configuration. 
-        
-        // clean dist folder
+        // Clean dist and bower folders
         clean: {            
             dist: {
                 options: {
@@ -26,6 +23,7 @@ module.exports = function(grunt) {
             },
         },
 
+        //Install bower components
         bower: {
             install: {
               options: { 
@@ -45,6 +43,9 @@ module.exports = function(grunt) {
                 dest: dist + 'vendor.js'
             }
         },*/
+
+        //RequireJS optimizer
+        // Create two files - mcqtest.js and mcqtest-editor.js
         requirejs: {
             mcqtest: {
                 options: {
@@ -117,11 +118,10 @@ module.exports = function(grunt) {
     // Default task
     grunt.registerTask('default', [ 
         'clean:dist',
-        //'clean:bower',
-        //'bower:install',
+        'clean:bower',
+        'bower:install',
         //'concat',
-        'requirejs'
-        //'uglify'
+        'requirejs'        
     ]);  
 
     grunt.registerTask('connectServer', [ 

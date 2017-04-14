@@ -1,5 +1,5 @@
 {
-  "name": "libs-frontend-mcq",
+  "name": "libs-frontend-engine-mcq",
   "version": "0.0.1",
   "dependencies": {
     "handlebars": "~1.0.0",

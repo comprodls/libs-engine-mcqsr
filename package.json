@@ -1,7 +1,7 @@
 {
-  "name": "libs-frontend-engine-fib2",
+  "name": "libs-frontend-engine-mcq",
   "version": "0.0.1",
-  "description": "Compro Activity engine",
+  "description": "Compro MCQ Activity engine",
   "author": "Compro",
   "main": "Gruntfile.js",
   "devDependencies": {
