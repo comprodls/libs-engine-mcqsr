@@ -11,7 +11,7 @@
          </div>
          <div  class="col-sm-12 smart-form questions-editor">
             <ul class="list-unstyled nested-list editor">
-               <li class="col-xs-10" rv-each-element="content.content.interactions.i1.MCQTEST" rv-class-highlight="element.isCorrect">
+               <li class="col-xs-10 mcq-item" rv-each-element="content.content.interactions.i1.MCQTEST" rv-class-highlight="element.isCorrect">
                   <label class="radio radio-lg">
                      <span id="{index}" class="invisible wrong pull-left"></span>
                      <input type="radio" name="optionsRadios" class="option mcq-option" rv-key="element.key" rv-value="element.value" rv-checked="element.isCorrect"></input>
@@ -21,8 +21,12 @@
                   </label>
                   <a class="editor-icon mcq-edit fa fa-pencil pull-right" rv-hide="element.isEdited" rv-on-click="toggleEditing | args element"></a>
                   <a class="editor-icon mcq-edit fa fa-times pull-right" rv-show="element.isEdited" rv-on-click="toggleEditing | args element"></a>
+                  <a class="editor-icon delete-icon mcq-edit fa fa-trash-o pull-right" rv-on-click="removeItem | args element"></a>
                </li>           
             </ul>
+        </div>
+        <div class="colxs-12">
+            <a class="add-item" rv-on-click="addItem"><u>Add new item</u></a>
         </div>
       </div>
     </div>

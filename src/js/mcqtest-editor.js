@@ -177,8 +177,8 @@ define(['text!../html/mcqtest-editor.html','css!../css/mcqtest-editor.css','rive
 
         var processedObj = {};
         var processedArray = [];
-        var quesEdited = {};
-        quesEdited.isEditing = false;
+        var __quesEdited = {};
+        __quesEdited.isEditing = false;
 
         processedJsonContent.content.interactions.i1.MCQTEST.forEach(function(obj, index){
             processedObj= {};
@@ -186,6 +186,7 @@ define(['text!../html/mcqtest-editor.html','css!../css/mcqtest-editor.css','rive
                 processedObj.key = key;
                 processedObj.value = obj[key];
                 processedObj.isEdited = false;
+                processedObj.index = index;
                 if(processedJsonContent.responses.i1.correct == processedObj.key){
                     processedObj.isCorrect = processedObj.value;
                 }
@@ -194,29 +195,50 @@ define(['text!../html/mcqtest-editor.html','css!../css/mcqtest-editor.css','rive
         });
         processedJsonContent.content.interactions.i1.MCQTEST = processedArray;
         console.log(processedArray)
-        rivets.bind($('#mcq-editor'), {content: processedJsonContent, toggleEditing: toggleEditing, toggleQuestionTextEditing: toggleQuestionTextEditing, quesEdited: quesEdited});
+        rivets.bind($('#mcq-editor'), {
+                content: processedJsonContent, 
+                toggleEditing: __toggleEditing, 
+                toggleQuestionTextEditing: __toggleQuestionTextEditing, 
+                quesEdited: __quesEdited,
+                removeItem: __removeItem,
+                addItem: __addItem
+            });
 
         $(__constants.DOM_SEL_ACTIVITY_BODY).attr(__constants.ADAPTOR_INSTANCE_IDENTIFIER, adaptor.getId());            
-        $('.q1').keydown(function(){
-            console.log(processedJsonContent);
-        })
+    
         /* ---------------------- SETUP EVENTHANDLER STARTS----------------------------*/
              
-        $('.editor .radio input:radio').change(__handleRadioButtonClick);
+        $(document).on('change', '.editor .radio input:radio', __handleRadioButtonClick);
 
-        $('.option-value').keydown(function(){
-            console.log(processedJsonContent)
-        })
-
-        function toggleQuestionTextEditing(event, element){
+        /* ---------------------- SETUP EVENTHANDLER ENDS------------------------------*/
+        
+        /*------------------------RIVET FUNCTIONS START-------------------------------*/
+        function __toggleQuestionTextEditing(event, element){
             element.isEditing = !element.isEditing;
         }
 
-        function toggleEditing(event, element){
+        function __toggleEditing(event, element){
             element.isEdited = !element.isEdited;
         }
-        /* ---------------------- SETUP EVENTHANDLER ENDS------------------------------*/
 
+        function __removeItem(event, element){
+            console.log(element);
+            processedJsonContent.content.interactions.i1.MCQTEST.splice(element.index,1);
+            for(var i=element.index; i<processedJsonContent.content.interactions.i1.MCQTEST.length; i++){
+                processedJsonContent.content.interactions.i1.MCQTEST[i].index--;
+            }
+        }
+
+        function __addItem(event){
+            var newObj = {};
+            newObj.key = 'choiceE';
+            newObj.value = "";
+            newObj.isEdited = true;
+            newObj.index = processedJsonContent.content.interactions.i1.MCQTEST.length;
+            processedJsonContent.content.interactions.i1.MCQTEST.push(newObj);
+        }
+
+        /*------------------------RIVET FUNCTIONS END-------------------------------*/
         /* Inform the shell that init is complete */
         if(callback) {
             callback();

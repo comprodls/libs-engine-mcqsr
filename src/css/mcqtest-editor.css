@@ -37,3 +37,11 @@ div.option-value{
 	right: -50px;
 	top: 10px;
 }
+
+.delete-icon.mcq-edit{
+	right: -70px;
+}
+
+.add-item{
+	cursor: pointer;
+}
