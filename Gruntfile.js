@@ -2,7 +2,7 @@
 
 var engine_src = "src/js";
 var bower_components = "../../bower_components/"
-var dist = "master/dist/";
+var dist = "dist/";
 
 module.exports = function(grunt) {
 
@@ -75,12 +75,21 @@ module.exports = function(grunt) {
                     name: "mcqtest-editor",
                     out: dist + "mcqtest-editor.js",
                     paths: {
+                        'jquery':'empty:',
                         'text': bower_components + 'text/text',
                         'css': bower_components + 'require-css/css',
                         'css-builder': bower_components + 'require-css/css-builder',
                         'normalize': bower_components + 'require-css/normalize',
+                        'uuid': 'uuid-generator',
                         'rivets': bower_components+ 'rivets/dist/rivets',
-                        'sightglass': bower_components + 'sightglass/index'
+                        'sightglass': bower_components + 'sightglass/index',
+                        'data': bower_components + 'jquery-ui/ui/data',
+                        'ie': bower_components + 'jquery-ui/ui/ie',
+                        'scroll-parent': bower_components + 'jquery-ui/ui/scroll-parent',
+                        'version': bower_components + 'jquery-ui/ui/version',
+                        'widget': bower_components + 'jquery-ui/ui/widget',
+                        'mouse': bower_components + 'jquery-ui/ui/widgets/mouse',
+                        'sortable' :  bower_components + 'jquery-ui/ui/widgets/sortable'
                     },
                     optimize: 'uglify2',
                     uglify2: {
@@ -118,8 +127,8 @@ module.exports = function(grunt) {
     // Default task
     grunt.registerTask('default', [ 
         'clean:dist',
-        'clean:bower',
-        'bower:install',
+        //'clean:bower',
+        //'bower:install',
         //'concat',
         'requirejs'        
     ]);  

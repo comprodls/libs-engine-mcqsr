@@ -2,46 +2,70 @@
 	padding: 10px;
 }
 
-.option-value{
+#mcq-editor .option-value{
 	position: static!important;
 }
 
-div.option-value{
+#mcq-editor div.option-value{
 	display: inline-block;
 }
 
-.ques-text-editor{
+#mcq-editor .ques-text-editor{
 	position: absolute;
 	right: 97px;
 }
 
-.question-text-viewer{
+#mcq-editor .question-text-viewer{
 	border-bottom: 1px solid black;
 	font-weight: 700;
 	font-size: 18px;
 }
-.question-text-editor{
+#mcq-editor .question-text-editor{
 	font-weight: 700;
 	font-size: 18px;
 }
-.questions-editor{
+#mcq-editor .questions-editor{
 	padding-top: 10px;
 }
 
-.editor-icon {
+#mcq-editor .editor-icon {
 	cursor: pointer;
 }
 
-.editor-icon.mcq-edit{
+#mcq-editor .editor-icon.mcq-edit{
 	position: absolute;
 	right: -50px;
 	top: 10px;
 }
 
-.delete-icon.mcq-edit{
+#mcq-editor .delete-icon.mcq-edit{
 	right: -70px;
 }
 
-.add-item{
+#mcq-editor .drag-icon.mcq-edit{
+	right: -90px;
+}
+
+#mcq-editor .add-item{
 	cursor: pointer;
+}
+
+#mcq-editor .input-option{
+	width: 90%;
+	border: none;
+	border-bottom: 1px solid black;
+}
+
+#mcq-editor .bottom-content .rule{
+	padding-bottom: 10px;	
+}
+
+#mcq-editor .bottom-content .objective{
+    border-bottom: 1px solid #dbdbdb;
+    padding-bottom: 10px;
+}
+
+#mcq-editor .bottom-content .feedback-text{
+	display: block;
+	padding: 10px 0;
 }

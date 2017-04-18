@@ -77,11 +77,11 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebar/rivets
      * Content (loaded / initialized during init() ).
      */ 
     var __content = {
-        directionsXML: "",
-        questionsXML: [], /* Contains the question obtained from content XML. */
-        optionsXML: [], /* Contains all the options for a particular question obtained from content XML. */
-        answersXML: [], /* Contains the answer for a particular question obtained from content XML. */
-        userAnswersXML: [], /* Contains the user answer for a particular question. */
+        directionsJSON: "",
+        questionsJSON: [], /* Contains the question obtained from content JSON. */
+        optionsJSON: [], /* Contains all the options for a particular question obtained from content JSON. */
+        answersJSON: [], /* Contains the answer for a particular question obtained from content JSON. */
+        userAnswersJSON: [], /* Contains the user answer for a particular question. */
         activityType: null  /* Type of FIB activity. Possible Values :- FIBPassage.  */    
     };
 
@@ -225,7 +225,7 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebar/rivets
      */ 
     function updateLastSavedResults(lastResults) {
         $.each(lastResults.results, function(num) {
-            __content.userAnswersXML[num] = this.answer.trim();
+            __content.userAnswersJSON[num] = this.answer.trim();
             for(var i = 0; i < $('input[id^=option]').length; i++) {
                 if($('input[id^=option]')[i].value.trim() === this.answer.trim()) {
                     $('input[id^=option]')[i].checked = true;
@@ -293,11 +293,11 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebar/rivets
         var newAnswer = currentTarget.value.replace(/^\s+|\s+$/g, '');
             
         /* Save new Answer in memory. */
-        __content.userAnswersXML[quesIndex] = newAnswer.replace(/^\s+|\s+$/g, '');  
+        __content.userAnswersJSON[quesIndex] = newAnswer.replace(/^\s+|\s+$/g, '');  
         
         __state.radioButtonClicked = true;
         
-        var interactionId = __content.questionsXML[0].split("^^")[2].trim();
+        var interactionId = __content.questionsJSON[0].split("^^")[2].trim();
     }    
 
     /**
@@ -306,9 +306,9 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebar/rivets
     function __markAnswers(){
         var radioNo = "";
         /* Looping through answers to show correct answer. */
-        for(var i = 0; i < __content.optionsXML.length; i++){
+        for(var i = 0; i < __content.optionsJSON.length; i++){
            radioNo = "" + i;
-           __markRadio(radioNo, __content.answersXML[0], __content.optionsXML[i]);
+           __markRadio(radioNo, __content.answersJSON[0], __content.optionsJSON[i]);
         }
         
     }
@@ -341,8 +341,8 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebar/rivets
         
         /*Setup results array */
         var resultArray = new Array(1);
-        /* Split questionXML to get interactionId. */
-        var questionData = __content.questionsXML[0].split("^^");
+        /* Split questionJSON to get interactionId. */
+        var questionData = __content.questionsJSON[0].split("^^");
         var interactionId = questionData[2].trim();
         if(__constants.END_TEST) {
             end_current_test = true;
@@ -350,18 +350,18 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebar/rivets
         if (skipQuestion) {
             answer = "Not Answered";
         } else {
-            answer = __content.userAnswersXML[0];
+            answer = __content.userAnswersJSON[0];
 
             /* Calculating scores.*/
-            if(__content.answersXML[0] === __content.userAnswersXML[0]){
+            if(__content.answersJSON[0] === __content.userAnswersJSON[0]){
                 score++;
             }
         }   
         
         results = {
             itemUID: interactionId,
-            question: __content.questionsXML[0],
-            correctAnswer: __content.answersXML[0],
+            question: __content.questionsJSON[0],
+            correctAnswer: __content.answersJSON[0],
             score: score,
             comment: '',
             end_current_test: end_current_test,
@@ -372,7 +372,7 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebar/rivets
 
         return {
             response: {
-                "directions": __content.directionsXML,
+                "directions": __content.directionsJSON,
                 "results": resultArray
             }
         };    
@@ -401,9 +401,9 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebar/rivets
             
         /* Activity Instructions. */
         var tagName = jsonContent.content.instructions[0].tag;
-        __content.directionsXML = jsonContent.content.instructions[0][tagName];
+        __content.directionsJSON = jsonContent.content.instructions[0][tagName];
         /* Put directions in JSON. */
-        jsonContent.content.directions = __content.directionsXML;
+        jsonContent.content.directions = __content.directionsJSON;
 
         __parseAndUpdateQuestionSetTypeJSON(jsonContent);
         
@@ -438,19 +438,19 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebar/rivets
         var interactionType = jsonContent.content.interactions[interactionId].type;
         var optionCount = jsonContent.content.interactions[interactionId][interactionType].length;
 
-        /* Make optionsXML and answerXML from JSON. */
+        /* Make optionsJSON and answerJSON from JSON. */
         for(var i = 0; i < optionCount; i++) {
             var optionObject = jsonContent.content.interactions[interactionId][interactionType][i];
             var option = optionObject[Object.keys(optionObject)].replace(/^\s+|\s+$/g, '');
-            __content.optionsXML.push(__getHTMLEscapeValue(option));
+            __content.optionsJSON.push(__getHTMLEscapeValue(option));
             optionObject[Object.keys(optionObject)] = option;
             /* Update JSON after updating option. */
             jsonContent.content.interactions[interactionId][interactionType][i] = optionObject;
             if(Object.keys(optionObject) == correctAnswerNumber) {
-                __content.answersXML[0] = optionObject[Object.keys(optionObject)];
+                __content.answersJSON[0] = optionObject[Object.keys(optionObject)];
             }
         }
-        __content.questionsXML[0] = questionText + " ^^ " + __content.optionsXML.toString() + " ^^ " + interactionId;       
+        __content.questionsJSON[0] = questionText + " ^^ " + __content.optionsJSON.toString() + " ^^ " + interactionId;       
     }
     
     /**

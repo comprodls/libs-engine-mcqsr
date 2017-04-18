@@ -1,73 +1,57 @@
 <div class="activity-body mcq-body" id="mcq-editor"> 
-	<div class="row">   
+   <div class="row">
+      <div class="col-sm-12 well">
+         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quis massa bibendum, auctor lacus sed, pellentesque justo. Nullam pulvinar mauris sed maximus elementum. Fusce purus sem, finibus ut sem nec, interdum feugiat ante. Phasellus ultricies justo vel arcu euismod, non blandit ex consequat. Etiam elementum laoreet risus, id interdum urna faucibus quis.
+      </div>
+   </div>
+	<div class="row" rv-each-interact="content.interactions">   
       <div class="col-sm-12">      
          <div class="col-sm-12 smart-form">       
-            <div rv-each-questionData="content.content.canvas.data.questiondata">
-            	<input class="question-text-editor col-xs-10" rv-show="quesEdited.isEditing" rv-value="questiondata.text"></input>
+            <div rv-each-questiondata="content.canvas.data.questiondata | appendindex %interact%">
+            	<input class="question-text-editor col-xs-10" rv-show="quesEdited.isEditing" rv-value="questiondata.text" rv-on-blur="removeEditing | args quesEdited"></input>
                <div class="question-text-viewer col-xs-10" rv-hide="quesEdited.isEditing" rv-text="questiondata.text"></div>
-               <a class="editor-icon fa fa-pencil pull-right ques-text-editor" rv-hide="quesEdited.isEditing" rv-on-click="toggleQuestionTextEditing | args quesEdited"></a>
-               <a class="editor-icon fa fa-times pull-right ques-text-editor" rv-show="quesEdited.isEditing" rv-on-click="toggleQuestionTextEditing | args quesEdited"></a>
+               <a class="editor-icon fa fa-pencil pull-right ques-text-editor" rv-on-click="toggleQuestionTextEditing | args quesEdited"></a>
             </div>
          </div>
-         <div  class="col-sm-12 smart-form questions-editor">
-            <ul class="list-unstyled nested-list editor">
-               <li class="col-xs-10 mcq-item" rv-each-element="content.content.interactions.i1.MCQTEST" rv-class-highlight="element.isCorrect">
+         <div class="col-sm-12 smart-form questions-editor">
+            <ul class="list-unstyled nested-list editor sortable">
+               <li class="col-xs-10 mcq-item" rv-each-element="interact.MCQTEST" rv-class-highlight="element.customAttribs.isCorrect" rv-elementIndex="element.customAttribs.index" rv-interactIndex="%interact%">
                   <label class="radio radio-lg">
                      <span id="{index}" class="invisible wrong pull-left"></span>
-                     <input type="radio" name="optionsRadios" class="option mcq-option" rv-key="element.key" rv-value="element.value" rv-checked="element.isCorrect"></input>
+                     <input type="radio" name="optionsRadios" class="option mcq-option" rv-key="element.customAttribs.key" rv-value="element.customAttribs.value" rv-checked="element.customAttribs.isCorrect"></input>
                      <i></i>
-                     <input class="option-value" rv-show="element.isEdited" rv-value="element.value"></input>
-                     <div class="option-value" rv-hide="element.isEdited" rv-text="element.value"></div>
+                     <input class="option-value input-option" rv-show="element.customAttribs.isEdited" rv-value="element.customAttribs.value" rv-on-blur="removeEditing | args element"></input>
+                     <div class="option-value" rv-hide="element.customAttribs.isEdited" rv-text="element.customAttribs.value"></div>
                   </label>
-                  <a class="editor-icon mcq-edit fa fa-pencil pull-right" rv-hide="element.isEdited" rv-on-click="toggleEditing | args element"></a>
-                  <a class="editor-icon mcq-edit fa fa-times pull-right" rv-show="element.isEdited" rv-on-click="toggleEditing | args element"></a>
-                  <a class="editor-icon delete-icon mcq-edit fa fa-trash-o pull-right" rv-on-click="removeItem | args element"></a>
+                  <a class="editor-icon mcq-edit fa fa-pencil pull-right" rv-on-click="toggleEditing | args element"></a>
+                  <a class="editor-icon delete-icon mcq-edit fa fa-trash-o pull-right" rv-on-click="removeItem | args element %interact%"></a>
+                  <a class="editor-icon drag-icon mcq-edit fa fa-bars pull-right"></a>
                </li>           
             </ul>
         </div>
-        <div class="colxs-12">
-            <a class="add-item" rv-on-click="addItem"><u>Add new item</u></a>
+        <div class="col xs-12">
+            <a class="add-item" rv-on-click="addItem | args content %interact%"><u>Add new option</u></a>
         </div>
       </div>
     </div>
+    <div class="row bottom-content">
+      <div class="col-sm-12">
+         <h3>Feedback (1)</h3>
+         <div class="rule">Rule: ALWAYS</div>
+         <div class="objective">
+            <div>
+               Objective: Identify the basic structures of the facial bones paranasal sinuses.
+            </div>
+            <div>
+               Textbook Reference: p. 393
+         </div>
+         <div>
+            
+         </div>
+      </div>
+      <div>
+        <a class="feedback-text"><u>Add Feedback {text} when answer is correct</u></a>
+        <a class="feedback-text"><u>Add Feedback {text} when answer is wrong</u></a>
+      </div>
+    </div>
 </div>
-
-<!-- {{#with content}}
-<div class="activity-body mcq-body"> 
-   <h2><strong>{{getAdapterParams "activityName"}}</strong></h2> 
-   <p class="instructions">{{{directions}}}</p> 
-   <div class="row">   
-      <div class="col-md-12">      
-         <div class="smart-form">       
-            <p>
-               {{#with canvas.data}}
-                  {{#each questiondata}}
-                     {{{this.text}}}
-                  {{/each}}
-               {{/with}}
-            </p>       
-            <ul class="list-unstyled nested-list">
-               {{#each interactions}}
-                  {{#with this}}
-                     {{#each this}}
-                        {{#each this}}
-                           {{#each this}}         
-                              <li>
-                                 <label class="radio radio-lg">
-                                    <span id="answer{{@index}}" class="invisible wrong pull-left"></span>
-                                    <input type="radio" name="optionsRadios" class="option" id="option{{@index}}" value="{{{this}}}">
-                                    <i></i>
-                                    <span class="content">{{this}}</span>
-                                 </label>
-                              </li>
-                           {{/each}} 
-                        {{/each}}
-                     {{/each}}
-                  {{/with}}
-               {{/each}}       
-            </ul> 
-         </div>   
-      </div>  
-   </div>
-</div>
-{{/with}} -->

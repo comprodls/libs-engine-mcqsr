@@ -40,9 +40,13 @@
  */
 
 define(['text!../html/mcqtest-editor.html', //Layout of the Editor
+        'uuid',
         'css!../css/mcqtest-editor.css', //Custom CSS of the Editor
+        'sortable',
+        'css!../../bower_components/jquery-ui/themes/base/jquery-ui.css',
         'rivets',
-        'sightglass'], function (mcqTemplateRef) {
+        'sightglass'
+        ], function (mcqTemplateRef,uuid) {
 
     mcqtestEditor = function() {
     "use strict";
@@ -67,17 +71,6 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
     var __state = {
     };  
     
-    /*
-     * Content (JSON) which was loaded into the editor for editing (loaded / initialized during init() ).
-     */ 
-    var __content = {
-        directionsXML: "",
-        questionsXML: [], /* Contains the question obtained from content XML. */
-        optionsXML: [], /* Contains all the options for a particular question obtained from content XML. */
-        answersXML: [], /* Contains the answer for a particular question obtained from content XML. */
-        userAnswersXML: [], /* Contains the user answer for a particular question. */
-        activityType: null  /* Type of FIB activity. Possible Values :- FIBPassage.  */    
-    };
 
     /*
      * Constants 
@@ -89,20 +82,19 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
         /* CONSTANT for identifier in which Adaptor Instance will be stored */
         ADAPTOR_INSTANCE_IDENTIFIER: "data-objectid",
         
-        /* CONSTANT for PLATFORM Save Status NO ERROR */
-        STATUS_NOERROR: "NO_ERROR",
-
-        /* CONSTANT to end test. */
-        END_TEST: false,
-        
         TEMPLATES: {
             /* Regular MCQ Layout */
             MCQTEST_EDITOR: mcqTemplateRef
         }
     };
     
-    var processedJsonContent;
-
+    var __processedJsonContent;
+    var __parsedQuestionArray = [];
+    var __interactionIds = [];
+    var __interactionTags = [];
+    var __finalJSONContent = {};
+    var __quesEdited = {};
+    __quesEdited.isEditing = false;
         
     /********************************************************/
     /*                  ENGINE-SHELL INIT FUNCTION
@@ -118,15 +110,18 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
     */
     /********************************************************/  
     function init(elRoot, params, adaptor, htmlLayout, jsonContentObj, callback) {        
-
         /* ---------------------- BEGIN OF INIT ---------------------------------*/
-        var jsonContent = jQuery.extend(true, {}, jsonContentObj);
+      
+        __processedJsonContent = jQuery.extend(true, {}, jsonContentObj);
+        __preProcessJSON();
+        __customizeJSONForIteration();
+
         activityAdaptor = adaptor;
-        
+
         var isContentValid = true;
 
         /* ------ VALIDATION BLOCK START -------- */    
-        if (jsonContent.content === undefined) {
+        if (__processedJsonContent.content === undefined) {
             isContentValid = false;
         }
         if(!isContentValid) {
@@ -137,106 +132,21 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
             return; /* -- EXITING --*/
         } 
         /* ------ VALIDATION BLOCK END -------- */        
-        
-
-        /* Parse and update content JSON. */
-        processedJsonContent = __parseAndUpdateJSONContent(jsonContent, params);
-         
-        var processedHTML = __constants.TEMPLATES[htmlLayout];
-        /* Apply the content JSON to the htmllayout */
-        //var processedHTML = __processLayoutWithContent(__constants.TEMPLATES[htmlLayout], processedJsonContent);
-        processedHTML = processedHTML.replace(/&lt;/g,"<");
-        processedHTML = processedHTML.replace(/&gt;/g,">");
-
+    
         /* Update the DOM and render the processed HTML - main body of the activity */      
-        $(elRoot).html(processedHTML);
-        
-      /*  rivets.formatters.propertyList = {
-          read: function(obj) {
-            var properties = []
-            for (var key in obj) {
-              properties.push({key: key, value: obj[key]})
-            }
-            return properties
-          },
-          publish: function(obj) {
-            console.log(obj)
-            return obj;
-          }
-        }*/
+        $(elRoot).html(__constants.TEMPLATES[htmlLayout]);
 
-        rivets.formatters.args = function(fn){
-          var args = Array.prototype.slice.call(arguments, 1);
-          return function()  {
-            return fn.apply(this, Array.prototype.concat.call(arguments, args))
-          }
-        }
-
-
-        var processedObj = {};
-        var processedArray = [];
-        var __quesEdited = {};
-        __quesEdited.isEditing = false;
-
-        processedJsonContent.content.interactions.i1.MCQTEST.forEach(function(obj, index){
-            processedObj= {};
-            Object.keys(obj).forEach(function(key){
-                processedObj.key = key;
-                processedObj.value = obj[key];
-                processedObj.isEdited = false;
-                processedObj.index = index;
-                if(processedJsonContent.responses.i1.correct == processedObj.key){
-                    processedObj.isCorrect = processedObj.value;
-                }
-            });
-            processedArray.push(processedObj);
-        });
-        processedJsonContent.content.interactions.i1.MCQTEST = processedArray;
-        console.log(processedArray)
-        rivets.bind($('#mcq-editor'), {
-                content: processedJsonContent, 
-                toggleEditing: __toggleEditing, 
-                toggleQuestionTextEditing: __toggleQuestionTextEditing, 
-                quesEdited: __quesEdited,
-                removeItem: __removeItem,
-                addItem: __addItem
-            });
+        __initRivets();
 
         $(__constants.DOM_SEL_ACTIVITY_BODY).attr(__constants.ADAPTOR_INSTANCE_IDENTIFIER, adaptor.getId());            
     
         /* ---------------------- SETUP EVENTHANDLER STARTS----------------------------*/
              
         $(document).on('change', '.editor .radio input:radio', __handleRadioButtonClick);
+        __bindSortable();
 
         /* ---------------------- SETUP EVENTHANDLER ENDS------------------------------*/
-        
-        /*------------------------RIVET FUNCTIONS START-------------------------------*/
-        function __toggleQuestionTextEditing(event, element){
-            element.isEditing = !element.isEditing;
-        }
 
-        function __toggleEditing(event, element){
-            element.isEdited = !element.isEdited;
-        }
-
-        function __removeItem(event, element){
-            console.log(element);
-            processedJsonContent.content.interactions.i1.MCQTEST.splice(element.index,1);
-            for(var i=element.index; i<processedJsonContent.content.interactions.i1.MCQTEST.length; i++){
-                processedJsonContent.content.interactions.i1.MCQTEST[i].index--;
-            }
-        }
-
-        function __addItem(event){
-            var newObj = {};
-            newObj.key = 'choiceE';
-            newObj.value = "";
-            newObj.isEdited = true;
-            newObj.index = processedJsonContent.content.interactions.i1.MCQTEST.length;
-            processedJsonContent.content.interactions.i1.MCQTEST.push(newObj);
-        }
-
-        /*------------------------RIVET FUNCTIONS END-------------------------------*/
         /* Inform the shell that init is complete */
         if(callback) {
             callback();
@@ -245,6 +155,7 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
         /* ---------------------- END OF INIT ---------------------------------*/
     } /* init() Ends. */        
     
+    /* ---------------------- PUBLIC FUNCTIONS START ---------------------------------*/
     /**
      * ENGINE-SHELL Interface
      *
@@ -262,129 +173,209 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
     function getStatus() {
         return __state.activitySubmitted || __state.activityPariallySubmitted;
     }
-    /*
-     * -------------------
-     * DOM EVENT HANDLERS                      
-     * -------------------
-     */
 
-    
-    /**
-    * Function to handle radio button click.
-    */
-    function __handleRadioButtonClick(event){
+    function saveItemInEditor(){
+        var activityBodyObjectRef = $(__constants.DOM_SEL_ACTIVITY_BODY).attr(__constants.ADAPTOR_INSTANCE_IDENTIFIER); 
+        activityAdaptor.submitEditChanges(__transformJSONtoOriginialForm(), activityBodyObjectRef);
+    }
+
+    /* ---------------------- PUBLIC FUNCTIONS START ---------------------------------*/
+
+    /* ---------------------- PRIVATE FUNCTIONS START ---------------------------------*/
+
+    function __preProcessJSON(){
+        var newArray =[];
+        var newObj={};
+        var interactionTag;
+        for(var i=0; i <__processedJsonContent.content.canvas.data.questiondata.length; i++){
+            __parsedQuestionArray = $.parseHTML(__processedJsonContent.content.canvas.data.questiondata[i].text);
+            var interactionReferenceString = "http://www.comprodls.com/m1.0/interaction/mcqsc";
+            $.each(__parsedQuestionArray, function(index, el) {
+              if(this.href === interactionReferenceString) {
+                __interactionIds.push(this.childNodes[0].nodeValue.trim())
+                interactionTag = this.outerHTML;
+                interactionTag = interactionTag.replace(/"/g, "'");
+                __interactionTags.push(interactionTag);
+                __processedJsonContent.content.canvas.data.questiondata[i].text = __processedJsonContent.content.canvas.data.questiondata[i].text.replace(interactionTag, '');
+              }
+            });
+        }
+        for(var key in __processedJsonContent.content.interactions){
+            newObj = __processedJsonContent.content.interactions[key];
+            newObj.key = key;
+            newArray.push(newObj);
+        }
+        __processedJsonContent.content.interactions = newArray;
+    }
+
+    function __customizeJSONForIteration(){
+        for(var i=0; i <__interactionIds.length; i++){
+           var processedArray = [];
+           __processedJsonContent.content.interactions[i].MCQTEST.forEach(function(obj, index){
+                var processedObj = {};
+                processedObj.customAttribs = {};
+                Object.keys(obj).forEach(function(key){
+                    processedObj.customAttribs.key = key;
+                    processedObj.customAttribs.value = obj[key];
+                    processedObj.customAttribs.isEdited = false;
+                    processedObj.customAttribs.index = index;
+                    if(__processedJsonContent.responses[__interactionIds[i]].correct == processedObj.customAttribs.key){
+                        processedObj.customAttribs.isCorrect = processedObj.customAttribs.value;
+                    } else{
+                        processedObj.customAttribs.isCorrect = false;
+                    }
+                });
+                processedArray.push(processedObj);
+            });
+            __processedJsonContent.content.interactions[i].MCQTEST = processedArray; 
+        }
+    }
+
+    function __initRivets(){
         /*
-         * Soft save here
+         * Formatters for rivets
          */
-         console.log("called")
+        rivets.formatters.args = function(fn){
+          var args = Array.prototype.slice.call(arguments, 1);
+          return function()  {
+            return fn.apply(this, Array.prototype.concat.call(arguments, args))
+          }
+        }
+
+        rivets.formatters.appendindex = function(obj, index) {
+            var array = [];
+            array.push(obj[index])
+            return array;
+        };
+
+        /* 
+         * Bind data to template using rivets
+         */
+        rivets.bind($('#mcq-editor'), {
+            content: __processedJsonContent.content, 
+            toggleEditing: __toggleEditing, 
+            toggleQuestionTextEditing: __toggleQuestionTextEditing, 
+            quesEdited: __quesEdited,
+            removeItem: __removeItem,
+            addItem: __addItem,
+            removeEditing : __removeEditing,
+            interactionIds : __interactionIds
+        });
+    }
+
+        /*------------------------RIVET FUNCTIONS START-------------------------------*/
+    function __toggleQuestionTextEditing(event, element){
+        element.isEditing = !element.isEditing;
+        $(event[0].currentTarget).siblings('.question-text-editor').focus();
+    }
+
+    function __toggleEditing(event, element){
+        element.customAttribs.isEdited = !element.customAttribs.isEdited;
+        $(event[0].currentTarget).parent().find('.option-value')[0].focus();
+    }
+
+    function __removeItem(event, element, interaction){
+        __processedJsonContent.content.interactions[interaction].MCQTEST.splice(element.customAttribs.index,1);
+        for(var option=element.index; option<__processedJsonContent.content.interactions[interaction].MCQTEST.length; option++){
+            obj.interactions[interaction].MCQTEST[option].customAttribs.index--;
+        }
+        activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm());
+    }
+
+    function __removeEditing(event, element){
+        if(element.customAttribs){
+            element.customAttribs.isEdited = false;    
+        } else{
+            element.isEditing = false;
+        }
+        activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm());
+    }
+
+    function __addItem(event, content, interaction){
+        var newObj = {};
+        newObj.customAttribs = {};
+        newObj.customAttribs.key = uuid.v4();
+        newObj.customAttribs.value = "";
+        newObj.customAttribs.isEdited = true;
+        newObj.customAttribs.index = content.interactions[interaction].MCQTEST.length;
+        content.interactions[interaction].MCQTEST.push(newObj);
+        activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm());
+    }
+        /*------------------------RIVET FUNCTIONS END-------------------------------*/
+
+    function __bindSortable(){
+        $(".sortable").sortable({
+            handle: ".drag-icon",
+            axis: 'y',
+            stop: function( event, ui ) {
+                var prevIndex = $(ui.item[0]).attr('elementIndex');
+                var currentIndex;
+                var prevItem ={};
+                var currentItem ={};
+                var interaction;
+                var interactIndex;
+                $(ui.item[0]).parent('.sortable').children('li').each(function(index){
+                    if($(this).attr('elementIndex') == prevIndex){
+                        currentIndex = index;
+                        interactIndex = parseInt($(this).attr('interactIndex'));
+                        return false;
+                    }
+                });
+                
+                prevIndex = parseInt(prevIndex);
+                $(".sortable").sortable("cancel");
+                prevItem =  jQuery.extend({},__processedJsonContent.content.interactions[interactIndex].MCQTEST[prevIndex].customAttribs);
+                currentItem = jQuery.extend({},__processedJsonContent.content.interactions[interactIndex].MCQTEST[currentIndex].customAttribs);
+                __processedJsonContent.content.interactions[interactIndex].MCQTEST[prevIndex].customAttribs = currentItem;
+                __processedJsonContent.content.interactions[interactIndex].MCQTEST[currentIndex].customAttribs = prevItem;
+                $.each(__processedJsonContent.content.interactions[interactIndex].MCQTEST, function(index, value){
+                    __processedJsonContent.content.interactions[interactIndex].MCQTEST[index].customAttribs.index = index;
+                });
+                activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm());
+            } 
+        });
+    }
+
+    function __handleRadioButtonClick(event){
         var currentTarget = event.currentTarget;
         var quesIndex = 0;
-        
+        var interactionIndex = $(currentTarget).parent().parent("li").attr('interactIndex');
         $("label.radio").parent().removeClass("highlight");
         $(currentTarget).parent().parent("li").addClass("highlight");  
         
         var newAnswer = currentTarget.value.replace(/^\s+|\s+$/g, '');
-            
-        /* Save new Answer in memory. */
-        __content.userAnswersXML[quesIndex] = newAnswer.replace(/^\s+|\s+$/g, '');  
         
         __state.radioButtonClicked = true;
-        
-        var interactionId = __content.questionsXML[0].split("^^")[2].trim();
-        processedJsonContent.responses.i1.correct = $(currentTarget).attr('key');
-    }    
-    
-    /**
-     * Function to process HandleBars template with JSON.
-     */
-    function __processLayoutWithContent(layoutHTML, contentJSON) {
-        /* Compiling Template Using Handlebars. */
-        var compiledTemplate = Handlebars.compile(layoutHTML);
-
-        /*Compiling HTML from Template. */
-        var compiledHTML = compiledTemplate(contentJSON);
-        return compiledHTML;
-    }
-    
-    /**
-     * Parse and Update JSON based on MCQSC specific requirements.
-     */
-    function __parseAndUpdateJSONContent(jsonContent, params) { 
-        jsonContent.content.displaySubmit = activityAdaptor.displaySubmit;   
-        
-        __content.activityType = params.engineType;
-            
-        /* Activity Instructions. */
-        var tagName = jsonContent.content.instructions[0].tag;
-        __content.directionsXML = jsonContent.content.instructions[0][tagName];
-        /* Put directions in JSON. */
-        jsonContent.content.directions = __content.directionsXML;
-
-        __parseAndUpdateQuestionSetTypeJSON(jsonContent);
-        
-        /* Returning processed JSON. */
-        return jsonContent; 
+        __processedJsonContent.responses[__interactionIds[interactionIndex]].correct = $(currentTarget).attr('key');
+        activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm());
     }
 
-    
-    /**
-     * Parse and Update Question Set type JSON based on  MCQSC specific requirements.
-     */  
-    function __parseAndUpdateQuestionSetTypeJSON(jsonContent) {
-
-        /* Extract interaction id's and tags from question text. */
-        var interactionId = "";
-        var interactionTag = "";
-        /* String present in href of interaction tag. */
-        var interactionReferenceString = "http://www.comprodls.com/m1.0/interaction/mcqsc";
-        /* Parse questiontext as HTML to get HTML tags. */
-        var parsedQuestionArray = $.parseHTML(jsonContent.content.canvas.data.questiondata[0].text);
-        $.each( parsedQuestionArray, function(i, el) {
-          if(this.href === interactionReferenceString) {
-            interactionId = this.childNodes[0].nodeValue.trim();
-            interactionTag = this.outerHTML;
-            interactionTag = interactionTag.replace(/"/g, "'");
-          }
-        });
-        /* Replace interaction tag with blank string. */
-        jsonContent.content.canvas.data.questiondata[0].text = jsonContent.content.canvas.data.questiondata[0].text.replace(interactionTag,"");
-        var questionText = "1.  " + jsonContent.content.canvas.data.questiondata[0].text;
-        var correctAnswerNumber = jsonContent.responses[interactionId].correct;
-        var interactionType = jsonContent.content.interactions[interactionId].type;
-        var optionCount = jsonContent.content.interactions[interactionId][interactionType].length;
-
-        /* Make optionsXML and answerXML from JSON. */
-        for(var i = 0; i < optionCount; i++) {
-            var optionObject = jsonContent.content.interactions[interactionId][interactionType][i];
-            var option = optionObject[Object.keys(optionObject)].replace(/^\s+|\s+$/g, '');
-            __content.optionsXML.push(__getHTMLEscapeValue(option));
-            optionObject[Object.keys(optionObject)] = option;
-            /* Update JSON after updating option. */
-            jsonContent.content.interactions[interactionId][interactionType][i] = optionObject;
-            if(Object.keys(optionObject) == correctAnswerNumber) {
-                __content.answersXML[0] = optionObject[Object.keys(optionObject)];
+    function __transformJSONtoOriginialForm(){
+        __finalJSONContent = jQuery.extend(true, {}, __processedJsonContent);
+        var newObj = {};
+        for(var interaction=0;interaction <__finalJSONContent.content.interactions.length; interaction++){
+            var content = __finalJSONContent.content.interactions[interaction];
+            for(var option=0;option<content.MCQTEST.length;option++){
+                content.MCQTEST[option][content.MCQTEST[option].customAttribs.key] = content.MCQTEST[option].customAttribs.value;
+                delete content.MCQTEST[option].customAttribs;
             }
+            newObj[content.key] = content;  
+            delete newObj[content.key].key;
         }
-        __content.questionsXML[0] = questionText + " ^^ " + __content.optionsXML.toString() + " ^^ " + interactionId;       
-    }
-    
-    /**
-     * Escaping HTML codes from String.
-     */
-    function __getHTMLEscapeValue(content) {  
-        var tempDiv = $("<div></div>");
-        $(tempDiv).html(content);
-        $("body").append(tempDiv);
-        content  = $(tempDiv).html();
-        $(tempDiv).remove();    
-        return content;
-    }       
+        __finalJSONContent.content.interactions = newObj;
+        for(var i=0;i <__finalJSONContent.content.canvas.data.questiondata.length; i++){
+            __finalJSONContent.content.canvas.data.questiondata[i].text += __interactionTags[i];
+        }
+        return __finalJSONContent;
+    }    
+    /* ---------------------- PRIVATE FUNCTIONS END ---------------------------------*/
     
     return {
         /*Engine-Shell Interface*/
         "init": init, /* Shell requests the engine intialized and render itself. */
         "getStatus": getStatus, /* Shell requests a gradebook status from engine, based on its current state. */
-        "getConfig" : getConfig /* Shell requests a engines config settings.  */
+        "getConfig" : getConfig, /* Shell requests a engines config settings.  */
+        "saveItemInEditor" : saveItemInEditor
     };
     };
 });

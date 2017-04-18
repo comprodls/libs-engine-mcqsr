@@ -7,7 +7,8 @@
     "requirejs": "*",
     "bootstrap": "3.3.0",
     "rivets": "*",
-    "font-awesome": "^4.7.0"
+    "font-awesome": "^4.7.0",
+    "jquery-ui": "^1.12.1"
   },
   "devDependencies": {
     "less": "~2.3.0",
