@@ -430,7 +430,7 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebar/rivets
             interactionTag = this.outerHTML;
             interactionTag = interactionTag.replace(/"/g, "'");
           }
-        });
+        })
         /* Replace interaction tag with blank string. */
         jsonContent.content.canvas.data.questiondata[0].text = jsonContent.content.canvas.data.questiondata[0].text.replace(interactionTag,"");
         var questionText = "1.  " + jsonContent.content.canvas.data.questiondata[0].text;
