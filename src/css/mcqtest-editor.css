@@ -21,8 +21,8 @@
 	padding: 10px;
 }
 
-#mcq-editor .radio{
-	padding-left: 45px;
+#mcq-editor .smart-form .radio {{
+	padding-left: 45px!important;
 }
 
 #mcq-editor .option-value{
