@@ -21,6 +21,10 @@
 	padding: 10px;
 }
 
+#mcq-editor .radio{
+	padding-left: 45px;
+}
+
 #mcq-editor .option-value{
 	position: static!important;
 }
