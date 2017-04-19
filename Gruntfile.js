@@ -32,19 +32,8 @@ module.exports = function(grunt) {
               }             
             }
         },
-        
-       /* concat: {
-            vendorLibs: {
-                src: [
-                    'bower_components/jquery/jquery.js',
-                    'bower_components/bootstrap/dist/js/bootstrap.js',
-                    'bower_components/handlebars/handlebars.js'
-                ],
-                dest: dist + 'vendor.js'
-            }
-        },*/
 
-        //RequireJS optimizer
+        // RequireJS optimizer
         // Create two files - mcqtest.js and mcqtest-editor.js
         requirejs: {
             mcqtest: {
@@ -118,22 +107,27 @@ module.exports = function(grunt) {
     
     //Load grunt Tasks
     grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-contrib-connect');
-    //grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-connect');    
     grunt.loadNpmTasks('grunt-bower-task');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-text-replace');
     
-    // Default task
-    grunt.registerTask('default', [ 
+    // Build distribution folder
+    grunt.registerTask('build', [ 
         'clean:dist',
-        //'clean:bower',
-        //'bower:install',
-        //'concat',
+        'clean:bower',
+        'bower:install',
         'requirejs'        
     ]);  
 
+    // Run a local server at port 9001 (http://localhost:9001/) to serve engine files.
+    // This is used during development to register engines from local server in Assesments Showcase.
     grunt.registerTask('connectServer', [ 
         'connect'
     ]);
+
+    grunt.registerTask('default', [ 
+        'build'        
+    ]);  
+
 };

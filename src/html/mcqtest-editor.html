@@ -1,20 +1,26 @@
+
+<!-- Engine Editor Template -->
+
 <div class="activity-body mcq-body" id="mcq-editor"> 
    <div class="row">
       <div class="col-sm-12 well">
          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quis massa bibendum, auctor lacus sed, pellentesque justo. Nullam pulvinar mauris sed maximus elementum. Fusce purus sem, finibus ut sem nec, interdum feugiat ante. Phasellus ultricies justo vel arcu euismod, non blandit ex consequat. Etiam elementum laoreet risus, id interdum urna faucibus quis.
       </div>
    </div>
+  <!-- Loop over all interactions -->
 	<div class="row" rv-each-interact="content.interactions">   
       <div class="col-sm-12">      
-         <div class="col-sm-12 smart-form">       
+         <div class="col-sm-12 smart-form">     
+           <!-- Loop over all questiondata inside interaction -->  
             <div rv-each-questiondata="content.canvas.data.questiondata | appendindex %interact%">
-            	<input class="question-text-editor col-xs-10" rv-show="quesEdited.isEditing" rv-value="questiondata.text" rv-on-blur="removeEditing | args quesEdited"></input>
+            	 <input class="question-text-editor col-xs-10" rv-show="quesEdited.isEditing" rv-value="questiondata.text" rv-on-blur="removeEditing | args quesEdited"></input>
                <div class="question-text-viewer col-xs-10" rv-hide="quesEdited.isEditing" rv-text="questiondata.text"></div>
                <a class="editor-icon fa fa-pencil pull-right ques-text-editor" rv-on-click="toggleQuestionTextEditing | args quesEdited"></a>
             </div>
          </div>
          <div class="col-sm-12 smart-form questions-editor">
             <ul class="list-unstyled nested-list editor sortable">
+               <!-- Loop over all options inside interaction  (MCQTEST Array)-->  
                <li class="col-xs-10 mcq-item" rv-each-element="interact.MCQTEST" rv-class-highlight="element.customAttribs.isCorrect" rv-elementIndex="element.customAttribs.index" rv-interactIndex="%interact%">
                   <label class="radio radio-lg">
                      <span id="{index}" class="invisible wrong pull-left"></span>

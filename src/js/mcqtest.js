@@ -1,7 +1,7 @@
 /*
- * -------------------
+ * ----------------------
  * Engine Module Renderer
- * -------------------
+ * ----------------------
  * 
  * Item Type: MCQ Single Choice Quesion engine
  * Code: MCQTEST
@@ -32,15 +32,12 @@
  * EXTERNAL JS DEPENDENCIES : ->
  * Following are shared/common dependencies and assumed to loaded via the platform. The engine code can use/reference
  * these as needed
- * 1. JQuery ...? (TODO: version)
- * 2. Handlebars (TODO: version)
- * 3. Boostrap  (TODO: version)
- * 5. Rivets (TODO: version / decide if common)
- *
- *
+ * 1. JQuery (2.1.1)
+ * 2. Handlebars (1.0.0)
+ * 3. Boostrap (TODO: version) 
  */
 
-define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebar/rivets) reprenting the rendering UX
+define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebar/rivets) representing the rendering UX
         'css!../css/mcqtest.css'], //Custom styles of the engine (applied over bootstrap & front-end-core)
         function (mcqTemplateRef) {
 
@@ -234,6 +231,12 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebar/rivets
             }
         });
     }
+
+     /*
+     * -------------------
+     * Private Functions                   
+     * -------------------
+     */
     /**
      * Function called to send result JSON to adaptor (partial save OR submit).
      * Parameters:

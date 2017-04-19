@@ -30,22 +30,18 @@
  * EXTERNAL JS DEPENDENCIES : ->
  * Following are shared/common dependencies and assumed to loaded via the platform. The engine code can use/reference
  * these as needed
- * 1. JQuery ...? (TODO: version)
- * 2. Handlebars (TODO: version)
- * 3. Boostrap  (TODO: version)
- * 5. Rivets (TODO: version / decide if common)
- *
-
- *
+ * 1. JQuery (2.1.1) 
+ * 2. Boostrap  (TODO: version)
+ * 3. Rivets (0.9.6)
  */
 
 define(['text!../html/mcqtest-editor.html', //Layout of the Editor
-        'uuid',
+        'uuid', // UUID Genrator module
         'css!../css/mcqtest-editor.css', //Custom CSS of the Editor
-        'sortable',
-        'css!../../bower_components/jquery-ui/themes/base/jquery-ui.css',
-        'rivets',
-        'sightglass'
+        'sortable', //Jquery Sortable for reordering
+        'css!../../bower_components/jquery-ui/themes/base/jquery-ui.css', //CSS for sortable
+        'rivets',   // Rivets for two way data binding
+        'sightglass' // Required by Rivets
         ], function (mcqTemplateRef,uuid) {
 
     mcqtestEditor = function() {
@@ -90,7 +86,9 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
     
     var __processedJsonContent;
     var __parsedQuestionArray = [];
+    // Array of all interactions Ids in question
     var __interactionIds = [];
+    // Array of all interaction tags in question
     var __interactionTags = [];
     var __finalJSONContent = {};
     var __quesEdited = {};
@@ -112,8 +110,13 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
     function init(elRoot, params, adaptor, htmlLayout, jsonContentObj, callback) {        
         /* ---------------------- BEGIN OF INIT ---------------------------------*/
       
+        // Extend the question JSON
         __processedJsonContent = jQuery.extend(true, {}, jsonContentObj);
+
+        // Process JSON to remove interaction tags and initiate __interactionIds and __interactionTags Arrays
         __preProcessJSON();
+
+        // Process JSON for easy iteration in template
         __customizeJSONForIteration();
 
         activityAdaptor = adaptor;
@@ -179,10 +182,22 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
         activityAdaptor.submitEditChanges(__transformJSONtoOriginialForm(), activityBodyObjectRef);
     }
 
-    /* ---------------------- PUBLIC FUNCTIONS START ---------------------------------*/
+    /* ---------------------- PUBLIC FUNCTIONS END ---------------------------------*/
 
     /* ---------------------- PRIVATE FUNCTIONS START ---------------------------------*/
 
+    /***
+     * This function does following
+     * 1. Creates two arrays required for rendering this editor
+     *      1.1 __interactionIds (InteractionIds array) - This contains all the interaction ids (in questiondata)
+     *           e.g. ["i1", "i2"]
+     *      1.2 __interactionTags (Array of Original interaction texts in questiondata) - This will be used for recreating JSON to original format when "saveItemInEditor" is called.  
+     *          e.g. [
+     *             "<a href='http://www.comprodls.com/m1.0/interaction/mcqsc'>i1</a>", 
+     *             "<a href='http://www.comprodls.com/m1.0/interaction/mcqsc'>i2</a>"
+     *              ]   
+     * 2. Replace the interactionTags in questiondata (__processedJsonContent Object) with BLANKs 
+     **/ 
     function __preProcessJSON(){
         var newArray =[];
         var newObj={};
@@ -208,6 +223,45 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
         __processedJsonContent.content.interactions = newArray;
     }
 
+    /***
+     * Function to modify question JSON for easy iteration in template
+     * 
+     * Original JSON Object
+     * ---------------------
+     * 
+     * "MCQTEST": [
+          {
+            "choiceA": "She has the flu." 
+          },
+          {
+            "choiceB": "She has the measles."
+          }  
+        ]
+
+        Modified JSON Object
+        ----------------------
+
+        "MCQTEST": [
+          {
+              "customAttribs" : {
+                    "key" : "choiceA",
+                    "value" : "She has the flu.",
+                    "isEdited" : false,
+                    "index" : 0
+                    "isCorrect" : false
+              } 
+          },
+           {
+              "customAttribs" : {
+                    "key" : "choiceB",
+                    "value" : "She has the measles.",
+                    "isEdited" : false,
+                    "index" : 1
+                    "isCorrect" : true
+              } 
+          }  
+        ]
+     */
     function __customizeJSONForIteration(){
         for(var i=0; i <__interactionIds.length; i++){
            var processedArray = [];

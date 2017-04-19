@@ -1,3 +1,22 @@
+/*******************************************************
+ * 
+ * ----------------------
+ * Engine Editor Styles
+ * ----------------------
+ *
+ * These styles do not include any product-specific branding
+ * and/or layout / design. They represent minimal structural
+ * CSS which is necessary for a default rendering of an
+ * MCQSC activity
+ *
+ * The styles are linked/depending on the presence of
+ * certain elements (classes / ids / tags) in the DOM (as would
+ * be injected via a valid MCQSC layout HTML and/or dynamically
+ * created by the MCQSC engine JS)
+ *
+ *
+ *******************************************************/
+
 #mcq-editor .smart-form li{
 	padding: 10px;
 }
