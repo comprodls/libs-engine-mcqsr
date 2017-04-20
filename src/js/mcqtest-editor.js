@@ -65,9 +65,9 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
      * Internal Engine State.
      */ 
     var __state = {
+       "hasUnsavedChanges" : false
     };  
     
-
     /*
      * Constants 
      */
@@ -109,59 +109,55 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
     /********************************************************/  
     function init(elRoot, params, adaptor, htmlLayout, jsonContentObj, callback) {        
         /* ---------------------- BEGIN OF INIT ---------------------------------*/
-      
-        // Extend the question JSON
+         
+        //Store the adaptor    
+        activityAdaptor = adaptor;
+        
+        //Clone the JSON so that original is preserved.
         __processedJsonContent = jQuery.extend(true, {}, jsonContentObj);
 
         // Process JSON to remove interaction tags and initiate __interactionIds and __interactionTags Arrays
+        //__parseAndUpdateJSONForInteractions();
         __preProcessJSON();
 
-        // Process JSON for easy iteration in template
+        //Process JSON for easy iteration in template
+        //__parseAndUpdateJSONForRivets();
         __customizeJSONForIteration();
-
-        activityAdaptor = adaptor;
-
-        var isContentValid = true;
 
         /* ------ VALIDATION BLOCK START -------- */    
         if (__processedJsonContent.content === undefined) {
-            isContentValid = false;
-        }
-        if(!isContentValid) {
             /* Inform the shell that init is complete */
             if(callback) {
                 callback();
             }           
+            //TODO - In future more advanced schema validations could be done here    
             return; /* -- EXITING --*/
-        } 
+        }
         /* ------ VALIDATION BLOCK END -------- */        
     
-        /* Update the DOM and render the processed HTML - main body of the activity */      
+        /* Apply the layout HTML to the dom */      
         $(elRoot).html(__constants.TEMPLATES[htmlLayout]);
 
+        /* Initialize RIVET. */
         __initRivets();
 
-        $(__constants.DOM_SEL_ACTIVITY_BODY).attr(__constants.ADAPTOR_INSTANCE_IDENTIFIER, adaptor.getId());            
-    
         /* ---------------------- SETUP EVENTHANDLER STARTS----------------------------*/
-             
+        //On CLICK of Radio buttons    
         $(document).on('change', '.editor .radio input:radio', __handleRadioButtonClick);
+        
+        //Drag of list items (re-ordering)
         __bindSortable();
-
         /* ---------------------- SETUP EVENTHANDLER ENDS------------------------------*/
 
         /* Inform the shell that init is complete */
         if(callback) {
             callback();
         }                               
-        
-        /* ---------------------- END OF INIT ---------------------------------*/
+      
     } /* init() Ends. */        
     
-    /* ---------------------- PUBLIC FUNCTIONS START ---------------------------------*/
+    /* ---------------------- ENGINE-SHELL Interface ---------------------------------*/
     /**
-     * ENGINE-SHELL Interface
-     *
      * Return configuration
      */
     function getConfig () {
@@ -174,17 +170,22 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
      * Return the current state (Activity Submitted/ Partial Save State.) of activity.
      */
     function getStatus() {
-        return __state.activitySubmitted || __state.activityPariallySubmitted;
+        return __state.hasUnsavedChanges;
+    }
+            
+    /**
+     * ENGINE-SHELL Interface
+     *
+     * Return the current state (Activity Submitted/ Partial Save State.) of activity.
+     */
+    function getUpdatedJSON(){
+        activityAdaptor.submitEditChanges(__transformJSONtoOriginialForm());
     }
 
-    function saveItemInEditor(){
-        var activityBodyObjectRef = $(__constants.DOM_SEL_ACTIVITY_BODY).attr(__constants.ADAPTOR_INSTANCE_IDENTIFIER); 
-        activityAdaptor.submitEditChanges(__transformJSONtoOriginialForm(), activityBodyObjectRef);
-    }
+    /* ---------------------- ENGINE-SHELL Interface ends ---------------------------------*/
+           
 
-    /* ---------------------- PUBLIC FUNCTIONS END ---------------------------------*/
-
-    /* ---------------------- PRIVATE FUNCTIONS START ---------------------------------*/
+    /* ---------------------- JSON PROCESSING FUNCTIONS START ---------------------------------*/
 
     /***
      * This function does following
@@ -285,6 +286,9 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
         }
     }
 
+    
+            
+    /*------------------------RIVET INITIALIZATION & BINDINGS -------------------------------*/        
     function __initRivets(){
         /*
          * Formatters for rivets
@@ -317,7 +321,7 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
         });
     }
 
-        /*------------------------RIVET FUNCTIONS START-------------------------------*/
+    
     function __toggleQuestionTextEditing(event, element){
         element.isEditing = !element.isEditing;
         $(event[0].currentTarget).siblings('.question-text-editor').focus();
@@ -355,7 +359,7 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
         content.interactions[interaction].MCQTEST.push(newObj);
         activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm());
     }
-        /*------------------------RIVET FUNCTIONS END-------------------------------*/
+    /*------------------------RIVETS END-------------------------------*/
 
     function __bindSortable(){
         $(".sortable").sortable({
@@ -389,7 +393,8 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
             } 
         });
     }
-
+    
+    /* ---------------------- JQUERY BINDINGS ---------------------------------*/
     function __handleRadioButtonClick(event){
         var currentTarget = event.currentTarget;
         var quesIndex = 0;
@@ -422,7 +427,7 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
         }
         return __finalJSONContent;
     }    
-    /* ---------------------- PRIVATE FUNCTIONS END ---------------------------------*/
+    /* ---------------------- JQUERY BINDINGS ---------------------------------*/
     
     return {
         /*Engine-Shell Interface*/
