@@ -38,7 +38,9 @@
  */
 
 define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebar/rivets) representing the rendering UX
-        'css!../css/mcqtest.css'], //Custom styles of the engine (applied over bootstrap & front-end-core)
+        'css!../css/mcqtest.css',
+        'rivets',
+        'sightglass'], //Custom styles of the engine (applied over bootstrap & front-end-core)
         function (mcqTemplateRef) {
 
     mcqtest = function() {
@@ -143,20 +145,28 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebar/rivets
 
         /* Parse and update content JSON. */
         var processedJsonContent = __parseAndUpdateJSONContent(jsonContent, params);
-        console.log(processedJsonContent)  
-        /* Apply the content JSON to the htmllayout */
-        var processedHTML = __processLayoutWithContent(__constants.TEMPLATES[htmlLayout], processedJsonContent);
-        processedHTML = processedHTML.replace(/&lt;/g,"<");
-        processedHTML = processedHTML.replace(/&gt;/g,">");
+        __parseAndUpdateJSONForRivets(processedJsonContent);
 
         /* Update the DOM and render the processed HTML - main body of the activity */      
-        $(elRoot).html(processedHTML);
+        $(elRoot).html(__constants.TEMPLATES[htmlLayout]);
         
         $(__constants.DOM_SEL_ACTIVITY_BODY).attr(__constants.ADAPTOR_INSTANCE_IDENTIFIER, adaptor.getId());            
-        
+        console.log(processedJsonContent)
+
+        rivets.formatters.append = function(obj){
+           return obj[0].text;
+        }
+
+        rivets.bind($('#mcq-engine'), {
+            content: processedJsonContent.content
+        });
         /* ---------------------- SETUP EVENTHANDLER STARTS----------------------------*/
             
         $('input[id^=option]').change(__handleRadioButtonClick); 
+
+        $(document).bind('userAnswered', function() {
+            __saveResults(false);
+        });
 
         /* ---------------------- SETUP EVENTHANDLER ENDS------------------------------*/
 
@@ -288,7 +298,6 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebar/rivets
          * Soft save here
          */
         var currentTarget = event.currentTarget;
-        var quesIndex = 0;
         
         $("label.radio").parent().removeClass("highlight");
         $(currentTarget).parent().parent("li").addClass("highlight");  
@@ -296,11 +305,13 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebar/rivets
         var newAnswer = currentTarget.value.replace(/^\s+|\s+$/g, '');
             
         /* Save new Answer in memory. */
-        __content.userAnswersJSON[quesIndex] = newAnswer.replace(/^\s+|\s+$/g, '');  
+        __content.userAnswersJSON[0] = newAnswer.replace(/^\s+|\s+$/g, '');  
         
         __state.radioButtonClicked = true;
         
         var interactionId = __content.questionsJSON[0].split("^^")[2].trim();
+
+        $(document).triggerHandler('userAnswered');
     }    
 
     /**
@@ -318,15 +329,15 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebar/rivets
         
     function __markRadio(optionNo, correctAnswer, userAnswer) {    
         if(userAnswer.trim() === correctAnswer.trim()) {
-            $("#answer" + optionNo).removeClass("wrong");
-            $("#answer" + optionNo).addClass("correct");
-            $("#answer" + optionNo).parent().addClass("state-success");
+            $($(".answer")[optionNo]).removeClass("wrong");
+            $($(".answer")[optionNo]).addClass("correct");
+            $($(".answer")[optionNo]).parent().addClass("state-success");
         } else {
-            $("#answer" + optionNo).removeClass("correct");
-            $("#answer" + optionNo).addClass("wrong");
-            $("#answer" + optionNo).parent().addClass("state-error");
+            $($(".answer")[optionNo]).removeClass("correct");
+            $($(".answer")[optionNo]).addClass("wrong");
+            $($(".answer")[optionNo]).parent().addClass("state-error");
         }
-        $("#answer" + optionNo).removeClass("invisible");
+        $(".answer" + optionNo).removeClass("invisible");
     }
     
     /**
@@ -466,7 +477,22 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebar/rivets
         content  = $(tempDiv).html();
         $(tempDiv).remove();    
         return content;
-    }       
+    }      
+
+    function __parseAndUpdateJSONForRivets(jsonContent){  
+       var processedArray = [];
+       jsonContent.content.interactions.i1.MCQTEST.forEach(function(obj, index){
+            var processedObj = {};
+            processedObj.customAttribs = {};
+            Object.keys(obj).forEach(function(key){
+                processedObj.customAttribs.key = key;
+                processedObj.customAttribs.value = obj[key];
+            });
+            processedArray.push(processedObj);
+        });
+        jsonContent.content.interactions.i1.MCQTEST = processedArray; 
+        
+    } 
     
     return {
         /*Engine-Shell Interface*/

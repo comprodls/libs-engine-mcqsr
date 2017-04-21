@@ -45,7 +45,9 @@ module.exports = function(grunt) {
                         'text': bower_components + 'text/text',
                         'css': bower_components + 'require-css/css',
                         'css-builder': bower_components + 'require-css/css-builder',
-                        'normalize': bower_components + 'require-css/normalize'
+                        'normalize': bower_components + 'require-css/normalize',
+                        'rivets': bower_components+ 'rivets/dist/rivets',
+                        'sightglass': bower_components + 'sightglass/index'
                     },
                     optimize: 'uglify2',
                     uglify2: {

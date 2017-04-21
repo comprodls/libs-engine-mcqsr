@@ -84,7 +84,7 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
         }
     };
     
-    var __processedJsonContent;
+    var __editedJsonContent;
     var __parsedQuestionArray = [];
     // Array of all interactions Ids in question
     var __interactionIds = [];
@@ -114,18 +114,18 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
         activityAdaptor = adaptor;
         
         //Clone the JSON so that original is preserved.
-        __processedJsonContent = jQuery.extend(true, {}, jsonContentObj);
+        __editedJsonContent = jQuery.extend(true, {}, jsonContentObj);
 
         // Process JSON to remove interaction tags and initiate __interactionIds and __interactionTags Arrays
         //__parseAndUpdateJSONForInteractions();
-        __preProcessJSON();
+        __parseAndUpdateJSONForInteractions();
 
         //Process JSON for easy iteration in template
         //__parseAndUpdateJSONForRivets();
-        __customizeJSONForIteration();
+        __parseAndUpdateJSONForRivets();
 
         /* ------ VALIDATION BLOCK START -------- */    
-        if (__processedJsonContent.content === undefined) {
+        if (__editedJsonContent.content === undefined) {
             /* Inform the shell that init is complete */
             if(callback) {
                 callback();
@@ -178,7 +178,7 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
      *
      * Return the current state (Activity Submitted/ Partial Save State.) of activity.
      */
-    function getUpdatedJSON(){
+    function saveItemInEditor(){
         activityAdaptor.submitEditChanges(__transformJSONtoOriginialForm());
     }
 
@@ -197,14 +197,14 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
      *             "<a href='http://www.comprodls.com/m1.0/interaction/mcqsc'>i1</a>", 
      *             "<a href='http://www.comprodls.com/m1.0/interaction/mcqsc'>i2</a>"
      *              ]   
-     * 2. Replace the interactionTags in questiondata (__processedJsonContent Object) with BLANKs 
+     * 2. Replace the interactionTags in questiondata (__editedJsonContent Object) with BLANKs 
      **/ 
-    function __preProcessJSON(){
+    function __parseAndUpdateJSONForInteractions(){
         var newArray =[];
         var newObj={};
         var interactionTag;
-        for(var i=0; i <__processedJsonContent.content.canvas.data.questiondata.length; i++){
-            __parsedQuestionArray = $.parseHTML(__processedJsonContent.content.canvas.data.questiondata[i].text);
+        for(var i=0; i <__editedJsonContent.content.canvas.data.questiondata.length; i++){
+            __parsedQuestionArray = $.parseHTML(__editedJsonContent.content.canvas.data.questiondata[i].text);
             var interactionReferenceString = "http://www.comprodls.com/m1.0/interaction/mcqsc";
             $.each(__parsedQuestionArray, function(index, el) {
               if(this.href === interactionReferenceString) {
@@ -212,16 +212,16 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
                 interactionTag = this.outerHTML;
                 interactionTag = interactionTag.replace(/"/g, "'");
                 __interactionTags.push(interactionTag);
-                __processedJsonContent.content.canvas.data.questiondata[i].text = __processedJsonContent.content.canvas.data.questiondata[i].text.replace(interactionTag, '');
+                __editedJsonContent.content.canvas.data.questiondata[i].text = __editedJsonContent.content.canvas.data.questiondata[i].text.replace(interactionTag, '');
               }
             });
         }
-        for(var key in __processedJsonContent.content.interactions){
-            newObj = __processedJsonContent.content.interactions[key];
+        for(var key in __editedJsonContent.content.interactions){
+            newObj = __editedJsonContent.content.interactions[key];
             newObj.key = key;
             newArray.push(newObj);
         }
-        __processedJsonContent.content.interactions = newArray;
+        __editedJsonContent.content.interactions = newArray;
     }
 
     /***
@@ -263,10 +263,10 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
           }  
         ]
      */
-    function __customizeJSONForIteration(){
+    function __parseAndUpdateJSONForRivets(){
         for(var i=0; i <__interactionIds.length; i++){
            var processedArray = [];
-           __processedJsonContent.content.interactions[i].MCQTEST.forEach(function(obj, index){
+           __editedJsonContent.content.interactions[i].MCQTEST.forEach(function(obj, index){
                 var processedObj = {};
                 processedObj.customAttribs = {};
                 Object.keys(obj).forEach(function(key){
@@ -274,7 +274,7 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
                     processedObj.customAttribs.value = obj[key];
                     processedObj.customAttribs.isEdited = false;
                     processedObj.customAttribs.index = index;
-                    if(__processedJsonContent.responses[__interactionIds[i]].correct == processedObj.customAttribs.key){
+                    if(__editedJsonContent.responses[__interactionIds[i]].correct == processedObj.customAttribs.key){
                         processedObj.customAttribs.isCorrect = processedObj.customAttribs.value;
                     } else{
                         processedObj.customAttribs.isCorrect = false;
@@ -282,7 +282,7 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
                 });
                 processedArray.push(processedObj);
             });
-            __processedJsonContent.content.interactions[i].MCQTEST = processedArray; 
+            __editedJsonContent.content.interactions[i].MCQTEST = processedArray; 
         }
     }
 
@@ -310,7 +310,7 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
          * Bind data to template using rivets
          */
         rivets.bind($('#mcq-editor'), {
-            content: __processedJsonContent.content, 
+            content: __editedJsonContent.content, 
             toggleEditing: __toggleEditing, 
             toggleQuestionTextEditing: __toggleQuestionTextEditing, 
             quesEdited: __quesEdited,
@@ -333,8 +333,8 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
     }
 
     function __removeItem(event, element, interaction){
-        __processedJsonContent.content.interactions[interaction].MCQTEST.splice(element.customAttribs.index,1);
-        for(var option=element.index; option<__processedJsonContent.content.interactions[interaction].MCQTEST.length; option++){
+        __editedJsonContent.content.interactions[interaction].MCQTEST.splice(element.customAttribs.index,1);
+        for(var option=element.index; option<__editedJsonContent.content.interactions[interaction].MCQTEST.length; option++){
             obj.interactions[interaction].MCQTEST[option].customAttribs.index--;
         }
         activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm());
@@ -382,12 +382,12 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
                 
                 prevIndex = parseInt(prevIndex);
                 $(".sortable").sortable("cancel");
-                prevItem =  jQuery.extend({},__processedJsonContent.content.interactions[interactIndex].MCQTEST[prevIndex].customAttribs);
-                currentItem = jQuery.extend({},__processedJsonContent.content.interactions[interactIndex].MCQTEST[currentIndex].customAttribs);
-                __processedJsonContent.content.interactions[interactIndex].MCQTEST[prevIndex].customAttribs = currentItem;
-                __processedJsonContent.content.interactions[interactIndex].MCQTEST[currentIndex].customAttribs = prevItem;
-                $.each(__processedJsonContent.content.interactions[interactIndex].MCQTEST, function(index, value){
-                    __processedJsonContent.content.interactions[interactIndex].MCQTEST[index].customAttribs.index = index;
+                prevItem =  jQuery.extend({},__editedJsonContent.content.interactions[interactIndex].MCQTEST[prevIndex].customAttribs);
+                currentItem = jQuery.extend({},__editedJsonContent.content.interactions[interactIndex].MCQTEST[currentIndex].customAttribs);
+                __editedJsonContent.content.interactions[interactIndex].MCQTEST[prevIndex].customAttribs = currentItem;
+                __editedJsonContent.content.interactions[interactIndex].MCQTEST[currentIndex].customAttribs = prevItem;
+                $.each(__editedJsonContent.content.interactions[interactIndex].MCQTEST, function(index, value){
+                    __editedJsonContent.content.interactions[interactIndex].MCQTEST[index].customAttribs.index = index;
                 });
                 activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm());
             } 
@@ -405,12 +405,12 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
         var newAnswer = currentTarget.value.replace(/^\s+|\s+$/g, '');
         
         __state.radioButtonClicked = true;
-        __processedJsonContent.responses[__interactionIds[interactionIndex]].correct = $(currentTarget).attr('key');
+        __editedJsonContent.responses[__interactionIds[interactionIndex]].correct = $(currentTarget).attr('key');
         activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm());
     }
 
     function __transformJSONtoOriginialForm(){
-        __finalJSONContent = jQuery.extend(true, {}, __processedJsonContent);
+        __finalJSONContent = jQuery.extend(true, {}, __editedJsonContent);
         var newObj = {};
         for(var interaction=0;interaction <__finalJSONContent.content.interactions.length; interaction++){
             var content = __finalJSONContent.content.interactions[interaction];

@@ -20,15 +20,23 @@
 .mcq-body span.correct:before {
     content: "\f00c";
     font-family: fontawesome;
-    display: block;
-    margin: 0 3.6em auto -3.2em;
+    display: inline-block;
+    margin: 0 3.5em auto -3.2em;
 }
 
 .mcq-body span.wrong:before {
     content: "\f00d";
     font-family: fontawesome;
-    display: block;
+    display: inline-block;
     margin: 0 3.6em auto -3.2em;
+}
+
+.mcq-body .answer{
+    margin-left: 20px;
+}
+
+.mcq-body span.correct, .mcq-body span.wrong{
+    margin-left: 0;
 }
 
 .mcq-body .col-md-6.last-child {
@@ -57,7 +65,7 @@
 .mcq-body #feedback-area span.correct:before {
     content: "\f00c";
     font-family: fontawesome;
-    display: block;
+    display: inline-block;
     margin-right: 10px;
     color: #009900;
     float: left;
@@ -70,7 +78,7 @@
 .mcq-body #feedback-area span.wrong:before {
     content: "\f00d";
     font-family: fontawesome;
-    display: block;
+    display: inline-block;
     margin-right: 10px;
     color: red;
     float: left;
