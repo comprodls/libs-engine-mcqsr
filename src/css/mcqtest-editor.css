@@ -16,23 +16,6 @@
  *
  *
  *******************************************************/
-
-#mcq-editor .smart-form li{
-	padding: 10px;
-}
-
-#mcq-editor .smart-form .radio {
-	padding-left: 45px!important;
-}
-
-#mcq-editor .option-value{
-	position: static!important;
-}
-
-#mcq-editor div.option-value{
-	display: inline-block;
-}
-
 #mcq-editor .ques-text-editor{
 	position: absolute;
 	right: 115px;
@@ -43,33 +26,105 @@
 	font-weight: 700;
 	font-size: 18px;
 }
+
 #mcq-editor .question-text-editor{
 	font-weight: 700;
 	font-size: 18px;
 }
-#mcq-editor .questions-editor{
+
+#mcq-editor .questions-editor.form{
 	padding-top: 10px;
 }
 
-#mcq-editor .editor-icon {
+#mcq-editor .form *{
+    margin: 0;
+    padding: 0;
+}
+
+#mcq-editor .form ul li{
+    padding: 10px;
+    position: relative;
+}
+
+#mcq-editor .form ul li.highlight{
+    background-color: #F2F2F2;
+    border-radius: 6px;
+}
+
+#mcq-editor .form ul li i{
+    height: 1.8em;
+    width: 1.8em;
+    border-radius: 50%;
+    position: absolute;
+	top: 7px;
+    left: 15px;
+    display: block;
+    outline: 0;
+    border: 1px solid #BDBDBD;
+    background: #FFF;
+}
+
+#mcq-editor .form ul li i:after {
+    background-color: #3276B1;
+    content: '';
+    border-radius: 50%;
+    height: 1.1em;
+    width: 1.1em;
+    top: .3em;
+    left: .3em;
+    position: absolute;
+    opacity: 0;
+}
+
+#mcq-editor .form ul li.highlight i{
+    border-color: #3276B1;
+}
+
+#mcq-editor .form ul li.highlight i:after{
+    opacity: 1;
+}
+
+#mcq-editor .form ul li .radio{
+    font-size: 1em;
+    line-height: 1.8em;
+    color: #3D3D3D;
+    cursor: pointer;
+    padding-left: 45px!important;
+}
+
+
+#mcq-editor .form ul li .radio input {
+    position: absolute;
+    left: -9999px;
+}
+
+#mcq-editor .form ul li .radio .option-value{
+	position: static!important;
+}
+
+#mcq-editor .form ul li .radio div.option-value{
+	display: inline-block;
+}
+
+#mcq-editor .form ul li .editor-icon {
 	cursor: pointer;
 }
 
-#mcq-editor .editor-icon.mcq-edit{
+#mcq-editor .form ul li .editor-icon.mcq-edit{
 	position: absolute;
 	right: -50px;
 	top: 10px;
 }
 
-#mcq-editor .delete-icon.mcq-edit{
+#mcq-editor .form ul li .delete-icon.mcq-edit{
 	right: -70px;
 }
 
-#mcq-editor .drag-icon.mcq-edit{
+#mcq-editor .form ul li .drag-icon.mcq-edit{
 	right: -90px;
 }
 
-#mcq-editor .add-item{
+#mcq-editor .add-container .add-item{
 	cursor: pointer;
 }
 

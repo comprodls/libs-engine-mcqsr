@@ -10,7 +10,7 @@
   <!-- Loop over all interactions -->
 	<div class="row" rv-each-interact="content.interactions">   
       <div class="col-sm-12">      
-         <div class="col-sm-12 smart-form">     
+         <div class="col-sm-12 form">     
            <!-- Loop over all questiondata inside interaction -->  
             <div rv-each-questiondata="content.canvas.data.questiondata | appendindex %interact%">
             	 <input class="question-text-editor col-xs-10" rv-show="quesEdited.isEditing" rv-value="questiondata.text" rv-on-blur="removeEditing | args quesEdited"></input>
@@ -18,14 +18,14 @@
                <a class="editor-icon fa fa-pencil pull-right ques-text-editor" rv-on-click="toggleQuestionTextEditing | args quesEdited"></a>
             </div>
          </div>
-         <div class="col-sm-12 smart-form questions-editor">
+         <div class="col-sm-12 form questions-editor">
             <ul class="list-unstyled nested-list editor sortable">
                <!-- Loop over all options inside interaction  (MCQTEST Array)-->  
                <li class="col-xs-10 mcq-item" rv-each-element="interact.MCQTEST" rv-class-highlight="element.customAttribs.isCorrect" rv-elementIndex="element.customAttribs.index" rv-interactIndex="%interact%">
+                  <i></i>
                   <label class="radio radio-lg">
-                     <span id="{index}" class="invisible wrong pull-left"></span>
+                     <span class="invisible wrong pull-left"></span>
                      <input type="radio" name="optionsRadios" class="option mcq-option" rv-key="element.customAttribs.key" rv-value="element.customAttribs.value" rv-checked="element.customAttribs.isCorrect"></input>
-                     <i></i>
                      <input class="option-value input-option" rv-show="element.customAttribs.isEdited" rv-value="element.customAttribs.value" rv-on-blur="removeEditing | args element"></input>
                      <div class="option-value" rv-hide="element.customAttribs.isEdited" rv-text="element.customAttribs.value"></div>
                   </label>
@@ -35,7 +35,7 @@
                </li>           
             </ul>
         </div>
-        <div class="col xs-12">
+        <div class="col xs-12 add-container">
             <a class="add-item" rv-on-click="addItem | args content %interact%"><u>Add new option</u></a>
         </div>
       </div>

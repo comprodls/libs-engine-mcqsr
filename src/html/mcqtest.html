@@ -4,14 +4,14 @@
 <div class="activity-body mcq-body" id="mcq-engine"> 
    <div class="row">   
       <div class="col-md-12">      
-         <div class="smart-form">       
+         <div class="form">       
             <div rv-text="content.canvas.data.questiondata | append"></div>     
             <ul class="list-unstyled nested-list">        
                <li rv-each-element="content.interactions.i1.MCQTEST">
+                  <i></i>
                   <label class="radio radio-lg">
                      <span class="answer" class="invisible wrong pull-left"></span>
                      <input type="radio" name="optionsRadios" class="option" id="option" rv-value="element.customAttribs.value">
-                     <i></i>
                      <span class="content" rv-text="element.customAttribs.value"></span>
                   </label>
                </li>                

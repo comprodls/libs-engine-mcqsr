@@ -337,6 +337,7 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
         for(var option=element.index; option<__editedJsonContent.content.interactions[interaction].MCQTEST.length; option++){
             obj.interactions[interaction].MCQTEST[option].customAttribs.index--;
         }
+        __state.hasUnsavedChanges = true;
         activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm());
     }
 
@@ -346,6 +347,7 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
         } else{
             element.isEditing = false;
         }
+        __state.hasUnsavedChanges = true;
         activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm());
     }
 
@@ -357,6 +359,7 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
         newObj.customAttribs.isEdited = true;
         newObj.customAttribs.index = content.interactions[interaction].MCQTEST.length;
         content.interactions[interaction].MCQTEST.push(newObj);
+        __state.hasUnsavedChanges = true;
         activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm());
     }
     /*------------------------RIVETS END-------------------------------*/
@@ -389,6 +392,7 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
                 $.each(__editedJsonContent.content.interactions[interactIndex].MCQTEST, function(index, value){
                     __editedJsonContent.content.interactions[interactIndex].MCQTEST[index].customAttribs.index = index;
                 });
+                __state.hasUnsavedChanges = true;
                 activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm());
             } 
         });
@@ -401,10 +405,7 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
         var interactionIndex = $(currentTarget).parent().parent("li").attr('interactIndex');
         $("label.radio").parent().removeClass("highlight");
         $(currentTarget).parent().parent("li").addClass("highlight");  
-        
-        var newAnswer = currentTarget.value.replace(/^\s+|\s+$/g, '');
-        
-        __state.radioButtonClicked = true;
+        __state.hasUnsavedChanges = true;
         __editedJsonContent.responses[__interactionIds[interactionIndex]].correct = $(currentTarget).attr('key');
         activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm());
     }

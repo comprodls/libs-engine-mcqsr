@@ -17,6 +17,67 @@
  *
  *******************************************************/
 
+.mcq-body .form *{
+    margin: 0;
+    padding: 0;
+}
+
+.mcq-body .form ul li{
+    padding: .7em .4em .7em 1.8em;
+    position: relative;
+}
+
+.mcq-body .form ul li.highlight{
+    background-color: #F2F2F2;
+    border-radius: 6px;
+}
+
+.mcq-body .form ul li i{
+    height: 1.8em;
+    width: 1.8em;
+    border-radius: 50%;
+    position: absolute;
+    top: 7px;
+    left: 20px;
+    display: block;
+    outline: 0;
+    border: 1px solid #BDBDBD;
+    background: #FFF;
+}
+
+.mcq-body .form ul li i:after {
+    background-color: #3276B1;
+    content: '';
+    border-radius: 50%;
+    height: 1.1em;
+    width: 1.1em;
+    top: .3em;
+    left: .3em;
+    position: absolute;
+    opacity: 0;
+}
+
+.mcq-body .form ul li.highlight i{
+    border-color: #3276B1;
+}
+
+.mcq-body .form ul li.highlight i:after{
+    opacity: 1;
+}
+
+.mcq-body .form ul li .radio{
+    line-height: 1.8em;
+    font-weight: normal;
+    cursor: pointer;
+    padding-left: 25px;
+}
+
+
+.mcq-body .form ul li .radio input {
+    position: absolute;
+    left: -9999px;
+}
+
 .mcq-body span.correct:before {
     content: "\f00c";
     font-family: fontawesome;
