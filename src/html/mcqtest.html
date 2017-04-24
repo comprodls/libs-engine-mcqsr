@@ -1,13 +1,16 @@
 
 <!-- Engine Renderer Template -->
-
 <div class="activity-body mcq-body" id="mcq-engine"> 
    <div class="row">   
       <div class="col-md-12">      
-         <div class="form">       
+         <div class="form">      
+            <!-- Paint the instructions or question text -->   
             <div rv-text="content.canvas.data.questiondata | append"></div>     
+            
+            <!-- Paint the options -->   
             <ul class="list-unstyled nested-list">        
                <li rv-each-element="content.interactions.i1.MCQTEST">
+                  <!-- Placeholder for radio buttons-->   
                   <i></i>
                   <label class="radio radio-lg">
                      <span class="answer" class="invisible wrong pull-left"></span>
