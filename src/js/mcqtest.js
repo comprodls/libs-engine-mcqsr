@@ -4,7 +4,7 @@
  * ----------------------
  * 
  * Item Type: MCQ Single Choice Quesion engine
- * Code: MCQTEST
+ * Code: MCQ
  * Interface: Renderer
  *  
  * Item Render Interfaces / Modes :->
@@ -37,10 +37,10 @@
  * 3. Boostrap (TODO: version) 
  */
 
-define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebar/rivets) representing the rendering UX
-        'css!../css/mcqtest.css',
-        'rivets',
-        'sightglass'], //Custom styles of the engine (applied over bootstrap & front-end-core)
+define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivets) representing the rendering UX
+        'css!../css/mcqtest.css',  //Custom styles of the engine (applied over bootstrap & front-end-core)
+        'rivets',  // Rivets for data binding
+        'sightglass'], //Required by Rivets
         function (mcqTemplateRef) {
 
     mcqtest = function() {

@@ -55,7 +55,7 @@ module.exports = function(grunt) {
                     },
                     exclude: ['normalize'],
                     done: function (done, output) {
-                        console.log('done requirejs for mcq module');
+                        console.log('Completed requirejs optimization for mcq renderer successfully.');
                         done();
                     }
                 }
@@ -88,7 +88,7 @@ module.exports = function(grunt) {
                     },
                     exclude: ['normalize'],
                     done: function (done, output) {
-                        console.log('done requirejs for mcq-editor module');
+                        console.log('Completed requirejs optimization for mcq editor successfully.');
                         done();
                     }
                 }
