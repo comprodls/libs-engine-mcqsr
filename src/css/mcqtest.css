@@ -37,8 +37,8 @@
     width: 1.8em;
     border-radius: 50%;
     position: absolute;
-    top: 7px;
-    left: 20px;
+    top: 0;
+    left: 0;
     display: block;
     outline: 0;
     border: 1px solid #BDBDBD;
@@ -76,6 +76,24 @@
 .mcq-body .form ul li .radio input {
     position: absolute;
     left: -9999px;
+}
+
+.mcq-body .form ul li .radio.state-error i{
+    background: #fff0f0;
+    border-color: #a90329;
+}
+
+.mcq-body .form ul li .radio.state-error i:after {
+    background-color: #a90329;
+}
+
+.mcq-body .form ul li .radio.state-success i{
+    background: #f0fff0;
+    border-color: #7DC27D;
+}
+
+.mcq-body .form ul li .radio.state-success i:after {
+    background-color: #7DC27D;
 }
 
 .mcq-body span.correct:before {

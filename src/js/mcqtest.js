@@ -105,8 +105,9 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivet
             MCQTEST: mcqTemplateRef
         }
     };
-    
-
+    // Array of all interaction tags in question
+    var __interactionIds = [];
+    var __processedJsonContent;
         
     /********************************************************/
     /*                  ENGINE-SHELL INIT FUNCTION
@@ -124,42 +125,34 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivet
     function init(elRoot, params, adaptor, htmlLayout, jsonContentObj, callback) {        
 
         /* ---------------------- BEGIN OF INIT ---------------------------------*/
-        var jsonContent = jQuery.extend(true, {}, jsonContentObj);
+        //Store the adaptor  
         activityAdaptor = adaptor;
-        
-        var isContentValid = true;
 
+        //Clone the JSON so that original is preserved.
+        var jsonContent = jQuery.extend(true, {}, jsonContentObj);
+        
         /* ------ VALIDATION BLOCK START -------- */    
         if (jsonContent.content === undefined) {
-            isContentValid = false;
-        }
-        if(!isContentValid) {
-            /* Inform the shell that init is complete */
             if(callback) {
                 callback();
-            }           
+            }       
+            //TODO - In future more advanced schema validations could be done here        
             return; /* -- EXITING --*/
-        } 
+        }
+        
         /* ------ VALIDATION BLOCK END -------- */        
         
-
         /* Parse and update content JSON. */
-        var processedJsonContent = __parseAndUpdateJSONContent(jsonContent, params);
-        __parseAndUpdateJSONForRivets(processedJsonContent);
+        __processedJsonContent = __parseAndUpdateJSONContent(jsonContent, params);
+        //Process JSON for easy iteration in template
+        //__parseAndUpdateJSONForRivets();
+        __parseAndUpdateJSONForRivets(__processedJsonContent);
 
-        /* Update the DOM and render the processed HTML - main body of the activity */      
+        /* Apply the layout HTML to the dom */
         $(elRoot).html(__constants.TEMPLATES[htmlLayout]);
-        
-        $(__constants.DOM_SEL_ACTIVITY_BODY).attr(__constants.ADAPTOR_INSTANCE_IDENTIFIER, adaptor.getId());            
-        console.log(processedJsonContent)
 
-        rivets.formatters.append = function(obj){
-           return obj[0].text;
-        }
-
-        rivets.bind($('#mcq-engine'), {
-            content: processedJsonContent.content
-        });
+        /* Initialize RIVET. */
+        __initRivets();
         /* ---------------------- SETUP EVENTHANDLER STARTS----------------------------*/
             
         $('input[id^=option]').change(__handleRadioButtonClick); 
@@ -177,7 +170,7 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivet
         
         /* ---------------------- END OF INIT ---------------------------------*/
     } /* init() Ends. */        
-    
+    /* ---------------------- PUBLIC FUNCTIONS --------------------------------*/
     /**
      * ENGINE-SHELL Interface
      *
@@ -195,12 +188,7 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivet
     function getStatus() {
         return __state.activitySubmitted || __state.activityPariallySubmitted;
     }
-    /*
-     * -------------------
-     * DOM EVENT HANDLERS                      
-     * -------------------
-     */
-     
+    
     /**
     * Bound to click of Activity submit button.
     */
@@ -241,12 +229,194 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivet
             }
         });
     }
+    /* ---------------------- PUBLIC FUNCTIONS END ----------------------------*/
+     
 
-     /*
-     * -------------------
-     * Private Functions                   
-     * -------------------
+    /* ---------------------- PRIVATE FUNCTIONS -------------------------------*/
+
+     /* ---------------------- JSON PROCESSING FUNCTIONS START ---------------------------------*/
+     /**
+     * Parse and Update JSON based on MCQSC specific requirements.
      */
+    function __parseAndUpdateJSONContent(jsonContent, params) { 
+        jsonContent.content.displaySubmit = activityAdaptor.displaySubmit;   
+        
+        __content.activityType = params.engineType;
+            
+        /* Activity Instructions. */
+        var tagName = jsonContent.content.instructions[0].tag;
+        __content.directionsJSON = jsonContent.content.instructions[0][tagName];
+        /* Put directions in JSON. */
+        jsonContent.content.directions = __content.directionsJSON;
+
+        __parseAndUpdateQuestionSetTypeJSON(jsonContent);
+        
+        /* Returning processed JSON. */
+        return jsonContent; 
+    }
+
+    
+    /**
+     * Parse and Update Question Set type JSON based on  MCQSC specific requirements.
+     */  
+    function __parseAndUpdateQuestionSetTypeJSON(jsonContent) {
+
+        /* Extract interaction id's and tags from question text. */
+        var interactionId = "";
+        var interactionTag = "";
+        /* String present in href of interaction tag. */
+        var interactionReferenceString = "http://www.comprodls.com/m1.0/interaction/mcqsc";
+        /* Parse questiontext as HTML to get HTML tags. */
+        var parsedQuestionArray = $.parseHTML(jsonContent.content.canvas.data.questiondata[0].text);
+        $.each( parsedQuestionArray, function(i, el) {
+          if(this.href === interactionReferenceString) {
+            interactionId = this.childNodes[0].nodeValue.trim();
+            __interactionIds.push(interactionId);
+            interactionTag = this.outerHTML;
+            interactionTag = interactionTag.replace(/"/g, "'");
+          }
+        });
+        /* Replace interaction tag with blank string. */
+        jsonContent.content.canvas.data.questiondata[0].text = jsonContent.content.canvas.data.questiondata[0].text.replace(interactionTag,"");
+        var questionText = "1.  " + jsonContent.content.canvas.data.questiondata[0].text;
+        var correctAnswerNumber = jsonContent.responses[interactionId].correct;
+        var interactionType = jsonContent.content.interactions[interactionId].type;
+        var optionCount = jsonContent.content.interactions[interactionId][interactionType].length;
+
+        /* Make optionsJSON and answerJSON from JSON. */
+        for(var i = 0; i < optionCount; i++) {
+            var optionObject = jsonContent.content.interactions[interactionId][interactionType][i];
+            var option = optionObject[Object.keys(optionObject)].replace(/^\s+|\s+$/g, '');
+            __content.optionsJSON.push(__getHTMLEscapeValue(option));
+            optionObject[Object.keys(optionObject)] = option;
+            /* Update JSON after updating option. */
+            jsonContent.content.interactions[interactionId][interactionType][i] = optionObject;
+            if(Object.keys(optionObject) == correctAnswerNumber) {
+                __content.answersJSON[0] = optionObject[Object.keys(optionObject)];
+            }
+        }
+        __content.questionsJSON[0] = questionText + " ^^ " + __content.optionsJSON.toString() + " ^^ " + interactionId;       
+    }
+    
+    /**
+     * Escaping HTML codes from String.
+     */
+    function __getHTMLEscapeValue(content) {  
+        var tempDiv = $("<div></div>");
+        $(tempDiv).html(content);
+        $("body").append(tempDiv);
+        content  = $(tempDiv).html();
+        $(tempDiv).remove();    
+        return content;
+    }      
+
+    /***
+     * Function to modify question JSON for easy iteration in template
+     * 
+     * Original JSON Object
+     * ---------------------
+     * 
+     * "MCQTEST": [
+          {
+            "choiceA": "She has the flu." 
+          },
+          {
+            "choiceB": "She has the measles."
+          }  
+        ]
+
+        Modified JSON Object
+        ----------------------
+
+        "MCQTEST": [
+          {
+              "customAttribs" : {
+                    "key" : "choiceA",
+                    "value" : "She has the flu.",
+                    "isEdited" : false,
+                    "index" : 0
+                    "isCorrect" : false
+              } 
+          },
+           {
+              "customAttribs" : {
+                    "key" : "choiceB",
+                    "value" : "She has the measles.",
+                    "isEdited" : false,
+                    "index" : 1
+                    "isCorrect" : true
+              } 
+          }  
+        ]
+     */
+    function __parseAndUpdateJSONForRivets(jsonContent){  
+       var processedArray = [];
+       for(var i=0; i <__interactionIds.length; i++){
+            jsonContent.content.interactions[__interactionIds[i]].MCQTEST.forEach(function(obj, index){
+                var processedObj = {};
+                processedObj.customAttribs = {};
+                Object.keys(obj).forEach(function(key){
+                    processedObj.customAttribs.key = key;
+                    processedObj.customAttribs.value = obj[key];
+                });
+                processedArray.push(processedObj);
+            });
+            jsonContent.content.interactions[__interactionIds[i]].MCQTEST = processedArray;  
+       }
+    } 
+
+    /*------------------------RIVET INITIALIZATION & BINDINGS -------------------------------*/        
+    function __initRivets(){
+        rivets.formatters.propertyList = function(obj) {
+          return (function() {
+            var properties = [];
+            for (var key in obj) {
+              properties.push({key: key, value: obj[key]})
+            }
+            return properties
+          })();
+        }
+
+        rivets.formatters.appendInteraction = function(obj, interaction, MCQ){
+            return obj[interaction].text;
+        }
+
+        rivets.formatters.getArray = function(obj, interaction){
+            return obj[interaction].MCQTEST;
+        }
+
+        rivets.bind($('#mcq-engine'), {
+            content: __processedJsonContent.content
+        });
+    }
+
+    /*------------------------RIVETS END-------------------------------*/
+
+    /* ---------------------- JQUERY BINDINGS ---------------------------------*/
+    /**
+    * Function to handle radio button click.
+    */
+    function __handleRadioButtonClick(event){
+        /*
+         * Soft save here
+         */
+        var currentTarget = event.currentTarget;
+        
+        $("label.radio").parent().removeClass("highlight");
+        $(currentTarget).parent().parent("li").addClass("highlight");  
+        
+        var newAnswer = currentTarget.value.replace(/^\s+|\s+$/g, '');
+            
+        /* Save new Answer in memory. */
+        __content.userAnswersJSON[0] = newAnswer.replace(/^\s+|\s+$/g, '');  
+        
+        __state.radioButtonClicked = true;
+        
+        var interactionId = __content.questionsJSON[0].split("^^")[2].trim();
+
+        $(document).triggerHandler('userAnswered');
+    }   
+
     /**
      * Function called to send result JSON to adaptor (partial save OR submit).
      * Parameters:
@@ -287,32 +457,9 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivet
                 }
             });
         }
-    }   
-
-    
-    /**
-    * Function to handle radio button click.
-    */
-    function __handleRadioButtonClick(event){
-        /*
-         * Soft save here
-         */
-        var currentTarget = event.currentTarget;
-        
-        $("label.radio").parent().removeClass("highlight");
-        $(currentTarget).parent().parent("li").addClass("highlight");  
-        
-        var newAnswer = currentTarget.value.replace(/^\s+|\s+$/g, '');
-            
-        /* Save new Answer in memory. */
-        __content.userAnswersJSON[0] = newAnswer.replace(/^\s+|\s+$/g, '');  
-        
-        __state.radioButtonClicked = true;
-        
-        var interactionId = __content.questionsJSON[0].split("^^")[2].trim();
-
-        $(document).triggerHandler('userAnswered');
     }    
+
+    /*------------------------OTHER PRIVATE FUNCTIONS------------------------*/
 
     /**
      * Function to show correct Answers to User, called on click of Show Answers Button.
@@ -390,109 +537,7 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivet
                 "results": resultArray
             }
         };    
-        
     }   
-    
-    /**
-     * Function to process HandleBars template with JSON.
-     */
-    function __processLayoutWithContent(layoutHTML, contentJSON) {
-        /* Compiling Template Using Handlebars. */
-        var compiledTemplate = Handlebars.compile(layoutHTML);
-
-        /*Compiling HTML from Template. */
-        var compiledHTML = compiledTemplate(contentJSON);
-        return compiledHTML;
-    }
-    
-    /**
-     * Parse and Update JSON based on MCQSC specific requirements.
-     */
-    function __parseAndUpdateJSONContent(jsonContent, params) { 
-        jsonContent.content.displaySubmit = activityAdaptor.displaySubmit;   
-        
-        __content.activityType = params.engineType;
-            
-        /* Activity Instructions. */
-        var tagName = jsonContent.content.instructions[0].tag;
-        __content.directionsJSON = jsonContent.content.instructions[0][tagName];
-        /* Put directions in JSON. */
-        jsonContent.content.directions = __content.directionsJSON;
-
-        __parseAndUpdateQuestionSetTypeJSON(jsonContent);
-        
-        /* Returning processed JSON. */
-        return jsonContent; 
-    }
-
-    
-    /**
-     * Parse and Update Question Set type JSON based on  MCQSC specific requirements.
-     */  
-    function __parseAndUpdateQuestionSetTypeJSON(jsonContent) {
-
-        /* Extract interaction id's and tags from question text. */
-        var interactionId = "";
-        var interactionTag = "";
-        /* String present in href of interaction tag. */
-        var interactionReferenceString = "http://www.comprodls.com/m1.0/interaction/mcqsc";
-        /* Parse questiontext as HTML to get HTML tags. */
-        var parsedQuestionArray = $.parseHTML(jsonContent.content.canvas.data.questiondata[0].text);
-        $.each( parsedQuestionArray, function(i, el) {
-          if(this.href === interactionReferenceString) {
-            interactionId = this.childNodes[0].nodeValue.trim();
-            interactionTag = this.outerHTML;
-            interactionTag = interactionTag.replace(/"/g, "'");
-          }
-        });
-        /* Replace interaction tag with blank string. */
-        jsonContent.content.canvas.data.questiondata[0].text = jsonContent.content.canvas.data.questiondata[0].text.replace(interactionTag,"");
-        var questionText = "1.  " + jsonContent.content.canvas.data.questiondata[0].text;
-        var correctAnswerNumber = jsonContent.responses[interactionId].correct;
-        var interactionType = jsonContent.content.interactions[interactionId].type;
-        var optionCount = jsonContent.content.interactions[interactionId][interactionType].length;
-
-        /* Make optionsJSON and answerJSON from JSON. */
-        for(var i = 0; i < optionCount; i++) {
-            var optionObject = jsonContent.content.interactions[interactionId][interactionType][i];
-            var option = optionObject[Object.keys(optionObject)].replace(/^\s+|\s+$/g, '');
-            __content.optionsJSON.push(__getHTMLEscapeValue(option));
-            optionObject[Object.keys(optionObject)] = option;
-            /* Update JSON after updating option. */
-            jsonContent.content.interactions[interactionId][interactionType][i] = optionObject;
-            if(Object.keys(optionObject) == correctAnswerNumber) {
-                __content.answersJSON[0] = optionObject[Object.keys(optionObject)];
-            }
-        }
-        __content.questionsJSON[0] = questionText + " ^^ " + __content.optionsJSON.toString() + " ^^ " + interactionId;       
-    }
-    
-    /**
-     * Escaping HTML codes from String.
-     */
-    function __getHTMLEscapeValue(content) {  
-        var tempDiv = $("<div></div>");
-        $(tempDiv).html(content);
-        $("body").append(tempDiv);
-        content  = $(tempDiv).html();
-        $(tempDiv).remove();    
-        return content;
-    }      
-
-    function __parseAndUpdateJSONForRivets(jsonContent){  
-       var processedArray = [];
-       jsonContent.content.interactions.i1.MCQTEST.forEach(function(obj, index){
-            var processedObj = {};
-            processedObj.customAttribs = {};
-            Object.keys(obj).forEach(function(key){
-                processedObj.customAttribs.key = key;
-                processedObj.customAttribs.value = obj[key];
-            });
-            processedArray.push(processedObj);
-        });
-        jsonContent.content.interactions.i1.MCQTEST = processedArray; 
-        
-    } 
     
     return {
         /*Engine-Shell Interface*/

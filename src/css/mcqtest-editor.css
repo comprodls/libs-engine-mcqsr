@@ -16,13 +16,13 @@
  *
  *
  *******************************************************/
-#mcq-editor .ques-text-editor{
+#mcq-editor .ques-text-editor.editor-icon{
 	position: absolute;
 	right: 115px;
+    cursor: pointer;
 }
 
 #mcq-editor .question-text-viewer{
-	border-bottom: 1px solid black;
 	font-weight: 700;
 	font-size: 18px;
 }
@@ -30,10 +30,13 @@
 #mcq-editor .question-text-editor{
 	font-weight: 700;
 	font-size: 18px;
+    border: none;
+    border-bottom: 1px solid black;
 }
 
 #mcq-editor .questions-editor.form{
 	padding-top: 10px;
+    padding-bottom: 15px;
 }
 
 #mcq-editor .form *{
@@ -56,8 +59,8 @@
     width: 1.8em;
     border-radius: 50%;
     position: absolute;
-	top: 7px;
-    left: 15px;
+	top: 0;
+    left: 0;
     display: block;
     outline: 0;
     border: 1px solid #BDBDBD;
@@ -106,6 +109,10 @@
 	display: inline-block;
 }
 
+#mcq-editor .form ul li .radio .correct-answer{
+    font-weight: 700;
+}
+
 #mcq-editor .form ul li .editor-icon {
 	cursor: pointer;
 }
@@ -117,11 +124,11 @@
 }
 
 #mcq-editor .form ul li .delete-icon.mcq-edit{
-	right: -70px;
+	right: -90px;
 }
 
 #mcq-editor .form ul li .drag-icon.mcq-edit{
-	right: -90px;
+	right: -70px;
 }
 
 #mcq-editor .add-container .add-item{

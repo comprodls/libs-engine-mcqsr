@@ -116,14 +116,6 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
         //Clone the JSON so that original is preserved.
         __editedJsonContent = jQuery.extend(true, {}, jsonContentObj);
 
-        // Process JSON to remove interaction tags and initiate __interactionIds and __interactionTags Arrays
-        //__parseAndUpdateJSONForInteractions();
-        __parseAndUpdateJSONForInteractions();
-
-        //Process JSON for easy iteration in template
-        //__parseAndUpdateJSONForRivets();
-        __parseAndUpdateJSONForRivets();
-
         /* ------ VALIDATION BLOCK START -------- */    
         if (__editedJsonContent.content === undefined) {
             /* Inform the shell that init is complete */
@@ -133,6 +125,14 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
             //TODO - In future more advanced schema validations could be done here    
             return; /* -- EXITING --*/
         }
+
+        // Process JSON to remove interaction tags and initiate __interactionIds and __interactionTags Arrays
+        //__parseAndUpdateJSONForInteractions();
+        __parseAndUpdateJSONForInteractions();
+
+        //Process JSON for easy iteration in template
+        //__parseAndUpdateJSONForRivets();
+        __parseAndUpdateJSONForRivets();
         /* ------ VALIDATION BLOCK END -------- */        
     
         /* Apply the layout HTML to the dom */      
@@ -364,15 +364,15 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
     }
     /*------------------------RIVETS END-------------------------------*/
 
+    /* ---------------------- JQUERY BINDINGS ---------------------------------*/
     function __bindSortable(){
         $(".sortable").sortable({
             handle: ".drag-icon",
             axis: 'y',
+            containment: '.main-container',
             stop: function( event, ui ) {
                 var prevIndex = $(ui.item[0]).attr('elementIndex');
                 var currentIndex;
-                var prevItem ={};
-                var currentItem ={};
                 var interaction;
                 var interactIndex;
                 $(ui.item[0]).parent('.sortable').children('li').each(function(index){
@@ -385,27 +385,35 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
                 
                 prevIndex = parseInt(prevIndex);
                 $(".sortable").sortable("cancel");
-                prevItem =  jQuery.extend({},__editedJsonContent.content.interactions[interactIndex].MCQTEST[prevIndex].customAttribs);
-                currentItem = jQuery.extend({},__editedJsonContent.content.interactions[interactIndex].MCQTEST[currentIndex].customAttribs);
-                __editedJsonContent.content.interactions[interactIndex].MCQTEST[prevIndex].customAttribs = currentItem;
-                __editedJsonContent.content.interactions[interactIndex].MCQTEST[currentIndex].customAttribs = prevItem;
+
+                var removedItem = __editedJsonContent.content.interactions[interactIndex].MCQTEST.splice(prevIndex, 1);
+                __editedJsonContent.content.interactions[interactIndex].MCQTEST.splice(currentIndex,0,removedItem[0]);
                 $.each(__editedJsonContent.content.interactions[interactIndex].MCQTEST, function(index, value){
                     __editedJsonContent.content.interactions[interactIndex].MCQTEST[index].customAttribs.index = index;
                 });
+                
                 __state.hasUnsavedChanges = true;
                 activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm());
             } 
         });
     }
     
-    /* ---------------------- JQUERY BINDINGS ---------------------------------*/
     function __handleRadioButtonClick(event){
         var currentTarget = event.currentTarget;
         var quesIndex = 0;
-        var interactionIndex = $(currentTarget).parent().parent("li").attr('interactIndex');
+        var interactionIndex = parseInt($(currentTarget).parent().parent("li").attr('interactIndex'));
         $("label.radio").parent().removeClass("highlight");
-        $(currentTarget).parent().parent("li").addClass("highlight");  
+        $(currentTarget).parent().parent("li").addClass("highlight"); 
+        $('.correct-answer').hide();
+        $(currentTarget).siblings('.correct-answer').show();
         __state.hasUnsavedChanges = true;
+        __editedJsonContent.content.interactions[interactionIndex].MCQTEST.forEach(function(obj, index){
+            if(__editedJsonContent.content.interactions[interactionIndex].MCQTEST[index].customAttribs.key ==  $(currentTarget).attr('key')){
+                __editedJsonContent.content.interactions[interactionIndex].MCQTEST[index].customAttribs.isCorrect = true;
+            } else{
+                __editedJsonContent.content.interactions[interactionIndex].MCQTEST[index].customAttribs.isCorrect = false;
+            }
+        });
         __editedJsonContent.responses[__interactionIds[interactionIndex]].correct = $(currentTarget).attr('key');
         activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm());
     }
@@ -428,7 +436,7 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
         }
         return __finalJSONContent;
     }    
-    /* ---------------------- JQUERY BINDINGS ---------------------------------*/
+    /* ---------------------- JQUERY BINDINGS END ----------------------------*/
     
     return {
         /*Engine-Shell Interface*/

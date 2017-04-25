@@ -9,7 +9,7 @@
    </div>
   <!-- Loop over all interactions -->
 	<div class="row" rv-each-interact="content.interactions">   
-      <div class="col-sm-12">      
+      <div class="col-sm-12 main-container">      
          <div class="col-sm-12 form">     
            <!-- Loop over all questiondata inside interaction -->  
             <div rv-each-questiondata="content.canvas.data.questiondata | appendindex %interact%">
@@ -22,12 +22,13 @@
             <ul class="list-unstyled nested-list editor sortable">
                <!-- Loop over all options inside interaction  (MCQTEST Array)-->  
                <li class="col-xs-10 mcq-item" rv-each-element="interact.MCQTEST" rv-class-highlight="element.customAttribs.isCorrect" rv-elementIndex="element.customAttribs.index" rv-interactIndex="%interact%">
-                  <i></i>
                   <label class="radio radio-lg">
                      <span class="invisible wrong pull-left"></span>
                      <input type="radio" name="optionsRadios" class="option mcq-option" rv-key="element.customAttribs.key" rv-value="element.customAttribs.value" rv-checked="element.customAttribs.isCorrect"></input>
+                     <i></i>
                      <input class="option-value input-option" rv-show="element.customAttribs.isEdited" rv-value="element.customAttribs.value" rv-on-blur="removeEditing | args element"></input>
                      <div class="option-value" rv-hide="element.customAttribs.isEdited" rv-text="element.customAttribs.value"></div>
+                     <span class="correct-answer pull-right" rv-show="element.customAttribs.isCorrect">Correct Answer</span>
                   </label>
                   <a class="editor-icon mcq-edit fa fa-pencil pull-right" rv-on-click="toggleEditing | args element"></a>
                   <a class="editor-icon delete-icon mcq-edit fa fa-trash-o pull-right" rv-on-click="removeItem | args element %interact%"></a>

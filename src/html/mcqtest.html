@@ -1,18 +1,18 @@
 
 <!-- Engine Renderer Template -->
+
 <div class="activity-body mcq-body" id="mcq-engine"> 
-   <div class="row">   
+   <div class="row" rv-each-interact="content.interactions | propertyList">   
       <div class="col-md-12">      
          <div class="form">      
-            <!-- Paint the instructions or question text -->   
-            <div rv-text="content.canvas.data.questiondata | append"></div>     
-            
-            <!-- Paint the options -->   
+ <!-- Paint the instructions or question text -->    
+            <div rv-text="content.canvas.data.questiondata | appendInteraction %interact%"></div>     
+			<!-- Paint the options -->
             <ul class="list-unstyled nested-list">        
-               <li rv-each-element="content.interactions.i1.MCQTEST">
-                  <!-- Placeholder for radio buttons-->   
-                  <i></i>
+               <li rv-each-element="content.interactions | getArray interact.key">
                   <label class="radio radio-lg">
+ 					 <!-- Placeholder for radio buttons-->   
+                     <i></i>
                      <span class="answer" class="invisible wrong pull-left"></span>
                      <input type="radio" name="optionsRadios" class="option" id="option" rv-value="element.customAttribs.value">
                      <span class="content" rv-text="element.customAttribs.value"></span>
