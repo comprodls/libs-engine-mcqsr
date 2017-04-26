@@ -102,7 +102,8 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivet
         
         TEMPLATES: {
             /* Regular MCQ Layout */
-            MCQTEST: mcqTemplateRef
+            MCQTEST: mcqTemplateRef,
+            MCQ_IMG: mcqTemplateRef,
         }
     };
     // Array of all interaction tags in question
@@ -143,7 +144,7 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivet
         /* ------ VALIDATION BLOCK END -------- */        
         
         /* Parse and update content JSON. */
-        __processedJsonContent = __parseAndUpdateJSONContent(jsonContent, params);
+        __processedJsonContent = __parseAndUpdateJSONContent(jsonContent, params, htmlLayout);
         //Process JSON for easy iteration in template
         //__parseAndUpdateJSONForRivets();
         __parseAndUpdateJSONForRivets(__processedJsonContent);
@@ -238,17 +239,22 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivet
      /**
      * Parse and Update JSON based on MCQSC specific requirements.
      */
-    function __parseAndUpdateJSONContent(jsonContent, params) { 
+    function __parseAndUpdateJSONContent(jsonContent, params, htmlLayout) { 
         jsonContent.content.displaySubmit = activityAdaptor.displaySubmit;   
         
         __content.activityType = params.engineType;
-            
+        __content.layoutType = jsonContent.content.canvas.layout;
+
         /* Activity Instructions. */
         var tagName = jsonContent.content.instructions[0].tag;
         __content.directionsJSON = jsonContent.content.instructions[0][tagName];
         /* Put directions in JSON. */
         jsonContent.content.directions = __content.directionsJSON;
-
+        $.each(jsonContent.content.stimulus, function(i) {
+            if(this.tag === "image") {
+                jsonContent.content.stimulus.mediaContent = params.questionMediaBasePath + this.image;
+            }
+        });
         __parseAndUpdateQuestionSetTypeJSON(jsonContent);
         
         /* Returning processed JSON. */
@@ -385,8 +391,30 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivet
             return obj[interaction].MCQTEST;
         }
 
+        /*rivets.binders.src = function(el, value) {
+            console.log(el)
+            console.log(value)
+          el.src = value;
+        }*/
+
+        rivets.binders.addclass = function(el, value) {
+          if(el.addedClass) {
+            $(el).removeClass(el.addedClass)
+            delete el.addedClass
+          }
+
+          if(value) {
+            $(el).addClass(value)
+            el.addedClass = value
+          }
+        }
+        var isMCQImageEngine = false;
+        if(__content.layoutType == 'MCQ_IMG'){
+            isMCQImageEngine = true;
+        }
         rivets.bind($('#mcq-engine'), {
-            content: __processedJsonContent.content
+            content: __processedJsonContent.content,
+            isMCQImageEngine: isMCQImageEngine
         });
     }
 

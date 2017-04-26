@@ -3,12 +3,13 @@
 
 <div class="activity-body mcq-body" id="mcq-engine"> 
    <div class="row" rv-each-interact="content.interactions | propertyList">   
-      <div class="col-md-12">      
+      <div class="col-sm-12">      
          <div class="form">      
  <!-- Paint the instructions or question text -->    
             <div rv-text="content.canvas.data.questiondata | appendInteraction %interact%"></div>     
 			<!-- Paint the options -->
-            <ul class="list-unstyled nested-list">        
+            <img rv-src="content.stimulus.mediaContent" class="col-sm-6" ></img>
+            <ul class="list-unstyled nested-list" rv-class-col-sm-6="isMCQImageEngine">        
                <li rv-each-element="content.interactions | getArray interact.key">
                   <label class="radio radio-lg">
  					 <!-- Placeholder for radio buttons-->   

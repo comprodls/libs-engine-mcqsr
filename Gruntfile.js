@@ -1,6 +1,7 @@
 'use strict';
 
 var engine_src = "src/js";
+var img_src = "src/assets";
 var bower_components = "../../bower_components/"
 var dist = "dist/";
 
@@ -71,16 +72,9 @@ module.exports = function(grunt) {
                         'css': bower_components + 'require-css/css',
                         'css-builder': bower_components + 'require-css/css-builder',
                         'normalize': bower_components + 'require-css/normalize',
-                        'uuid': 'uuid-generator',
                         'rivets': bower_components+ 'rivets/dist/rivets',
                         'sightglass': bower_components + 'sightglass/index',
-                        'data': bower_components + 'jquery-ui/ui/data',
-                        'ie': bower_components + 'jquery-ui/ui/ie',
-                        'scroll-parent': bower_components + 'jquery-ui/ui/scroll-parent',
-                        'version': bower_components + 'jquery-ui/ui/version',
-                        'widget': bower_components + 'jquery-ui/ui/widget',
-                        'mouse': bower_components + 'jquery-ui/ui/widgets/mouse',
-                        'sortable' :  bower_components + 'jquery-ui/ui/widgets/sortable'
+                        'jquery-ui' :  bower_components + 'jquery-ui/jquery-ui'
                     },
                     optimize: 'uglify2',
                     uglify2: {
@@ -103,6 +97,18 @@ module.exports = function(grunt) {
                     base: '..'
                 }
             }
+        },
+        copy: {
+          images: {
+            files: [
+              { 
+                expand: true,
+                cwd: img_src, 
+                src: ['**/*.{png,jpg,svg}'], 
+                dest: dist + '/assets' 
+              }
+            ]
+          }
         }
 
     });
@@ -113,13 +119,15 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-bower-task');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-text-replace');
+    grunt.loadNpmTasks('grunt-contrib-copy');
     
     // Build distribution folder
     grunt.registerTask('build', [ 
         'clean:dist',
         'clean:bower',
         'bower:install',
-        'requirejs'        
+        'requirejs',
+        'copy'   
     ]);  
 
     // Run a local server at port 9001 (http://localhost:9001/) to serve engine files.

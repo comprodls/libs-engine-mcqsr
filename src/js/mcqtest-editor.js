@@ -36,13 +36,12 @@
  */
 
 define(['text!../html/mcqtest-editor.html', //Layout of the Editor
-        'uuid', // UUID Genrator module
         'css!../css/mcqtest-editor.css', //Custom CSS of the Editor
-        'sortable', //Jquery Sortable for reordering
+        'jquery-ui', //Jquery Sortable for reordering
         'css!../../bower_components/jquery-ui/themes/base/jquery-ui.css', //CSS for sortable
         'rivets',   // Rivets for two way data binding
         'sightglass' // Required by Rivets
-        ], function (mcqTemplateRef,uuid) {
+        ], function (mcqTemplateRef) {
 
     mcqtestEditor = function() {
     "use strict";
@@ -354,7 +353,7 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
     function __addItem(event, content, interaction){
         var newObj = {};
         newObj.customAttribs = {};
-        newObj.customAttribs.key = uuid.v4();
+        newObj.customAttribs.key = __guid();
         newObj.customAttribs.value = "";
         newObj.customAttribs.isEdited = true;
         newObj.customAttribs.index = content.interactions[interaction].MCQTEST.length;
@@ -437,6 +436,16 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
         return __finalJSONContent;
     }    
     /* ---------------------- JQUERY BINDINGS END ----------------------------*/
+
+    function __guid() {
+        function s4() {
+            return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+        }
+        return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+            s4() + '-' + s4() + s4() + s4();
+    }
     
     return {
         /*Engine-Shell Interface*/
