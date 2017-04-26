@@ -8,8 +8,8 @@
  <!-- Paint the instructions or question text -->    
             <div rv-text="content.canvas.data.questiondata | appendInteraction %interact%"></div>     
 			<!-- Paint the options -->
-            <img rv-src="content.stimulus.mediaContent" class="col-sm-6" ></img>
-            <ul class="list-unstyled nested-list" rv-class-col-sm-6="isMCQImageEngine">        
+            <img rv-src="content.stimulus.mediaContent" class="col-sm-6" rv-show="isMCQImageEngine"></img>
+            <ul class="list-unstyled nested-list col-sm-6">        
                <li rv-each-element="content.interactions | getArray interact.key">
                   <label class="radio radio-lg">
  					 <!-- Placeholder for radio buttons-->   
