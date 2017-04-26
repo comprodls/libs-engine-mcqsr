@@ -22,6 +22,10 @@
     padding: 0;
 }
 
+.mcq-body .form .mcq-img{
+    padding-top: 10px;
+}
+
 .mcq-body .form ul li{
     padding: .7em .4em .7em 1.8em;
     position: relative;
