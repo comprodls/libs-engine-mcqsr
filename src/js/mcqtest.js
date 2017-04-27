@@ -102,8 +102,7 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivet
         
         TEMPLATES: {
             /* Regular MCQ Layout */
-            MCQTEST: mcqTemplateRef,
-            MCQ_IMG: mcqTemplateRef,
+            MCQTEST: mcqTemplateRef
         }
     };
     // Array of all interaction tags in question
@@ -373,6 +372,13 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivet
 
     /*------------------------RIVET INITIALIZATION & BINDINGS -------------------------------*/        
     function __initRivets(){
+        /* Formatter to transform object into object having 'key' property with value key
+         * and 'value' with the value of the object
+         * Example:
+         * var obj = {'choiceA' : 'She has flu.'} to
+         * obj= { 'key' : 'choiceA', 'value' : 'She has flu.'}
+         * This is done to access the key and value of object in the template using rivets.
+         */
         rivets.formatters.propertyList = function(obj) {
           return (function() {
             var properties = [];
@@ -383,35 +389,27 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivet
           })();
         }
 
+        /* This formatter is used to append interaction property to the object
+         * and return text of the question for particular interaction
+         */
         rivets.formatters.appendInteraction = function(obj, interaction, MCQ){
             return obj[interaction].text;
         }
 
+        /* This formatter is used to return the array of options for a particular
+         * interaction so that rivets can iterate over it.
+         */
         rivets.formatters.getArray = function(obj, interaction){
             return obj[interaction].MCQTEST;
         }
 
-        /*rivets.binders.src = function(el, value) {
-            console.log(el)
-            console.log(value)
-          el.src = value;
-        }*/
-
-        rivets.binders.addclass = function(el, value) {
-          if(el.addedClass) {
-            $(el).removeClass(el.addedClass)
-            delete el.addedClass
-          }
-
-          if(value) {
-            $(el).addClass(value)
-            el.addedClass = value
-          }
-        }
         var isMCQImageEngine = false;
+        /* Find if layout is of type MCQ_IMG*/
         if(__content.layoutType == 'MCQ_IMG'){
             isMCQImageEngine = true;
         }
+
+        /*Bind the data to template using rivets*/
         rivets.bind($('#mcq-engine'), {
             content: __processedJsonContent.content,
             isMCQImageEngine: isMCQImageEngine
@@ -501,7 +499,7 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivet
         }
         
     }
-        
+    /* Add correct or wrong answer classes*/
     function __markRadio(optionNo, correctAnswer, userAnswer) {    
         if(userAnswer.trim() === correctAnswer.trim()) {
             $($(".answer")[optionNo]).removeClass("wrong");

@@ -292,6 +292,8 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
         /*
          * Formatters for rivets
          */
+
+         /* Appends cutom arguments to function calls*/
         rivets.formatters.args = function(fn){
           var args = Array.prototype.slice.call(arguments, 1);
           return function()  {
@@ -320,17 +322,19 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
         });
     }
 
-    
+    /* Toggle between editing and read-only mode for question text */
     function __toggleQuestionTextEditing(event, element){
         element.isEditing = !element.isEditing;
         $(event[0].currentTarget).siblings('.question-text-editor').focus();
     }
 
+    /* Toggle between editing and read-only mode for options */
     function __toggleEditing(event, element){
         element.customAttribs.isEdited = !element.customAttribs.isEdited;
         $(event[0].currentTarget).parent().find('.option-value')[0].focus();
     }
 
+    /* Remove option item */
     function __removeItem(event, element, interaction){
         __editedJsonContent.content.interactions[interaction].MCQTEST.splice(element.customAttribs.index,1);
         for(var option=element.index; option<__editedJsonContent.content.interactions[interaction].MCQTEST.length; option++){
@@ -340,6 +344,7 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
         activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm());
     }
 
+    /* Remove editing on blur*/
     function __removeEditing(event, element){
         if(element.customAttribs){
             element.customAttribs.isEdited = false;    
@@ -350,6 +355,7 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
         activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm());
     }
 
+    /* Add new option for the question */
     function __addItem(event, content, interaction){
         var newObj = {};
         newObj.customAttribs = {};
@@ -364,6 +370,12 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
     /*------------------------RIVETS END-------------------------------*/
 
     /* ---------------------- JQUERY BINDINGS ---------------------------------*/
+    /* Handling when options are sorted.
+     * When dargging is stopped, get the previous and new index for dragged element.
+     * Now instead of sortable, use these indexes to restructure array.
+     * when the array would be updated, the rivets will detect the change and re-render
+     * updated data in the template.
+     */
     function __bindSortable(){
         $(".sortable").sortable({
             handle: ".drag-icon",
@@ -374,6 +386,7 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
                 var currentIndex;
                 var interaction;
                 var interactIndex;
+                /* Find the previous and current index of dragged element*/
                 $(ui.item[0]).parent('.sortable').children('li').each(function(index){
                     if($(this).attr('elementIndex') == prevIndex){
                         currentIndex = index;
@@ -383,10 +396,14 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
                 });
                 
                 prevIndex = parseInt(prevIndex);
+                /* Cancel sorting using library*/
                 $(".sortable").sortable("cancel");
 
+                /* Instead do the sorting manually*/
                 var removedItem = __editedJsonContent.content.interactions[interactIndex].MCQTEST.splice(prevIndex, 1);
                 __editedJsonContent.content.interactions[interactIndex].MCQTEST.splice(currentIndex,0,removedItem[0]);
+                
+                /* Update index property of customAttribs for each element*/
                 $.each(__editedJsonContent.content.interactions[interactIndex].MCQTEST, function(index, value){
                     __editedJsonContent.content.interactions[interactIndex].MCQTEST[index].customAttribs.index = index;
                 });
@@ -406,6 +423,7 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
         $('.correct-answer').hide();
         $(currentTarget).siblings('.correct-answer').show();
         __state.hasUnsavedChanges = true;
+        /* Update the isCorrect property for each option*/
         __editedJsonContent.content.interactions[interactionIndex].MCQTEST.forEach(function(obj, index){
             if(__editedJsonContent.content.interactions[interactionIndex].MCQTEST[index].customAttribs.key ==  $(currentTarget).attr('key')){
                 __editedJsonContent.content.interactions[interactionIndex].MCQTEST[index].customAttribs.isCorrect = true;
@@ -417,6 +435,9 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
         activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm());
     }
 
+    /* Transform the processedJSON to originally received form so that the platform
+     * can use it to repaint the updated json.
+     */
     function __transformJSONtoOriginialForm(){
         __finalJSONContent = jQuery.extend(true, {}, __editedJsonContent);
         var newObj = {};
@@ -437,6 +458,7 @@ define(['text!../html/mcqtest-editor.html', //Layout of the Editor
     }    
     /* ---------------------- JQUERY BINDINGS END ----------------------------*/
 
+    /* Generate unique ids for newly added options*/
     function __guid() {
         function s4() {
             return Math.floor((1 + Math.random()) * 0x10000)
