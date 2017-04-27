@@ -97,6 +97,18 @@ module.exports = function(grunt) {
                     base: '..'
                 }
             }
+        },
+        copy: {
+          images: {
+            files: [
+              { 
+                expand: true,
+                cwd: img_src, 
+                src: ['**/*.{png,jpg,svg}'], 
+                dest: dist + '/assets' 
+              }
+            ]
+          }
         }
     });
     
@@ -106,13 +118,15 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-bower-task');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-text-replace');
+    grunt.loadNpmTasks('grunt-contrib-copy');
     
     // Build distribution folder
     grunt.registerTask('build', [ 
         'clean:dist',
         'clean:bower',
         'bower:install',
-        'requirejs'
+        'requirejs',
+        'copy'
     ]);  
 
     // Run a local server at port 9001 (http://localhost:9001/) to serve engine files.
