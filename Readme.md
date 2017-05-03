@@ -1,8 +1,8 @@
 # Assessment Item Type | Reference Implementation
-This repository represents a reference implementation (best practices, seed project, etc.) for implementing a new comproDLS assessment item-type (Multiple Choice, Single Select) - designed to automatically plug-n-play with the following components in the comproDLS&trade ecosystems:
-* comproDLS&trade; Assessments (assessment.comprodls.com)
-* comproDLS&trade; Builder 
-* comproDLS&trade; Test Runner (widget for embedding assessments in Experience Apps)
+This repository represents a reference implementation (best practices, seed project, etc.) for implementing a new comproDLS assessment item types (for example - Multiple Choice, Single Select). Also known as **engines**, comproDLS&trade; Assessment types are designed to automatically plug-n-play with the following components in the comproDLS&trade; ecosystems:
+* comproDLS&trade; Assessments (showcase & development bench for assessments)
+* comproDLS&trade; Builder (authoring courses & product models, with assessments)
+* comproDLS&trade; Test Runner (embedding assessments in Experience Apps)
 * comproDLS&trade; Activity API (attempts & state management)
 * comproDLS&trade; Analytics API (learning & content analytics)
 
