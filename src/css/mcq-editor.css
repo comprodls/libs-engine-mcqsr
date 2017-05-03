@@ -16,6 +16,14 @@
  *
  *
  *******************************************************/
+#mcq-editor .edit-procedure{
+    padding-bottom: 0;
+}
+
+#mcq-editor .edit-procedure li{
+    padding: 5px;
+}
+
 #mcq-editor .ques-text-editor.editor-icon{
 	position: absolute;
 	right: 115px;
