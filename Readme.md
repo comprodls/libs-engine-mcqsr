@@ -1,19 +1,19 @@
 # Assessment Item Type | Reference Implementation
 This repository represents a reference implementation (best practices, seed project, etc.) for implementing new comproDLS assessment item types (for example - Multiple Choice, Single Select). Also known as **engines**, comproDLS&trade; Assessment types are designed to automatically plug-n-play with the following components in the comproDLS&trade; ecosystems:
-* comproDLS&trade; Assessments (showcase & development bench for assessments)
-* comproDLS&trade; Builder (authoring courses & product models, with assessments)
-* comproDLS&trade; Test Runner (embedding assessments in Experience Apps)
-* comproDLS&trade; Activity API (attempts & state management)
-* comproDLS&trade; Analytics API (learning & content analytics)
+* **comproDLS&trade; Assessments** (showcase & development bench for assessments)
+* **comproDLS&trade; Builder** (authoring courses & product models, with assessments)
+* **comproDLS&trade; Test Runner** (embedding assessments in Experience Apps)
+* **comproDLS&trade; Activity API** (attempts & state management)
+* **comproDLS&trade; Analytics API** (learning & content analytics)
 
-Following sections provide more details on how to setup your own assessment project and subsequent development, release & integration practices.
+Following sections provide more details on how to setup your own assessment (item type) project and related development, release & integration practices.
 
 ## Related documents & references
-1. [comproDLS&trade; Product Schema](https://docs.google.com/a/comprotechnologies.com/document/d/1npkT-s7aIWrAi_uXMldWMuX9UWpvhHXTflvi__Pm2jo/edit?usp=sharing) - You will need to this to define your underlying schema. While every assessment will have unique schema aspects, some schema elements need to be standardized (metadata, question text, scores, feedback, etc.) as per comproDLS&trade; product schema document.
-2. [comproDLS&trade; Assessment Showcase & Development bench](http://assessment.comprodls.com) - Use this application to review existing assessement types, as well as develop new assessment types.
-3. [comproDLS&trade; Test Runner](https://github.com/comprodls/libs-frontend-testrunner) - Use this front-end library to embed assessment types (mix of custom and standard) in your application.
-3. [comproDLS&trade; Activity API](http://activity.comprodls.com) - Used for managing runtime state and attempt history. See https://github.com/comprodls/service-activity/wiki/01_Activity_Concepts for more details
-4. [comproDLS&trade; Analytics API](http://analytics.comprodls.com)- Once your application is integrated with the ACTIVITY API, learning analytics for user progress & time spent are automatically available via the ANALYTICS API.
+1. [comproDLS&trade; Product Schema](https://docs.google.com/a/comprotechnologies.com/document/d/1npkT-s7aIWrAi_uXMldWMuX9UWpvhHXTflvi__Pm2jo/edit?usp=sharing) - Read this before defining the underlying schema (instructions, options, interactions, assets/stimulus etc.). While every assessment type will have its own unique schema aspects, some elements are standardized (metadata, question text, scores, feedback, etc.) as per the comproDLS&trade; product schema document.
+2. [comproDLS&trade; Assessment Showcase & Development bench](http://assessment.comprodls.com) - Use this portal to review existing assessement types, examples, as well as develop new assessment types (provide tools for testing and customization).
+3. [comproDLS&trade; Test Runner](https://github.com/comprodls/libs-frontend-testrunner) - Use this front-end library to embed assessment types (mix of custom and standard) in your application. This document is more relevant for higher-level use cases (Experience Apps, Integrations).
+3. [comproDLS&trade; Activity API](http://activity.comprodls.com) - Used for managing runtime state and attempt history. See https://github.com/comprodls/service-activity/wiki/01_Activity_Concepts for more details, This document is more relevant for higher-level use cases (Experience Apps, Integrations).
+4. [comproDLS&trade; Analytics API](http://analytics.comprodls.com)- Once your application is integrated with the ACTIVITY API, learning analytics for user progress & time spent are automatically available via the ANALYTICS API. This document is more relevant for higher-level use cases (Experience Apps, Integrations).
 
 
 ## Getting started - Setup a starter project
@@ -64,18 +64,15 @@ grunt
 ```
 If everything worked fine, you should an output as follows:
 ```
-...
-...
-Running "requirejs:engine" (requirejs) task
-Completed requirejs optimization for mcq renderer successfully.
+	Running "requirejs:engine" (requirejs) task
+	Completed requirejs optimization for mcq renderer successfully.
 
-Running "requirejs:engineEditor" (requirejs) task
-Completed requirejs optimization for mcq editor successfully.
+	Running "requirejs:engineEditor" (requirejs) task
+	Completed requirejs optimization for mcq editor successfully.
 
-Running "copy:images" (copy) task
-Copied 1 file
-
-Done.
+	Running "copy:images" (copy) task
+	Copied 1 file
+	Done.
 ```
 
 ## Testing your Assessment Type (BASIC flow)
@@ -180,5 +177,16 @@ TODO
 * ..
 * ..
 * ..
+
+## Integrating your Assessment type(s) with your Delivery Application
+An assessment type may be used in various modes:
+* Single or Multi-question tests with **NO state/history** - Simply use the [Test Runner](https://github.com/comprodls/libs-frontend-testrunner)) to embed your assesment type as a widget. You will need to supply content (question json).
+* Single or Multi-question tests **with state/history** (Attempts, Resume, Past scores etc.)- Requires use of comproDLS&trade; PRODUCT & ACTIVITY APIs in coordination with the Test runner.
+* **Embedded test** inside text/html/epub/markdown with **NO state/history** - Simply use the [Test Runner](https://github.com/comprodls/libs-frontend-testrunner))
+* **Embedded test** inside text/html/epub/markdown **with state/history** - Requires use of comproDLS&trade; PRODUCT & ACTIVITY APIs in coordination with the Test runner. _TODO Embedded Items_
+
+## Integrating your Assessment type(s) with Builder
+TODO
+ 
 
 
