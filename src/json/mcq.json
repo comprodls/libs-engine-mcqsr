@@ -15,8 +15,7 @@
     ],
     "stimulus": [
       {
-        "tag": "audio",
-        "audio": "../test/audios/capes_2_1_1.mp3"
+        "tag": ""
       }
     ],
     "canvas": {
