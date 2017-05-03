@@ -35,13 +35,13 @@ module.exports = function(grunt) {
         },
 
         // RequireJS optimizer
-        // Create two files - mcqtest.js and mcqtest-editor.js
+        // Create two files - mcq.js and mcq-editor.js
         requirejs: {
-            mcqtest: {
+            mcq: {
                 options: {
                     baseUrl: engine_src,
-                    name: "mcqtest",
-                    out: dist + "mcqtest.js",
+                    name: "mcq",
+                    out: dist + "mcq.js",
                     paths: {
                         'text': bower_components + 'text/text',
                         'css': bower_components + 'require-css/css',
@@ -61,11 +61,11 @@ module.exports = function(grunt) {
                     }
                 }
             },
-            mcqtestEdit: {
+            mcqEdit: {
                 options: {
                     baseUrl: engine_src,
-                    name: "mcqtest-editor",
-                    out: dist + "mcqtest-editor.js",
+                    name: "mcq-editor",
+                    out: dist + "mcq-editor.js",
                     paths: {
                         'jquery':'empty:',
                         'text': bower_components + 'text/text',

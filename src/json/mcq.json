@@ -1,6 +1,6 @@
 {
   "meta": {
-    "type": "MCQTEST",
+    "type": "MCQ",
     "score": {
       "default": 0,
       "max": 1,
@@ -20,11 +20,11 @@
       }
     ],
     "canvas": {
-      "layout": "MCQTEST",
+      "layout": "MCQ",
       "data": {
         "questiondata": [
           {
-            "text": "   What's the matter with this patient? <a href='http://www.comprodls.com/m1.0/interaction/mcqsc'>i1</a> "
+            "text": "   What's the matter with this patient? <a href='http://www.comprodls.com/m1.0/interaction/mcq'>i1</a> "
           }
         ]
       },
@@ -32,8 +32,8 @@
     },     
     "interactions": {
       "i1": {
-        "type": "MCQTEST",
-        "MCQTEST": [
+        "type": "MCQ",
+        "MCQ": [
           {
             "choiceA": "She has the flu." 
           },

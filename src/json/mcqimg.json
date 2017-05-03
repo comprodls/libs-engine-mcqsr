@@ -1,6 +1,6 @@
 {
   "meta": {
-    "type": "MCQTEST",
+    "type": "MCQ",
     "score": {
       "default": 0,
       "max": 1,
@@ -25,7 +25,7 @@
       "data": {
         "questiondata": [
           {
-            "text": " Hi. My name __ Paul. <a href='http://www.comprodls.com/m1.0/interaction/mcqsc'>i1</a> "
+            "text": " Hi. My name __ Paul. <a href='http://www.comprodls.com/m1.0/interaction/mcq'>i1</a> "
           }
         ]
       },
@@ -33,8 +33,8 @@
     },     
     "interactions": {
       "i1": {
-        "type": "MCQTEST",
-        "MCQTEST": [
+        "type": "MCQ",
+        "MCQ": [
           {
             "choiceA": "am" 
           },

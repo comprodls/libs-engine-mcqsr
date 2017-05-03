@@ -37,13 +37,13 @@
  * 3. Boostrap (TODO: version) 
  */
 
-define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivets) representing the rendering UX
-        'css!../css/mcqtest.css',  //Custom styles of the engine (applied over bootstrap & front-end-core)
+define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) representing the rendering UX
+        'css!../css/mcq.css',  //Custom styles of the engine (applied over bootstrap & front-end-core)
         'rivets',  // Rivets for data binding
         'sightglass'], //Required by Rivets
         function (mcqTemplateRef) {
 
-    mcqtest = function() {
+    mcq = function() {
     
     "use strict";
         
@@ -102,7 +102,7 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivet
         
         TEMPLATES: {
             /* Regular MCQ Layout */
-            MCQTEST: mcqTemplateRef
+            MCQ: mcqTemplateRef
         }
     };
     // Array of all interaction tags in question
@@ -236,7 +236,7 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivet
 
      /* ---------------------- JSON PROCESSING FUNCTIONS START ---------------------------------*/
      /**
-     * Parse and Update JSON based on MCQSC specific requirements.
+     * Parse and Update JSON based on MCQ specific requirements.
      */
     function __parseAndUpdateJSONContent(jsonContent, params, htmlLayout) { 
         jsonContent.content.displaySubmit = activityAdaptor.displaySubmit;   
@@ -262,7 +262,7 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivet
 
     
     /**
-     * Parse and Update Question Set type JSON based on  MCQSC specific requirements.
+     * Parse and Update Question Set type JSON based on  MCQ specific requirements.
      */  
     function __parseAndUpdateQuestionSetTypeJSON(jsonContent) {
 
@@ -270,7 +270,7 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivet
         var interactionId = "";
         var interactionTag = "";
         /* String present in href of interaction tag. */
-        var interactionReferenceString = "http://www.comprodls.com/m1.0/interaction/mcqsc";
+        var interactionReferenceString = "http://www.comprodls.com/m1.0/interaction/mcq";
         /* Parse questiontext as HTML to get HTML tags. */
         var parsedQuestionArray = $.parseHTML(jsonContent.content.canvas.data.questiondata[0].text);
         $.each( parsedQuestionArray, function(i, el) {
@@ -321,7 +321,7 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivet
      * Original JSON Object
      * ---------------------
      * 
-     * "MCQTEST": [
+     * "MCQ": [
           {
             "choiceA": "She has the flu." 
           },
@@ -333,7 +333,7 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivet
         Modified JSON Object
         ----------------------
 
-        "MCQTEST": [
+        "MCQ": [
           {
               "customAttribs" : {
                     "key" : "choiceA",
@@ -357,7 +357,7 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivet
     function __parseAndUpdateJSONForRivets(jsonContent){  
        var processedArray = [];
        for(var i=0; i <__interactionIds.length; i++){
-            jsonContent.content.interactions[__interactionIds[i]].MCQTEST.forEach(function(obj, index){
+            jsonContent.content.interactions[__interactionIds[i]].MCQ.forEach(function(obj, index){
                 var processedObj = {};
                 processedObj.customAttribs = {};
                 Object.keys(obj).forEach(function(key){
@@ -366,7 +366,7 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivet
                 });
                 processedArray.push(processedObj);
             });
-            jsonContent.content.interactions[__interactionIds[i]].MCQTEST = processedArray;  
+            jsonContent.content.interactions[__interactionIds[i]].MCQ = processedArray;  
        }
     } 
 
@@ -400,7 +400,7 @@ define(['text!../html/mcqtest.html', //HTML layout(s) template (handlebars/rivet
          * interaction so that rivets can iterate over it.
          */
         rivets.formatters.getArray = function(obj, interaction){
-            return obj[interaction].MCQTEST;
+            return obj[interaction].MCQ;
         }
 
         var isMCQImageEngine = false;
