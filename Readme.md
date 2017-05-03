@@ -9,7 +9,7 @@ This repository represents a reference implementation (best practices, seed proj
 Following sections provide more details on how to setup your own assessment project and subsequent development, release & integration practices.
 
 ## Related documents & references
-1. [comproDLS&trade; Product Schema](http:..) - You will need to this define your underlying schema. While every assessment will have unique schema aspects, some schema elements need to be standardized (metadata, question text, scores, feedback, etc.) as per comproDLS&trade; product schema document.
+1. [comproDLS&trade; Product Schema](http:..) - You will need to this to define your underlying schema. While every assessment will have unique schema aspects, some schema elements need to be standardized (metadata, question text, scores, feedback, etc.) as per comproDLS&trade; product schema document.
 2. [comproDLS&trade; Assessment Showcase & Development bench](http://assessment.comprodls.com) - Use this application to review existing assessement types, as well as develop new assessment types.
 3. [comproDLS&trade; Test Runner](https://github.com/comprodls/libs-frontend-testrunner) - Use this front-end library to embed assessment types (mix of custom and standard) in your application.
 3. [comproDLS&trade; Activity API](http://activity.comprodls.com) - Used for managing runtime state and attempt history. See https://github.com/comprodls/service-activity/wiki/01_Activity_Concepts for more details
@@ -17,37 +17,46 @@ Following sections provide more details on how to setup your own assessment proj
 
 
 ## Getting started - Setup a starter project
-1. Choose an unique **comproDLS&trade; code** for your Assessment type (MCQSR, FIB, DND, etc). Refer to [comproDLS&trade; Registered Assessment Type] for exiting code which can not used.
+1. Choose an unique **comproDLS&trade; code** for your Assessment type (MCQSR, FIB, DND, etc). Refer to [comproDLS&trade; Registered Assessment Type] for existing code which can not used.
 2. Setup a new GitHub repository using the following standard naming convention - **libs-engine-MY_UNIQUE_CODE** (all lowercase)
 3. Copy the contents of this repository into the new respository as the initial commit. Your repository folder structure should look like: 
 ``` 
-dist - ................
 src
-     js   - .....
+     js
         <CODE>.js
         <CODE>-editor.js
-     css  - .....  
+     css
         <CODE>.css
         <CODE>-editor.css
-     html  - .....   
+     html
         <CODE>.html
         <CODE>-editor.html
-     json  - .....
+     json
         <CODE>.json
-     assets  - .....
-Gruntfile.js - ................
-package.json -...............
-bower.json -...............
+     assets
+dist - Minified and concatenated files, Generated via Grunt Build task
+     <CODE>.js
+     <CODE>-editor.js
+Gruntfile.js
+package.json
+bower.json
 ```
 4. Rename all the files (as shown above) containing `<CODE>` appropriately. For example if you `CODE` is `QUESTION_TYPE_X` then files under the `js` folder would be renamed to `QUESTION_TYPE_X.js` and `QUESTION_TYPE_X-editor.js`
-5. Open the files listed below and replace all references of `MCQ` with your unique code i.e. `QUESTION_TYPE_X`.
+5. Open the files listed below and replace all references of `MCQ` (All Uppercase) with your unique code i.e. `QUESTION_TYPE_X`(All Uppercase) and all references `mcq`(All lowercase) with your unique code i.e. `question_type_x`(All lowercase)
 ```
- 	 js  - .....
+src
+     js
         <CODE>.js
         <CODE>-editor.js
-     html  - .....   
+     css
+        <CODE>.css
+        <CODE>-editor.css
+     html
         <CODE>.html
         <CODE>-editor.html
+     json
+        <CODE>.json
+Gruntfile.js        
 ```
 6. Run the following commands to initialize your project and compile the change files.
 ```
@@ -56,8 +65,16 @@ grunt
 ```
 If everything worked fine, you should an output as follows:
 ```
-sdjkfhsk
-sdffhsd
+Running "requirejs:engine" (requirejs) task
+Completed requirejs optimization for mcq renderer successfully.
+
+Running "requirejs:engineEditor" (requirejs) task
+Completed requirejs optimization for mcq editor successfully.
+
+Running "copy:images" (copy) task
+Copied 1 file
+
+Done.
 ```
 
 ## Testing your Assessment Type (BASIC flow)
@@ -77,7 +94,7 @@ The typical sequence of steps for developing a new assessment type is as follows
 
 ### Phase 1 - Student/Instructor Experience
 * Define UX MOCK
-* Identify your specific schema elements/aspects (which are not aleady available in comproDLS&trade; Product schema or cannot be mapped to an exiting schema construct.).
+* Identify your specific schema elements/aspects (which are not aleady available in comproDLS&trade; Product schema or cannot be mapped to an existing schema construct.).
 * Define the default/sample **question JSON** - `json/<CODE>.json`. You could use following generic schema as a starting point.
 ```javascript
 gdfg
