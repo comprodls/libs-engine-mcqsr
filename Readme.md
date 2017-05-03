@@ -97,19 +97,54 @@ The typical sequence of steps for developing a new assessment type is as follows
 * Identify your specific schema elements/aspects (which are not aleady available in comproDLS&trade; Product schema or cannot be mapped to an existing schema construct.).
 * Define the default/sample **question JSON** - `json/<CODE>.json`. You could use following generic schema as a starting point.
 ```javascript
-gdfg
-dfg
+{
+    "meta": {
+        "type": "QUESTION_TYPE_X",
+        “title”: “Question 1”,
+        "score": {
+            "default": 0,
+            "max": 1,
+            "min": 0
+        }
+    },
+    "content": {
+        "instructions": [{
+            "tag": "html",
+            "html": "These are sample instructions for this engine"
+        }],
+        "canvas": {
+            "layout": "QUESTION_TYPE_X",
+            "data": {
+                "questiondata": [{
+                    "text": "This is sample question?"
+                }]
+            }
+        }
+    },
+    "interactions": {},
+    "feedback": {
+        "global": {
+            "correct": "",
+            "incorrect": "",
+            "empty": ""
+        }
+    },
+    "responses": {},
+    "learning-objectives": [],
+    "tags": []
+}
 ```
-* Based on the UX, define the default layout for your assessment type - `html/<CODE>.json`. Include basic or first-level templating snippets (see ..... for detail on the RIVETs templating engine) for linking your **question JSON** to your template. Start with the standard schema elements like `content.instructions`, `meta,title` etc. You could use following vanilla template as a starting point.
+* Based on the UX, define the default layout for your assessment type - `html/<CODE>.html`. Include basic or first-level templating snippets (see http://rivetsjs.com/docs/guide/#usage for detail on the RIVETs templating engine) for linking your **question JSON** to your template. Start with the standard schema elements like `content.instructions`, `meta.title` etc. You could use following vanilla template as a starting point.
 ```html
 <html>
+</html>
 ```
 * If necessary add **custom styles** to align with your default template in `css/<CODE>.json`. Note [Bootstrap 3.7.x](http://..) is already included as the baseline styling system. You may skip this step initially and simply leverage default bootstrap styles.
-* Now you are ready to start writing your **javascript module** in the files `js/<CODE>.js` . The library  `jquery 1.x` is available as the baseline. Use the standard AMD module (see ......... ) pattern for specify additional dependencies. Following a vanilla starter module which uses RIVETs (for two-way binding and templating).
+* Now you are ready to start writing your **javascript module** in the files `js/<CODE>.js` . The library  `jquery 1.x` is available as the baseline. Use the standard AMD module (see http://requirejs.org/docs/whyamd.html#amd ) pattern for specifying additional dependencies. Following a vanilla starter module which uses RIVETs (for two-way binding and templating).
 ```javascript
-var a=0;
+
 ```
-* Commit your code and test using assessment.comprodls.com NOTE, at the time registration, **Specify SUPPORT EDITOR as false**
+* Commit your code and test using http://assessment.comprodls.com. NOTE, at the time of registration, **Specify SUPPORT EDITOR as false**
 
 
 ### Phase 2 - Authoring Experience
