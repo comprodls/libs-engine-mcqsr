@@ -80,13 +80,13 @@ If everything worked fine, you should an output as follows:
 2. Open http://assessment.comprodls.com and login using your comproDLS&trade; development account.
 3. Click on "Register New Item" in the left menu bar.
 4. Fill in the register form using your newly created item credentials.
-5. Path is external item repository path.
-6. Item Type is your engine MY_UNIQUE_CODE.
-7. Item Name is the name you want to give to the item.
-8. Each item supports many layouts, Layout here is the name of default layout/variation to be used for the item.
-9. Mark YES/NO depending on whether your new item supports editor or not.
-10. Give a default content to the item.
-11. Click on Register, you will be directly taken to the newly created item where you can validate its functioning.
+5. **Path** - External item repository path.
+6. **Item Type** - Your engine MY_UNIQUE_CODE.
+7. **Item Name** - Name you want to give to the item.
+8. **Layout** - Each item supports many layouts, Layout here is the name of default layout/variation to be used for the item.
+9. **Supports Editor** - Mark YES/NO depending on whether your new item supports editor or not.
+10. **Sample Content** - Give a default content to the item.
+11. Click on **Register**, you will be directly taken to the newly created item where you can validate its functioning.
 
 ## Typical development process
 The typical sequence of steps for developing a new assessment type is as follows.
