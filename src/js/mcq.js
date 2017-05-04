@@ -1,40 +1,31 @@
 /*
- * ----------------------
- * Engine Module Renderer
- * ----------------------
+ * -------------
+ * Engine Module
+ * -------------
  * 
  * Item Type: MCQ Single Choice Quesion engine
  * Code: MCQ
- * Interface: Renderer
- *  
- * Item Render Interfaces / Modes :->
- * 
- *  1. Supports Standard ENGINE-SHELL interface
- *      {
+ * Interface: ENGINE
+ 
+ *  ENGINE Interface public functions
+ *  {
  *          init(),
  *          getStatus(),
  *          getConfig()
- *      }
+ *  }
  * 
- * ENGINE - SHELL interface : ->
  *
- * This engine loaded by another module/js "shell.js" which  establishes interface with the platform. The shell instantiates
- * this engine [ engine.init() ]  with necessary configuration paramters and a reference to platform Adapter
- * object which allows subsequent communuication with the platform.
+ * This engine is designed to be loaded dynamical by other applications (or  platforms). At the starte the function [ engine.init() ] will be called  with necessary configuration paramters and a reference to platform "Adapter"  which allows subsequent communuication with the platform.
  *
- * SHELL calls [ engine.getStatus() ] to check if SUBMIT has been pressed or not - the response from the engine is 
- * used to enable / disable LMS controls.
+ * The function [ engine.getStatus() ] may be called to check if SUBMIT has been pressed or not - the response from the engine is used to enable / disable appropriate platform controls.
  *
- * SHELL calls engine.getConfig() to request SIZE information - the response from the engine is 
- * used to resize the container iframe.
+ * The function engine.getConfig() is called to request SIZE information - the response from the engine is used to resize & display the container iframe.
  *
  *
  * EXTERNAL JS DEPENDENCIES : ->
- * Following are shared/common dependencies and assumed to loaded via the platform. The engine code can use/reference
- * these as needed
+ * Following are shared/common dependencies and assumed to loaded via the platform. The engine code can use/reference these as needed
  * 1. JQuery (2.1.1)
- * 2. Handlebars (1.0.0)
- * 3. Boostrap (TODO: version) 
+ * 2. Boostrap (TODO: version) 
  */
 
 define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) representing the rendering UX

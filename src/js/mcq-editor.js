@@ -7,26 +7,21 @@
  * Code: MCQ
  * Interface: Editor
  *  
- * Interfaces / Modes :->
- * 
- *  1. Supports Standard ENGINE-SHELL interface
- *      {
+ *  ENGINE EDITOR Interface public functions
+ *  {
  *          init(),
  *          getStatus(),
  *          getConfig()
- *      }
- * 
- * ENGINE-EDITOR - SHELL interface : ->
- * 
- * This "engine editor" loaded by another module/js "shell.js" which  establishes interface with the platform. The shell instantiates
- * this engine [ engine.init() ]  with necessary configuration paramters and a reference to platform Adapter
+ *  }
+ *
+ * This engine-editor is designed to be loaded dynamical by other applications (or  platforms). At the start the function [ engine.init() ] will be called with necessary configuration paramters and a reference to platform Adapter
  * object which allows subsequent communuication with the platform.
  *
  *
- * SHELL calls engine.getConfig() to request SIZE information - the response from the engine is 
- * used to resize the container iframe.
+ * The function [ engine-editor.getStatus() ] may be called to check if SUBMIT has been pressed or not - the response from the engine is used to enable / disable appropriate platform controls.
  *
- * 
+ * he function [ engine-editor.getConfig() ] is called to request SIZE information - the response from the engine is used to resize & display the container iframe.
+ *
  * EXTERNAL JS DEPENDENCIES : ->
  * Following are shared/common dependencies and assumed to loaded via the platform. The engine code can use/reference
  * these as needed
