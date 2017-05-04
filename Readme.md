@@ -34,6 +34,10 @@ src
      json
         <CODE>.json
      assets
+ dist     
+     <CODE>.js
+     <CODE>-editor.js
+     assets    
 Gruntfile.js
 package.json
 bower.json
