@@ -1,7 +1,7 @@
 {
-    "meta": {
+    "meta": { 
         "type": "MCQ",
-        "title": "Question 1",
+        "title": "Island Survival Test 1",
         "score": {
             "default": 0,
             "max": 1,
@@ -11,13 +11,13 @@
     "content": {
         "instructions": [{
             "tag": "html",
-            "html": "These are sample instructions for this engine"
+            "html": "Please read the question carefully, and select ONE option as your answer."
         }],
         "canvas": {
             "layout": "MCQ",
             "data": {
                 "questiondata": [{
-                    "text": "This is sample question?"
+                    "text": "You are alone in a deserted island and about to die. God appears and gives one wish with pre-defined options. Choose the correct answer?"
                 }]
             }
         }
@@ -25,9 +25,9 @@
     "interactions": {},
     "feedback": {
         "global": {
-            "correct": "",
-            "incorrect": "",
-            "empty": ""
+            "correct": "Well done. You will live.",
+            "incorrect": "Sorry, wrong choice, your are about to die.",
+            "empty": "Do attempt the question."
         }
     },
     "responses": {},

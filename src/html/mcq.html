@@ -1,9 +1,11 @@
-<!-- Engine Renderer Template -->
-<div class="activity-body" id="mcq-engine"> 
+<div class="well" id="mcq-engine">  <!-- the "id" attribute must set as shown.->
+   <!-- Display the Title-->
    <h1 rv-text="jsonContent.meta.title"></h1>
+   <!-- Display Instructions-->
    <div rv-each-instruction="jsonContent.content.instructions">
-      <h4 rv-text="instruction.html"></h4>
+      <p class="lead" rv-text="instruction.html"></p>
    </div>   
+   <!-- Display the question-->
    <div rv-each-question="jsonContent.content.canvas.data.questiondata">
       <h6 rv-text="question.text"></h6>
    </div>   
