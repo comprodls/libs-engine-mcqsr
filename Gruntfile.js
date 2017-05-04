@@ -37,7 +37,7 @@ module.exports = function(grunt) {
         // RequireJS optimizer
         // Create two files - mcq.js and mcq-editor.js
         requirejs: {
-            mcq: {
+            engine: {
                 options: {
                     baseUrl: engine_src,
                     name: "mcq",
@@ -61,7 +61,7 @@ module.exports = function(grunt) {
                     }
                 }
             },
-            mcqEdit: {
+            engineEditor: {
                 options: {
                     baseUrl: engine_src,
                     name: "mcq-editor",
