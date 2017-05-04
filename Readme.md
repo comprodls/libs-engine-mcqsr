@@ -85,7 +85,7 @@ If everything worked fine, you should an output as follows:
 7. **Item Name** - Name you want to give to the item.
 8. **Layout** - Each item supports many layouts, Layout here is the name of default layout/variation to be used for the item.
 9. **Supports Editor** - Mark YES/NO depending on whether your new item supports editor or not.
-10. **Sample Content** - Give a default content to the item.
+10. **Sample Content** - Give default content to the item.
 11. Click on **Register**, you will be directly taken to the newly created item where you can validate its functioning.
 
 ## Typical development process
