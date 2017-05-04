@@ -18,7 +18,7 @@ Following sections provide more details on how to setup your own assessment (ite
 
 ## Getting started - Setup a starter project
 1. Choose a unique **comproDLS&trade; code** for your Assessment type (MCQSR, FIB, DND, etc). Refer to **TODO [comproDLS&trade; Registered Assessment Type]()** for existing codes which can't be used.
-2. Setup a new GitHub repository using the following standard naming convention - **libs-engine-MY_UNIQUE_CODE** (all lowercase)
+2. Setup a new GitHub repository using the following standard naming convention - **libs-engine-CODE** (all lowercase)
 3. Copy the contents of this repository into the new repository as the initial commit. Your repository folder structure should look like: 
 ``` 
 src
@@ -85,9 +85,9 @@ If everything worked fine, you should see an output as follows:
 3. Click on "Register New Item" in the left menu bar.
 4. Fill in the register form using your newly created item credentials.
 	* **Path** - External item repository path.
-	* **Item Type** - Your engine MY_UNIQUE_CODE.
+	* **Item Type** - Your engine CODE.
 	* **Item Name** - Name you want to give to the item.
-	* **Layout** - Each item supports many layouts, Layout here is the name of default layout/variation to be used for the item.
+	* **Layout** - Enter your Engine CODE here. This is the name of default layout/variation to be used for the item.
 	* **Supports Editor** - Mark NO (in future set to YES, depending on whether your new item supports editor interface or not)
 	* **Sample Content** - Copy & Paste contents of your default/sample **question JSON** - `json/<CODE>.json`
 11. Click on **Register**, you will be directly taken to a fresh page, where your newly created assessment type will be functioning.
