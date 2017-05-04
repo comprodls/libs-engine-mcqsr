@@ -1,5 +1,5 @@
 # Assessment Item Type | Reference Implementation
-This repository represents a reference implementation (best practices, seed project, etc.) for implementing new comproDLS assessment item types (for example - Multiple Choice, Single Select). Also known as **engines**, comproDLS&trade; Assessment types are designed to automatically plug-n-play with the following components in the comproDLS&trade; ecosystems:
+This repository represents a reference implementation (best practices, seed project, etc.) for implementing new comproDLS assessment item types (for example - Multiple Choice, Single Select). Also known as **engines**, comproDLS&trade; Assessment types are designed to automatically plug-n-play with the following components in the comproDLS&trade; ecosystem:
 * **comproDLS&trade; Assessments** (showcase & development bench for assessments)
 * **comproDLS&trade; Builder** (authoring courses & product models, with assessments)
 * **comproDLS&trade; Test Runner** (embedding assessments in Experience Apps)
@@ -10,16 +10,16 @@ Following sections provide more details on how to setup your own assessment (ite
 
 ## Related documents & references
 1. [comproDLS&trade; Product Schema](https://docs.google.com/a/comprotechnologies.com/document/d/1npkT-s7aIWrAi_uXMldWMuX9UWpvhHXTflvi__Pm2jo/edit?usp=sharing) - Read this before defining the underlying schema (instructions, options, interactions, assets/stimulus etc.). While every assessment type will have its own unique schema aspects, some elements are standardized (metadata, question text, scores, feedback, etc.) as per the comproDLS&trade; product schema document.
-2. [comproDLS&trade; Assessment Showcase & Development bench](http://assessment.comprodls.com) - Use this portal to review existing assessement types, examples, as well as develop new assessment types (provide tools for testing and customization).
+2. [comproDLS&trade; Assessment Showcase & Development bench](http://assessment.comprodls.com) - Use this portal to review existing assessment types, examples, as well as to develop new assessment types (provide tools for testing and customization).
 3. [comproDLS&trade; Test Runner](https://github.com/comprodls/libs-frontend-testrunner) - Use this front-end library to embed assessment types (mix of custom and standard) in your application. This document is more relevant for higher-level use cases (Experience Apps, Integrations).
-3. [comproDLS&trade; Activity API](http://activity.comprodls.com) - Used for managing runtime state and attempt history. See https://github.com/comprodls/service-activity/wiki/01_Activity_Concepts for more details, This document is more relevant for higher-level use cases (Experience Apps, Integrations).
+3. [comproDLS&trade; Activity API](http://activity.comprodls.com) - Used for managing runtime state and attempt history. See https://github.com/comprodls/service-activity/wiki/01_Activity_Concepts for more details. This document is more relevant for higher-level use cases (Experience Apps, Integrations).
 4. [comproDLS&trade; Analytics API](http://analytics.comprodls.com)- Once your application is integrated with the ACTIVITY API, learning analytics for user progress & time spent are automatically available via the ANALYTICS API. This document is more relevant for higher-level use cases (Experience Apps, Integrations).
 
 
 ## Getting started - Setup a starter project
-1. Choose a unique **comproDLS&trade; code** for your Assessment type (MCQSR, FIB, DND, etc). Refer to **TODO [comproDLS&trade; Registered Assessment Type]()** for existing codes which can not be used.
+1. Choose a unique **comproDLS&trade; code** for your Assessment type (MCQSR, FIB, DND, etc). Refer to **TODO [comproDLS&trade; Registered Assessment Type]()** for existing codes which can't be used.
 2. Setup a new GitHub repository using the following standard naming convention - **libs-engine-MY_UNIQUE_CODE** (all lowercase)
-3. Copy the contents of this repository into the new respository as the initial commit. Your repository folder structure should look like: 
+3. Copy the contents of this repository into the new repository as the initial commit. Your repository folder structure should look like: 
 ``` 
 src
      js
@@ -41,7 +41,7 @@ Readme.md
 .gitignore
 ```
 4. Rename all the files (as shown above) containing `<CODE>` appropriately. For example if your `CODE` is `QUESTION_TYPE_X` then files under the `js` folder would be renamed to `QUESTION_TYPE_X.js` and `QUESTION_TYPE_X-editor.js`
-5. Open the files listed below and replace all references of `MCQ` (All Uppercase) with your unique code i.e. `QUESTION_TYPE_X`(All Uppercase) and all references `mcq`(All lowercase) with your unique code i.e. `question_type_x`(All lowercase)
+5. Open the files listed below and replace all references of `MCQ` (all uppercase) with your unique code i.e. `QUESTION_TYPE_X`(all uppercase) and all references of `mcq`(all lowercase) with your unique code i.e. `question_type_x`(all lowercase)
 ```
 src
      js
@@ -57,12 +57,12 @@ src
         <CODE>.json
 Gruntfile.js        
 ```
-6. Run the following commands to initialize your project and compile the change files.
+6. Run the following commands to initialize your project and compile the changed files.
 ```
 npm install
 grunt
 ```
-If everything worked fine, you should an output as follows:
+If everything worked fine, you should see an output as follows:
 ```
 	Running "requirejs:engine" (requirejs) task
 	Completed requirejs optimization for mcq renderer successfully.
@@ -93,8 +93,8 @@ The typical sequence of steps for developing a new assessment type is as follows
 
 ### Phase 1 - Student/Instructor Experience
 * Define UX MOCK
-* Identify your specific schema elements/aspects (which are not aleady available in comproDLS&trade; Product schema or cannot be mapped to an existing schema construct).
-* Define the default/sample **question JSON** - `json/<CODE>.json`. You could use following generic schema as a starting point.
+* Identify your specific schema elements/aspects (which are not already available in comproDLS&trade; Product schema or cannot be mapped to an existing schema construct).
+* Define the default/sample **question JSON** - `json/<CODE>.json`. You could use following sample schema as a starting point.
 ```json
 {
     "meta": {
@@ -133,7 +133,7 @@ The typical sequence of steps for developing a new assessment type is as follows
     "tags": []
 }
 ```
-* Based on the UX, define the default layout for your assessment type - `html/<CODE>.html`. Include basic or first-level templating snippets (see http://rivetsjs.com/docs/guide/#usage for details on the RIVETs templating engine) for linking your **question JSON** to your template. Start with the standard schema elements like `content.instructions`, `meta.title` etc. You could use following vanilla template as a starting point.
+* Based on the UX, define the default layout for your assessment type - `html/<CODE>.html`. Include basic or first-level templating snippets (see http://rivetsjs.com/docs/guide/#usage for details on the RIVETS templating engine) for linking your **question JSON** to your template. Start with the standard schema elements like `content.instructions`, `meta.title` etc. You could use following vanilla template as a starting point.
 ```html
 <div class="activity-body" id="mcq-engine"> 
    <h1 rv-text="jsonContent.meta.title"></h1>
@@ -146,7 +146,7 @@ The typical sequence of steps for developing a new assessment type is as follows
 </div>
 ```
 * If necessary add **custom styles** to align with your default template in `css/<CODE>.css`. Note **TODO [Bootstrap 3.3.7]**(https://github.com/twbs/bootstrap) is already included as the baseline styling system. You may skip this step initially and simply leverage default bootstrap styles.
-* Now you are ready to start writing your **javascript module** in the files `js/<CODE>.js`. The library  **TODO `jquery 3.2.1`** is available as the baseline. Use the standard AMD module (see http://requirejs.org/docs/whyamd.html#amd ) pattern for specifying additional dependencies. Following is the vanilla starter module which uses RIVETs (for two-way binding and templating).
+* Now you are ready to start writing your **javascript module** in the files `js/<CODE>.js`. The library  **TODO `jquery 3.2.1`** is available as the baseline. Use the standard AMD module (see http://requirejs.org/docs/whyamd.html#amd ) pattern for specifying additional dependencies. Following is the vanilla starter module which uses RIVETS (for two-way binding and templating).
 ```javascript
 /*
  * ----------------------
