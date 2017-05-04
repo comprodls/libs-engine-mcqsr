@@ -84,26 +84,27 @@ If everything worked fine, you should see an output as follows:
 2. Open http://assessment.comprodls.com and login using your comproDLS&trade; development account.
 3. Click on "Register New Item" in the left menu bar.
 4. Fill in the register form using your newly created item credentials.
-5. **Path** - External item repository path.
-6. **Item Type** - Your engine MY_UNIQUE_CODE.
-7. **Item Name** - Name you want to give to the item.
-8. **Layout** - Each item supports many layouts, Layout here is the name of default layout/variation to be used for the item.
-9. **Supports Editor** - Mark YES/NO depending on whether your new item supports editor or not.
-10. **Sample Content** - Give default content to the item.
-11. Click on **Register**, you will be directly taken to the newly created item where you can validate its functioning.
+	* **Path** - External item repository path.
+	* **Item Type** - Your engine MY_UNIQUE_CODE.
+	* **Item Name** - Name you want to give to the item.
+	* **Layout** - Each item supports many layouts, Layout here is the name of default layout/variation to be used for the item.
+	* **Supports Editor** - Mark NO (in future set to YES, depending on whether your new item supports editor interface or not)
+	* **Sample Content** - Copy & Paste contents of your default/sample **question JSON** - `json/<CODE>.json`
+11. Click on **Register**, you will be directly taken to a fresh page, where your newly created assessment type will be functioning.
+
 
 ## Typical development process
 The typical sequence of steps for developing a new assessment type is as follows.
 
 ### Phase 1 - Student/Instructor Experience
-* Define UX MOCK
+* Define a basic UX MOCK/Wireframe - this is help with the subsequent steps for designing your schema and layout.
 * Identify your specific schema elements/aspects (which are not already available in comproDLS&trade; Product schema or cannot be mapped to an existing schema construct).
 * Define the default/sample **question JSON** - `json/<CODE>.json`. You could use following sample schema as a starting point.
 ```json
 {
-    "meta": {
+    "meta": { 
         "type": "MCQ",
-        "title": "Question 1",
+        "title": "Island Survival Test 1",
         "score": {
             "default": 0,
             "max": 1,
@@ -113,13 +114,13 @@ The typical sequence of steps for developing a new assessment type is as follows
     "content": {
         "instructions": [{
             "tag": "html",
-            "html": "These are sample instructions for this engine"
+            "html": "Please read the question carefully, and select ONE option as your answer."
         }],
         "canvas": {
             "layout": "MCQ",
             "data": {
                 "questiondata": [{
-                    "text": "This is sample question?"
+                    "text": "You are alone in a deserted island and about to die. God appears and gives one wish with pre-defined options. Choose the correct answer?"
                 }]
             }
         }
@@ -127,9 +128,9 @@ The typical sequence of steps for developing a new assessment type is as follows
     "interactions": {},
     "feedback": {
         "global": {
-            "correct": "",
-            "incorrect": "",
-            "empty": ""
+            "correct": "Well done. You will live.",
+            "incorrect": "Sorry, wrong choice, your are about to die.",
+            "empty": "Do attempt the question."
         }
     },
     "responses": {},
@@ -137,13 +138,19 @@ The typical sequence of steps for developing a new assessment type is as follows
     "tags": []
 }
 ```
-* Based on the UX, define the default layout for your assessment type - `html/<CODE>.html`. Include basic or first-level templating snippets (see http://rivetsjs.com/docs/guide/#usage for details on the RIVETS templating engine) for linking your **question JSON** to your template. Start with the standard schema elements like `content.instructions`, `meta.title` etc. You could use following vanilla template as a starting point.
+For more information on the above schema elements and their purpose, see https://docs.google.com/document/d/1npkT-s7aIWrAi_uXMldWMuX9UWpvhHXTflvi__Pm2jo/edit#heading=h.lz5q7wlcy4c1
+
+
+* Based on your UX, define the default layout for your assessment type - `html/<CODE>.html`. Include basic or first-level templating snippets (see http://rivetsjs.com/docs/guide/#usage for details on the RIVETS templating engine) for linking your **question JSON** to your template. Start with the standard schema elements like `content.instructions`, `meta.title` etc. You could use following vanilla template as a starting point.
 ```html
-<div class="activity-body" id="mcq-engine"> 
+<div class="well" id="mcq-engine">  <!-- the "id" attribute must set as shown.->
+   <!-- Display the Title-->
    <h1 rv-text="jsonContent.meta.title"></h1>
+   <!-- Display Instructions-->
    <div rv-each-instruction="jsonContent.content.instructions">
-      <h4 rv-text="instruction.html"></h4>
+      <p class="lead" rv-text="instruction.html"></p>
    </div>   
+   <!-- Display the question-->
    <div rv-each-question="jsonContent.content.canvas.data.questiondata">
       <h6 rv-text="question.text"></h6>
    </div>   
@@ -151,46 +158,38 @@ The typical sequence of steps for developing a new assessment type is as follows
 ```
 * If necessary add **custom styles** to align with your default template in `css/<CODE>.css`. Note **TODO [Bootstrap 3.3.7]**(https://github.com/twbs/bootstrap) is already included as the baseline styling system. You may skip this step initially and simply leverage default bootstrap styles.
 * Now you are ready to start writing your **javascript module** in the files `js/<CODE>.js`. The library  **TODO `jquery 3.2.1`** is available as the baseline. Use the standard AMD module (see http://requirejs.org/docs/whyamd.html#amd ) pattern for specifying additional dependencies. Following is the vanilla starter module which uses RIVETS (for two-way binding and templating).
+
 ```javascript
 /*
- * ----------------------
- * Engine Module Renderer
- * ----------------------
+ * -------------
+ * Engine Module
+ * -------------
  * 
  * Item Type: MCQ Single Choice Quesion engine
  * Code: MCQ
- * Interface: Renderer
- *  
- * Item Render Interfaces / Modes :->
- * 
- *  1. Supports Standard ENGINE-SHELL interface
- *      {
+ * Interface: ENGINE
+ 
+ *  ENGINE Interface public functions
+ *  {
  *          init(),
  *          getStatus(),
  *          getConfig()
- *      }
+ *  }
  * 
- * ENGINE - SHELL interface : ->
  *
- * This engine loaded by another module/js "shell.js" which  establishes interface with the platform. The shell instantiates
- * this engine [ engine.init() ]  with necessary configuration paramters and a reference to platform Adapter
- * object which allows subsequent communuication with the platform.
+ * This engine is designed to be loaded dynamical by other applications (or  platforms). At the starte the function [ engine.init() ] will be called  with necessary configuration paramters and a reference to platform "Adapter"  which allows subsequent communuication with the platform.
  *
- * SHELL calls [ engine.getStatus() ] to check if SUBMIT has been pressed or not - the response from the engine is 
- * used to enable / disable LMS controls.
+ * The function [ engine.getStatus() ] may be called to check if SUBMIT has been pressed or not - the response from the engine is used to enable / disable appropriate platform controls.
  *
- * SHELL calls engine.getConfig() to request SIZE information - the response from the engine is 
- * used to resize the container iframe.
+ * The function engine.getConfig() is called to request SIZE information - the response from the engine is used to resize & display the container iframe.
  *
  *
  * EXTERNAL JS DEPENDENCIES : ->
- * Following are shared/common dependencies and assumed to loaded via the platform. The engine code can use/reference
- * these as needed
+ * Following are shared/common dependencies and assumed to loaded via the platform. The engine code can use/reference these as needed
  * 1. JQuery (2.1.1)
  * 2. Boostrap (TODO: version) 
  */
-
-define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) representing the rendering UX
+define(['text!../html/mcq.html', //layout(s) template representing the UX
         'rivets',  // Rivets for data binding
         'sightglass'], //Required by Rivets
         function (mcqTemplateRef) {
@@ -200,7 +199,7 @@ define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) r
     "use strict";
         
     /*
-     * Reference to platform's activity adaptor (initialized during init() ).
+     * Reference to platform's activity adaptor (passed during init() ).
      */
     var activityAdaptor;     
     
@@ -215,7 +214,7 @@ define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) r
     };
     
     /*
-     * Internal Engine State.
+     * Internal Engine State - used to manage/track current status of the assessment.
      */ 
     var __state = {
         activityPariallySubmitted: false, /* State whether activity has been partially submitted. Possible Values: true/false(Boolean) */
@@ -233,54 +232,41 @@ define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) r
     };
         
     /********************************************************/
-    /*                  ENGINE-SHELL INIT FUNCTION
+    /*                  INIT FUNCTION
         
         "elRoot" :->        DOM Element reference where the engine should paint itself.                                                     
-        "params" :->        Startup params passed by platform. Include the following sets of parameters:
-                        (a) State (Initial launch / Resume / Gradebook mode ).
-                        (b) TOC parameters (videoRoot, contentFile, keyframe, layout, etc.).
+        "params" :->        Startup params passed by platform. 
         "adaptor" :->        An adaptor interface for communication with platform (__saveResults, closeActivity, savePartialResults, getLastResults, etc.).
-        "htmlLayout" :->    Activity HTML layout (as defined in the TOC LINK paramter). 
-        "jsonContent" :->    Activity JSON content (as defined in the TOC LINK paramter).
-        "callback" :->      To inform the shell that init is complete.
+        "htmlLayout" :->     HTML layout  
+        "jsonContent" :->    Question JSON 
+        "callback" :->      Function to inform platform that init is complete.
     */
     /********************************************************/  
-    function init(elRoot, params, adaptor, htmlLayout, jsonContentObj, callback) {        
-
-        /* ---------------------- BEGIN OF INIT ---------------------------------*/
+    function init(elRoot, params, adaptor, htmlLayout, questionJSON, callback) {        
         //Store the adaptor  
         activityAdaptor = adaptor;
 
-        //Clone the JSON so that original is preserved.
-        var jsonContent = jQuery.extend(true, {}, jsonContentObj);
+        //Clone question JSON so that original is preserved.
+        var jsonContent = jQuery.extend(true, {}, questionJSON);
         
-        /* ------ VALIDATION BLOCK START -------- */    
-        if (jsonContent.content === undefined) {
-            if(callback) {
-                callback();
-            }       
-            //TODO - In future more advanced schema validations could be done here        
-            return; /* -- EXITING --*/
-        }
-        
-        /* ------ VALIDATION BLOCK END -------- */        
-
         /* Apply the layout HTML to the dom */
         $(elRoot).html(__constants.TEMPLATES[htmlLayout]);
 
-        /* Initialize RIVET. */
-        __initRivets(jsonContent);
+        /* Process the template by initializing RIVETs */
+         rivets.bind($('#mcq-engine'), {
+            jsonContent: jsonContent
+        });
         
-        /* Inform the shell that init is complete */
+        /* Inform the Platform that init is complete */
         if(callback) {
             callback();
         }                               
         
-        /* ---------------------- END OF INIT ---------------------------------*/
     } /* init() Ends. */        
+    
     /* ---------------------- PUBLIC FUNCTIONS --------------------------------*/
     /**
-     * ENGINE-SHELL Interface
+     * ENGINE Interface
      *
      * Return configuration
      */
@@ -289,60 +275,23 @@ define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) r
     }
     
     /**
-     * ENGINE-SHELL Interface
+     * ENGINE Interface
      *
      * Return the current state (Activity Submitted/ Partial Save State.) of activity.
      */
     function getStatus() {
         return __state.activitySubmitted || __state.activityPariallySubmitted;
     }
-    
-    /**
-    * Bound to click of Activity submit button.
-    */
-    function handleSubmit(event){
-       
-       
-    }
 
-    /**
-    * Function to show user grades.
-    */
-    function showGrades(savedAnswer, reviewAttempt){
-          
-    } 
 
-    /**
-     * Function to display last result saved in LMS.
-     */ 
-    function updateLastSavedResults(lastResults) {
-        
-    }
-    /* ---------------------- PUBLIC FUNCTIONS END ----------------------------*/
-     
-
-    /* ---------------------- PRIVATE FUNCTIONS -------------------------------*/
-
-     
-    /*------------------------RIVET INITIALIZATION & BINDINGS -------------------------------*/        
-    function __initRivets(jsonContent){
-        
-        /*Bind the data to template using rivets*/
-        rivets.bind($('#mcq-engine'), {
-            jsonContent: jsonContent
-        });
-    }
-
-    /*------------------------RIVETS END-------------------------------*/
-    
     return {
-        /*Engine-Shell Interface*/
+        /*Engine Interface*/
         "init": init, /* Shell requests the engine intialized and render itself. */
         "getStatus": getStatus, /* Shell requests a gradebook status from engine, based on its current state. */
         "getConfig" : getConfig, /* Shell requests a engines config settings.  */
-        "handleSubmit" : handleSubmit,
-        "showGrades": showGrades,
-        "updateLastSavedResults": updateLastSavedResults
+        "handleSubmit" : function() {/* Do Nothing for now. Sample only*/},
+        "showGrades": function() {/* Do Nothing for now. Sample only*/},
+        "updateLastSavedResults": function() {/* Do Nothing for now. Sample only*/}
     };
     };
 });
@@ -362,14 +311,18 @@ The AMD **javascript module** conform to a standard **ENGINE interface** which e
 * comproDLS&trade; Analytics API (learning & content analytics)
 
 ### Public Methods 
-These methods must be defined, as they will invoked by the container (also known as shell).
+These methods must be defined, as they will invoked by the platform.
+
+### init()
+### getConfig()
+### getStatus()
 
 ### Events 
-These events must be raised by the engine at appropriate points
+The engine can contact the platform via the following functions available in the adaptor object.
 
-### Other communication points (with container)
-The `adaptor` object (recieved by the engine at the time initialization) should be used to call the container for the following scenarios.
-#### Report when initialization is COMPLETE
+### X
+### Y
+
 
 ## Understanding the EDITOR interface
 TODO
