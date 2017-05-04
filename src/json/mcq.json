@@ -1,69 +1,36 @@
 {
-  "meta": {
-    "type": "MCQ",
-    "score": {
-      "default": 0,
-      "max": 1,
-      "min": 0
-    }
-  },
-  "content": {
-    "instructions": [
-      {
-        "tag": ""
-      } 
-    ],
-    "stimulus": [
-      {
-        "tag": ""
-      }
-    ],
-    "canvas": {
-      "layout": "MCQ",
-      "data": {
-        "questiondata": [
-          {
-            "text": "   What's the matter with this patient? <a href='http://www.comprodls.com/m1.0/interaction/mcq'>i1</a> "
-          }
-        ]
-      },
-      "raw": ""
-    },     
-    "interactions": {
-      "i1": {
+    "meta": {
         "type": "MCQ",
-        "MCQ": [
-          {
-            "choiceA": "She has the flu." 
-          },
-          {
-            "choiceB": "She has the measles."
-          },
-          {
-            "choiceC": "She has malaria."
-          },
-          {
-            "choiceD": "She has a toothache."
-          }          
-        ]
-      }
+        "title": "Question 1",
+        "score": {
+            "default": 0,
+            "max": 1,
+            "min": 0
+        }
     },
-    "hint": {}
-  },
-  "feedback": {
-    "global": {
-      "correct": "",
-      "incorrect": "",
-      "empty": ""
-    }
-  },
-  "responses": {
-    "i1": {
-      "correct": "choiceC"
-    }
-  },
-  "learning-objectives": [],
-  "tags": [
-    "test"
-  ]
+    "content": {
+        "instructions": [{
+            "tag": "html",
+            "html": "These are sample instructions for this engine"
+        }],
+        "canvas": {
+            "layout": "MCQ",
+            "data": {
+                "questiondata": [{
+                    "text": "This is sample question?"
+                }]
+            }
+        }
+    },
+    "interactions": {},
+    "feedback": {
+        "global": {
+            "correct": "",
+            "incorrect": "",
+            "empty": ""
+        }
+    },
+    "responses": {},
+    "learning-objectives": [],
+    "tags": []
 }

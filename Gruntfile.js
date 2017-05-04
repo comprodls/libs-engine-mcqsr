@@ -3,7 +3,7 @@
 var engine_src = "src/js";
 var img_src = "src/assets";
 var bower_components = "../../bower_components/"
-var dist = "dist/";
+var dist = "master/dist/";
 
 module.exports = function(grunt) {
 

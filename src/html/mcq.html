@@ -1,26 +1,10 @@
-
 <!-- Engine Renderer Template -->
-
-<div class="activity-body mcq-body" id="mcq-engine"> 
-   <div class="row" rv-each-interact="content.interactions | propertyList">   
-      <div class="col-sm-12">      
-         <div class="form">      
- <!-- Paint the instructions or question text -->    
-            <div rv-text="content.canvas.data.questiondata | appendInteraction %interact%"></div>     
-			<!-- Paint the options -->
-            <img rv-src="content.stimulus.mediaContent" class="col-sm-6 mcq-img" rv-show="isMCQImageEngine"></img>
-            <ul class="list-unstyled nested-list col-sm-6">        
-               <li rv-each-element="content.interactions | getArray interact.key">
-                  <label class="radio radio-lg">
- 					 <!-- Placeholder for radio buttons-->   
-                     <i></i>
-                     <span class="answer" class="invisible wrong pull-left"></span>
-                     <input type="radio" name="optionsRadios" class="option" id="option" rv-value="element.customAttribs.value">
-                     <span class="content" rv-text="element.customAttribs.value"></span>
-                  </label>
-               </li>                
-            </ul> 
-         </div>   
-      </div>  
-   </div>
+<div class="activity-body" id="mcq-engine"> 
+   <h1 rv-text="jsonContent.meta.title"></h1>
+   <div rv-each-instruction="jsonContent.content.instructions">
+      <h4 rv-text="instruction.html"></h4>
+   </div>   
+   <div rv-each-question="jsonContent.content.canvas.data.questiondata">
+      <h6 rv-text="question.text"></h6>
+   </div>   
 </div>
