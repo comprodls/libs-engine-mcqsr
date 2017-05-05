@@ -85,6 +85,7 @@ define(['text!../html/mcq-editor.html', //Layout of the Editor
     // Array of all interaction tags in question
     var __interactionTags = [];
     var __finalJSONContent = {};
+    var uniqueId;
     var __quesEdited = {};
     __quesEdited.isEditing = false;
         
@@ -107,6 +108,7 @@ define(['text!../html/mcq-editor.html', //Layout of the Editor
         //Store the adaptor    
         activityAdaptor = adaptor;
         
+        uniqueId = activityAdaptor.getId();
         //Clone the JSON so that original is preserved.
         __editedJsonContent = jQuery.extend(true, {}, jsonContentObj);
 
@@ -173,7 +175,7 @@ define(['text!../html/mcq-editor.html', //Layout of the Editor
      * Return the current state (Activity Submitted/ Partial Save State.) of activity.
      */
     function saveItemInEditor(){
-        activityAdaptor.submitEditChanges(__transformJSONtoOriginialForm());
+        activityAdaptor.submitEditChanges(__transformJSONtoOriginialForm(), uniqueId);
     }
 
     /* ---------------------- ENGINE-SHELL Interface ends ---------------------------------*/
@@ -336,7 +338,7 @@ define(['text!../html/mcq-editor.html', //Layout of the Editor
             obj.interactions[interaction].MCQ[option].customAttribs.index--;
         }
         __state.hasUnsavedChanges = true;
-        activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm());
+        activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm(), uniqueId);
     }
 
     /* Remove editing on blur*/
@@ -347,7 +349,7 @@ define(['text!../html/mcq-editor.html', //Layout of the Editor
             element.isEditing = false;
         }
         __state.hasUnsavedChanges = true;
-        activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm());
+        activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm(), uniqueId);
     }
 
     /* Add new option for the question */
@@ -360,7 +362,7 @@ define(['text!../html/mcq-editor.html', //Layout of the Editor
         newObj.customAttribs.index = content.interactions[interaction].MCQ.length;
         content.interactions[interaction].MCQ.push(newObj);
         __state.hasUnsavedChanges = true;
-        activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm());
+        activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm(), uniqueId);
     }
     /*------------------------RIVETS END-------------------------------*/
 
@@ -404,7 +406,7 @@ define(['text!../html/mcq-editor.html', //Layout of the Editor
                 });
                 
                 __state.hasUnsavedChanges = true;
-                activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm());
+                activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm(), uniqueId);
             } 
         });
     }
@@ -427,7 +429,7 @@ define(['text!../html/mcq-editor.html', //Layout of the Editor
             }
         });
         __editedJsonContent.responses[__interactionIds[interactionIndex]].correct = $(currentTarget).attr('key');
-        activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm());
+        activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm(), uniqueId);
     }
 
     /* Transform the processedJSON to originally received form so that the platform

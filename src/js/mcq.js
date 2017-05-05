@@ -431,7 +431,7 @@ define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) r
      */
     function __saveResults(bSubmit){
         
-        var adaptorId = activityAdaptor.getId(); 
+        var uniqueId = activityAdaptor.getId(); 
 
         /*Getting answer in JSON format*/
         var answerJSON = __getAnswersJSON(false);
@@ -439,7 +439,7 @@ define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) r
         if(bSubmit===true) {/*Hard Submit*/
 
             /*Send Results to platform*/
-            activityAdaptor.submitResults(answerJSON, adaptorId, function(data, status){
+            activityAdaptor.submitResults(answerJSON, uniqueId, function(data, status){
                 if(status=== __constants.STATUS_NOERROR){
                     __state.activitySubmitted = true;
                     /*Close platform's session*/
@@ -457,7 +457,7 @@ define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) r
             });
         } else{ /*Soft Submit*/
             /*Send Results to platform*/
-            activityAdaptor.savePartialResults(answerJSON, adaptorId, function(data, status){
+            activityAdaptor.savePartialResults(answerJSON, uniqueId, function(data, status){
                 if(status=== __constants.STATUS_NOERROR){
                     __state.activityPariallySubmitted = true;
                 } else {
@@ -526,21 +526,14 @@ define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) r
         
         results = {
             itemUID: interactionId,
-            question: __content.questionsJSON[0],
-            correctAnswer: __content.answersJSON[0],
-            score: score,
-            comment: '',
-            end_current_test: end_current_test,
-            answer: answer,
-            possible: 1
+            answer: answer,           
+            score: score
+           
         };
         resultArray[0] = results;
 
         return {
-            response: {
-                "directions": __content.directionsJSON,
-                "results": resultArray
-            }
+            "results": resultArray
         };    
     }   
     
