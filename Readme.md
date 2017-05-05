@@ -8,7 +8,7 @@ This repository represents a reference implementation (best practices, seed proj
 
 Following sections provide more details on how to setup your own assessment (item type) project and related development, release & integration practices.
 
-## Related documents & references
+### Related documents & references
 1. [comproDLS&trade; Product Schema](https://docs.google.com/a/comprotechnologies.com/document/d/1npkT-s7aIWrAi_uXMldWMuX9UWpvhHXTflvi__Pm2jo/edit?usp=sharing) - Read this before defining the underlying schema (instructions, options, interactions, assets/stimulus etc.). While every assessment type will have its own unique schema aspects, some elements are standardized (metadata, question text, scores, feedback, etc.) as per the comproDLS&trade; product schema document.
 2. [comproDLS&trade; Assessment Showcase & Development bench](http://assessment.comprodls.com) - Use this portal to review existing assessment types, examples, as well as to develop new assessment types (provide tools for testing and customization).
 3. [comproDLS&trade; Test Runner](https://github.com/comprodls/libs-frontend-testrunner) - Use this front-end library to embed assessment types (mix of custom and standard) in your application. This document is more relevant for higher-level use cases (Experience Apps, Integrations).
@@ -16,7 +16,7 @@ Following sections provide more details on how to setup your own assessment (ite
 4. [comproDLS&trade; Analytics API](http://analytics.comprodls.com)- Once your application is integrated with the ACTIVITY API, learning analytics for user progress & time spent are automatically available via the ANALYTICS API. This document is more relevant for higher-level use cases (Experience Apps, Integrations).
 
 
-## Getting started - Setup a starter project
+## 1. Getting started - Setup a starter project
 1. Choose a unique **comproDLS&trade; code** for your Assessment type (MCQSR, FIB, DND, etc). Refer to **TODO [comproDLS&trade; Registered Assessment Type]()** for existing codes which can't be used.
 2. Setup a new GitHub repository using the following standard naming convention - **libs-engine-CODE** (all lowercase)
 3. Copy the contents of this repository into the new repository as the initial commit. Your repository folder structure should look like: 
@@ -67,19 +67,20 @@ npm install
 grunt
 ```
 If everything worked fine, you should see an output as follows:
+
 ```
-	Running "requirejs:engine" (requirejs) task
-	Completed requirejs optimization for mcq renderer successfully.
+Running "requirejs:engine" (requirejs) task
+Completed requirejs optimization for mcq renderer successfully.
 
-	Running "requirejs:engineEditor" (requirejs) task
-	Completed requirejs optimization for mcq editor successfully.
+Running "requirejs:engineEditor" (requirejs) task
+Completed requirejs optimization for mcq editor successfully.
 
-	Running "copy:images" (copy) task
-	Copied 1 file
-	Done.
+Running "copy:images" (copy) task
+Copied 1 file
+Done.
 ```
 
-## Testing your Assessment Type (BASIC flow)
+## 2. Testing your Assessment Type 
 1. Commit and push the above changes to your REMOTE GitHub. Also ensure that your GitHub repository is public (not private) **TODO - solve this**
 2. Open http://assessment.comprodls.com and login using your comproDLS&trade; development account.
 3. Click on "Register New Item" in the left menu bar.
@@ -93,10 +94,9 @@ If everything worked fine, you should see an output as follows:
 11. Click on **Register**, you will be directly taken to a fresh page, where your newly created assessment type will be functioning.
 
 
-## Typical development process
-The typical sequence of steps for developing a new assessment type is as follows.
-
-### Phase 1 - Student/Instructor Experience
+## 3. Development process / worklflow
+If you're developing your first assessment type, its strongly recommended that your break down your workflow into **two** phases:
+### Phase 1 - Building Student/Instructor Experience
 * Define a basic UX MOCK/Wireframe - this is help with the subsequent steps for designing your schema and layout.
 * Identify your specific schema elements/aspects (which are not already available in comproDLS&trade; Product schema or cannot be mapped to an existing schema construct).
 * Define the default/sample **question JSON** - `json/<CODE>.json`. You could use following sample schema as a starting point.
@@ -130,7 +130,7 @@ The typical sequence of steps for developing a new assessment type is as follows
         "global": {
             "correct": "Well done. You will live.",
             "incorrect": "Sorry, wrong choice, your are about to die.",
-            "empty": "Do attempt the question."
+            "empty": "Please do attempt the question. Its you're only chance."
         }
     },
     "responses": {},
@@ -138,22 +138,23 @@ The typical sequence of steps for developing a new assessment type is as follows
     "tags": []
 }
 ```
-For more information on the above schema elements and their purpose, see https://docs.google.com/document/d/1npkT-s7aIWrAi_uXMldWMuX9UWpvhHXTflvi__Pm2jo/edit#heading=h.lz5q7wlcy4c1
+For more information on the standard comproDLS&trade; schema elements and their purpose, see https://docs.google.com/document/d/1npkT-s7aIWrAi_uXMldWMuX9UWpvhHXTflvi__Pm2jo/edit#heading=h.lz5q7wlcy4c1
 
 
 * Based on your UX, define the default layout for your assessment type - `html/<CODE>.html`. Include basic or first-level templating snippets (see http://rivetsjs.com/docs/guide/#usage for details on the RIVETS templating engine) for linking your **question JSON** to your template. Start with the standard schema elements like `content.instructions`, `meta.title` etc. You could use following vanilla template as a starting point.
 ```html
 <div class="well" id="mcq-engine">  <!-- the "id" attribute must set as shown.->
-   <!-- Display the Title-->
+   <!-- Displaying the Title-->
    <h1 rv-text="jsonContent.meta.title"></h1>
-   <!-- Display Instructions-->
+   <!-- Displaying Instructions-->
    <div rv-each-instruction="jsonContent.content.instructions">
       <p class="lead" rv-text="instruction.html"></p>
    </div>   
-   <!-- Display the question-->
+   <!-- Displaying the question-->
    <div rv-each-question="jsonContent.content.canvas.data.questiondata">
       <h6 rv-text="question.text"></h6>
    </div>   
+   <!-- TODO - Display options-->
 </div>
 ```
 * If necessary add **custom styles** to align with your default template in `css/<CODE>.css`. Note **TODO [Bootstrap 3.3.7]**(https://github.com/twbs/bootstrap) is already included as the baseline styling system. You may skip this step initially and simply leverage default bootstrap styles.
@@ -187,7 +188,7 @@ For more information on the above schema elements and their purpose, see https:/
  * EXTERNAL JS DEPENDENCIES : ->
  * Following are shared/common dependencies and assumed to loaded via the platform. The engine code can use/reference these as needed
  * 1. JQuery (2.1.1)
- * 2. Boostrap (TODO: version) 
+ * 2. Boostrap (3.3.7) 
  */
 define(['text!../html/mcq.html', //layout(s) template representing the UX
         'rivets',  // Rivets for data binding
@@ -261,14 +262,13 @@ define(['text!../html/mcq.html', //layout(s) template representing the UX
         if(callback) {
             callback();
         }                               
-        
     } /* init() Ends. */        
     
     /* ---------------------- PUBLIC FUNCTIONS --------------------------------*/
     /**
      * ENGINE Interface
      *
-     * Return configuration
+     * Returns configuration (width, height, etc) of the assessment
      */
     function getConfig () {
         return __config;
@@ -277,7 +277,7 @@ define(['text!../html/mcq.html', //layout(s) template representing the UX
     /**
      * ENGINE Interface
      *
-     * Return the current state (Activity Submitted/ Partial Save State.) of activity.
+     * Returns the current state (Activity Submitted/ Partial Save State.) of assessment.
      */
     function getStatus() {
         return __state.activitySubmitted || __state.activityPariallySubmitted;
@@ -296,7 +296,7 @@ define(['text!../html/mcq.html', //layout(s) template representing the UX
     };
 });
 ```
-* Commit your code and test using http://assessment.comprodls.com. NOTE, at the time of registration, **Specify SUPPORT EDITOR as false**
+* Commit your code and test using http://assessment.comprodls.com. NOTE, at the time of registration, Specify SUPPORT EDITOR as **Sfalse**
 
 
 ### Phase 2 - Authoring Experience
@@ -314,14 +314,55 @@ The AMD **javascript module** conform to a standard **ENGINE interface** which e
 These methods must be defined, as they will invoked by the platform.
 
 ### init()
+First function (main) called by the platform. The responsiblity of the engine to fully initialize and render itself (including bind necessary DOM) - such  that its fully ready to accept inputs (answers) from the student, and provide feedback (as necessary). The engine must explicitly **notify** the platform that initialization is complete, via the callback
+
+**Parameters** 
+TODO
+
 ### getConfig()
+This function is called by the platform, when it needs information on engine's display characteristic or other configuration settings. 
+
+**Parameters** 
+TODO
+
 ### getStatus()
+This function is called by the platform, when it needs to know engine's current state:
+ - It is submitted?
+ - It is partially saved i.e. not submitted, but user's inputs are saved
+ - Not sumbitted, Not saved i.e. user information could be lost (if browser closes)
 
-### Events 
-The engine can contact the platform via the following functions available in the adaptor object.
+**Parameters** 
+TODO
 
-### X
-### Y
+### handleSubmit() 
+This function is called by the platform, when end user presses SUBMIT.
+
+**Parameters** 
+TODO
+
+
+### Adaptor (platform) functions 
+The engine can contact the platform via the  functions available in the adaptor object.
+
+### adapter.savePartialResults()
+The engine should call this function to save user's answers - to minimize chances of this data getting lost in the event of browser/tab closing or unexpected page navigation (before user submits)
+
+**Parameters** 
+TODO
+
+### adapter.submitResults()
+The engine should call this function to submit user's answers (for grading). There could two types of implementations of SUBMIT.
+* Engine owns the SUBMIT button - In this case the engine to bind itself to the submit button and call `submitResults`
+* Platform owns the SUBMIT button - In this the platform will notify the engine by calling its public `handleSubmit` function. Engine is responsible to in-turn call `adaptor.submitResults` as part of the `handleSubmit` processing.
+
+**Parameters** 
+TODO
+
+### adapter.autoResizeActivityIframe()
+The engine should call this function when it wants the platform to resize the container frame. This should be used only if your assessment type dynamic UX elements - for example you have a hidden section/div and when its shown, you should call this function to avoid scrolling - requesting the platform to resize the container. 
+
+**Parameters** 
+TODO
 
 
 ## Understanding the EDITOR interface
@@ -330,11 +371,12 @@ TODO
 
 ## DO's & DONT's
 * Do not inject your own Jquery and Bootstrap. If you need a new version of these dependencies, contact the Iron Fist for more details.
-* ..
-* ..
-* ..
-* ..
-* ..
+* Make sure you explicity notify the platform when initialization is complete.
+* Avoid any UX assumptions on WIDTH / HEIGHT or SCROLLBARs. Apply responsive design techniques to ensure best user experience when running in an embedded mode.
+* Remember that your engine is can launched in multiple modes (design upfront for this):
+ - First time (fresh attempt)
+ - Resuming 
+ - Instructor Review mode
 
 ## Integrating your Assessment type(s) with your Delivery Application
 An assessment type may be used in various modes:
