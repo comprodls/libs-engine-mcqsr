@@ -345,10 +345,10 @@ This function is called by the platform - it is a request to Engine to render th
 ```javascript
 
 //Example
-lastResults = [{"answer": "This is answer 1",
-		        "itemUID": "i1"},
-	           {"answer": "This is answer 2",
-		        "itemUID": "i2"}]
+lastResults = [{"itemUID": "i1",
+                "answer": "This is answer 1"},
+	           {"itemUID": "i2",
+                "answer": "This is answer 2"}]
 
 //itemUID - Interaction Id
 //answer - Interaction data/state
@@ -360,46 +360,22 @@ The engine can contact the platform via the  functions available in the adaptor 
 
 #### 4.2.1 adapter.savePartialResults()
 The engine should call this function to save user's answers - to minimize chances of this data getting lost in the event of browser/tab closing or unexpected page navigation (before user submits).
+
 **Parameters** 
-* **answersJson**: It is an object which contains "instructions" and array of "results" object which contain info about interactionId, question, useranswer, correctanswer etc. answersJson object has the following structure:
+* **resultsArray**: An array of "results" object.
 
 ```javascript
 //Example
-answersJson = {
-                "directions": "This is a sample instruction for the test", //Instructions for the question
-                "results": resultArray
-              }
-```
-
-Here resultsArray has the following structure:
-
-```javascript
 resultsArray = [{
             itemUID: interactionId, // interactionId
-            question: "This is sample question", // Question text
-            correctAnswer: "ChoiceC", // Correct Answer for the interaction
-            score: 1, // Score for the interaction
-            comment: '',// Comments if any
-            end_current_test: false, // Whether to end current test
             answer: "ChoiceC", //Answer given by the user
-            possible: 1 // Possible score for given interaction
+            score: 1 // Score for the interaction
+            
         }]
 ```
 
-* **activityBodyObjectRef**: It is used to uniquely identify a item/test(when multiple items/tests on a single page).
 
-```javascript
-activityBodyObjectRef = $(__constants.DOM_SEL_ACTIVITY_BODY).attr(__constants.ADAPTOR_INSTANCE_IDENTIFIER); 
-```
-where:
-
-```javascript
-var constants{
-	DOM_SEL_ACTIVITY_BODY: ".activity-body", // CONSTANT for HTML selectors
-	ADAPTOR_INSTANCE_IDENTIFIER: "data-objectid" //CONSTANT for identifier in which Adaptor Instance will be stored
-}
-```
-
+* **uniqueId**: UniqueId.
 * **callback**: The function that will be called once the results are saved successfully.
 
 #### 4.2.2 adapter.submitResults()

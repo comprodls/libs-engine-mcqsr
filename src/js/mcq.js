@@ -79,18 +79,8 @@ define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) r
      * Constants.
      */
     var __constants = {
-        /* CONSTANT for HTML selectors */ 
-        DOM_SEL_ACTIVITY_BODY: ".activity-body",
-        
-        /* CONSTANT for identifier in which Adaptor Instance will be stored */
-        ADAPTOR_INSTANCE_IDENTIFIER: "data-objectid",
-        
         /* CONSTANT for PLATFORM Save Status NO ERROR */
         STATUS_NOERROR: "NO_ERROR",
-
-        /* CONSTANT to end test. */
-        END_TEST: false,
-        
         TEMPLATES: {
             /* Regular MCQ Layout */
             MCQ: mcqTemplateRef
@@ -441,14 +431,15 @@ define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) r
      */
     function __saveResults(bSubmit){
         
-        var activityBodyObjectRef = $(__constants.DOM_SEL_ACTIVITY_BODY).attr(__constants.ADAPTOR_INSTANCE_IDENTIFIER); 
+        var adaptorId = activityAdaptor.getId(); 
+
         /*Getting answer in JSON format*/
         var answerJSON = __getAnswersJSON(false);
 
         if(bSubmit===true) {/*Hard Submit*/
 
             /*Send Results to platform*/
-            activityAdaptor.submitResults(answerJSON, activityBodyObjectRef, function(data, status){
+            activityAdaptor.submitResults(answerJSON, adaptorId, function(data, status){
                 if(status=== __constants.STATUS_NOERROR){
                     __state.activitySubmitted = true;
                     /*Close platform's session*/
@@ -466,7 +457,7 @@ define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) r
             });
         } else{ /*Soft Submit*/
             /*Send Results to platform*/
-            activityAdaptor.savePartialResults(answerJSON, activityBodyObjectRef, function(data, status){
+            activityAdaptor.savePartialResults(answerJSON, adaptorId, function(data, status){
                 if(status=== __constants.STATUS_NOERROR){
                     __state.activityPariallySubmitted = true;
                 } else {
@@ -515,16 +506,13 @@ define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) r
         var score = 0;
         var answer = "";
         var results = {};
-        var end_current_test = false;
         
         /*Setup results array */
         var resultArray = new Array(1);
         /* Split questionJSON to get interactionId. */
         var questionData = __content.questionsJSON[0].split("^^");
         var interactionId = questionData[2].trim();
-        if(__constants.END_TEST) {
-            end_current_test = true;
-        }
+
         if (skipQuestion) {
             answer = "Not Answered";
         } else {
