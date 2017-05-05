@@ -96,7 +96,7 @@ Done.
 
 ## 3. Development process / worklflow
 If you're developing your first assessment type, its strongly recommended that your break down your workflow into **two** phases:
-### Phase 1 - Building Student/Instructor Experience
+### 3.1 - Building Student/Instructor Experience
 * Define a basic UX MOCK/Wireframe - this is help with the subsequent steps for designing your schema and layout.
 * Identify your specific schema elements/aspects (which are not already available in comproDLS&trade; Product schema or cannot be mapped to an existing schema construct).
 * Define the default/sample **question JSON** - `json/<CODE>.json`. You could use following sample schema as a starting point.
@@ -299,10 +299,10 @@ define(['text!../html/mcq.html', //layout(s) template representing the UX
 * Commit your code and test using http://assessment.comprodls.com. NOTE, at the time of registration, Specify SUPPORT EDITOR as **Sfalse**
 
 
-### Phase 2 - Authoring Experience
+### 3.2 - Authoring Experience
 TODO
 
-## Understanding the ENGINE interface
+## 4. Understanding the ENGINE interface
 The AMD **javascript module** conform to a standard **ENGINE interface** which ensures that your assesment type can be embedded and integrated across various comproDLS apps and components
 * comproDLS&trade; Assessments (assessment.comprodls.com)
 * comproDLS&trade; Builder 
@@ -310,10 +310,10 @@ The AMD **javascript module** conform to a standard **ENGINE interface** which e
 * comproDLS&trade; Activity API (attempts & state management)
 * comproDLS&trade; Analytics API (learning & content analytics)
 
-### Public Methods 
+### 4.1 Public Methods 
 These methods must be defined, as they will invoked by the platform.
 
-### init()
+#### 4.1.1 init()
 First function (main) called by the platform. The responsiblity of the engine to fully initialize and render itself (including bind necessary DOM) - such  that its fully ready to accept inputs (answers) from the student, and provide feedback (as necessary). It makes the adaptor and questionJsonContent available to the engine which are passed as parameters. The DOM event handlers are setup inside init() which handle user interactions. The engine must explicitly **notify** the platform that initialization is complete, via the callback.
 
 **Parameters** 
@@ -324,19 +324,19 @@ First function (main) called by the platform. The responsiblity of the engine to
 * **jsonContent**: Question json content.
 * **callback**: Function to inform platform that init is complete.
 
-### getConfig()
+#### 4.1.2 getConfig()
 This function is called by the platform, when it needs information on engine's display characteristic or other configuration settings. 
 
-### getStatus()
+#### 4.1.3 getStatus()
 This function is called by the platform, when it needs to know engine's current state:
  - It is submitted?
  - It is partially saved i.e. not submitted, but user's inputs are saved
  - Not sumbitted, Not saved i.e. user information could be lost (if browser closes)
 
-### handleSubmit() 
+#### 4.1.4 handleSubmit() 
 This function is called by the platform, when end user presses SUBMIT. This can be used to disable futher interactions by the user and mark the answers. It calls the **activityAdaptor.submitResults()** to inform the platform that item has been submitted.
 
-### updateLastSavedResults() 
+#### 4.1.5 updateLastSavedResults() 
 This function is called by the platform to pass user's saved data to the engine. The engine updates the user's answer locally and the user can resume from last saved results.
 
 **Parameters** 
@@ -352,10 +352,10 @@ lastResults = [{
 	      }]
 ```
 
-### Adaptor (platform) functions 
+### 4.2 Adaptor (platform) functions 
 The engine can contact the platform via the  functions available in the adaptor object. 
 
-### adapter.savePartialResults()
+#### 4.2.1 adapter.savePartialResults()
 The engine should call this function to save user's answers - to minimize chances of this data getting lost in the event of browser/tab closing or unexpected page navigation (before user submits).
 **Parameters** 
 * **answersJson**: It is an object which contains "instructions" and array of "results" object which contain info about interactionId, question, useranswer, correctanswer etc. answersJson object has the following structure:
@@ -393,7 +393,7 @@ var constants{
 
 * **callback**: The function that will be called once the results are saved successfully.
 
-### adapter.submitResults()
+#### 4.2.2 adapter.submitResults()
 The engine should call this function to submit user's answers (for grading). There could two types of implementations of SUBMIT.
 * Engine owns the SUBMIT button - In this case the engine to bind itself to the submit button and call `submitResults`
 * Platform owns the SUBMIT button - In this the platform will notify the engine by calling its public `handleSubmit` function. Engine is responsible to in-turn call `adaptor.submitResults` as part of the `handleSubmit` processing.
@@ -402,10 +402,10 @@ The engine should call this function to submit user's answers (for grading). The
 
 Same as paramters for **adapter.savePartialResults** mentioned above.
 
-### adapter.autoResizeActivityIframe()
+#### 4.2.3 adapter.autoResizeActivityIframe()
 The engine should call this function when it wants the platform to resize the container frame. This should be used only if your assessment type dynamic UX elements - for example you have a hidden section/div and when its shown, you should call this function to avoid scrolling - requesting the platform to resize the container. 
 
-## Understanding the EDITOR interface
+## 5. Understanding the EDITOR interface
 TODO
 
 
@@ -418,14 +418,14 @@ TODO
  - Resuming 
  - Instructor Review mode
 
-## Integrating your Assessment type(s) with your Delivery Application
+## 6. Integrating your Assessment type(s) with your Delivery Application
 An assessment type may be used in various modes:
 * Single or Multi-question tests with **NO state/history** - Simply use the [Test Runner](https://github.com/comprodls/libs-frontend-testrunner)) to embed your assesment type as a widget. You will need to supply content (question json).
 * Single or Multi-question tests **with state/history** (Attempts, Resume, Past scores etc.)- Requires use of comproDLS&trade; PRODUCT & ACTIVITY APIs in coordination with the Test runner.
 * **Embedded test** inside text/html/epub/markdown with **NO state/history** - Simply use the [Test Runner](https://github.com/comprodls/libs-frontend-testrunner))
 * **Embedded test** inside text/html/epub/markdown **with state/history** - Requires use of comproDLS&trade; PRODUCT & ACTIVITY APIs in coordination with the Test runner. _TODO Embedded Items_
 
-## Integrating your Assessment type(s) with Builder
+## 7. Integrating your Assessment type(s) with Builder
 TODO
  
 
