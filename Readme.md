@@ -237,7 +237,7 @@ define(['text!../html/mcq.html', //layout(s) template representing the UX
         
         "elRoot" :->        DOM Element reference where the engine should paint itself.                                                     
         "params" :->        Startup params passed by platform. 
-        "adaptor" :->        An adaptor interface for communication with platform (__saveResults, closeActivity, savePartialResults, getLastResults, etc.).
+        "adaptor" :->        An adaptor interface for communication with platform. 
         "htmlLayout" :->     HTML layout  
         "jsonContent" :->    Question JSON 
         "callback" :->      Function to inform platform that init is complete.
