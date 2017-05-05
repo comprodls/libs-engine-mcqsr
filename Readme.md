@@ -317,12 +317,12 @@ These methods must be defined, as they will invoked by the platform.
 First function (main) called by the platform. The responsiblity of the engine to fully initialize and render itself (including bind necessary DOM) - such  that its fully ready to accept inputs (answers) from the student, and provide feedback (as necessary). It makes the adaptor and questionJsonContent available to the engine which are passed as parameters. The DOM event handlers are setup inside init() which handle user interactions. The engine must explicitly **notify** the platform that initialization is complete, via the callback.
 
 **Parameters** 
-* **elRoot**: DOM Element reference where the engine should paint itself.
-* **params**: Startup params like engineName, enginePath, layoutType etc. passed by platform.
-* **adaptor**: An adaptor interface for communication with platform (closeActivity, savePartialResults, getLastResults, etc.).
-* **htmlLayout**: Html layout template of the engine.
-* **jsonContent**: Question json content.
-* **callback**: Function to inform platform that init is complete.
+* **elRoot**: DOM element/div ID (String) reference where the engine should paint itself.
+* **params**: Startup params (like engine variation/config) passed by platform.
+* **adaptor**: Reference to the **adaptor** for communication with platform.
+* **htmlLayout**: Html layout template.
+* **jsonContent**: Question json (content).
+* **callback**: Callback to notify platform when engine initialization is complete.
 
 #### 4.1.2 getConfig()
 This function is called by the platform, when it needs information on engine's display characteristic or other configuration settings. 
@@ -331,25 +331,28 @@ This function is called by the platform, when it needs information on engine's d
 This function is called by the platform, when it needs to know engine's current state:
  - It is submitted?
  - It is partially saved i.e. not submitted, but user's inputs are saved
- - Not sumbitted, Not saved i.e. user information could be lost (if browser closes)
+ - Not sumbitted, Not saved i.e. user information could be lost (e.g. if browser closes)
 
 #### 4.1.4 handleSubmit() 
 This function is called by the platform, when end user presses SUBMIT. This can be used to disable futher interactions by the user and mark the answers. It calls the **activityAdaptor.submitResults()** to inform the platform that item has been submitted.
 
 #### 4.1.5 updateLastSavedResults() 
-This function is called by the platform to pass user's saved data to the engine. The engine updates the user's answer locally and the user can resume from last saved results.
+This function is called by the platform - it is a request to Engine to render the last save results / state. This function is typically called to simulate a RESUME scenario. The engine should expect this function to be called right after the completion of init (i.e. the platform callback has been executed). In case FRESH ATTEMPT, this function will NOT be called.
 
 **Parameters** 
-* **lastResults**: It is an array of 'answer' and 'interactionId' of last saved results of the user. E.g.:
-```
-lastResults = [{
-		"answer": "This is answer 1",
-		"itemUID": "i1"
-	       },
-	       {
-		"answer": "This is answer 2",
-		"itemUID": "i2"
-	      }]
+* **lastResults**: Array of last saved results. Each item of array represent an **interaction**
+
+```javascript
+
+//Example
+lastResults = [{"answer": "This is answer 1",
+		        "itemUID": "i1"},
+	           {"answer": "This is answer 2",
+		        "itemUID": "i2"}]
+
+//itemUID - Interaction Id
+//answer - Interaction data/state
+
 ```
 
 ### 4.2 Adaptor (platform) functions 
@@ -359,14 +362,18 @@ The engine can contact the platform via the  functions available in the adaptor 
 The engine should call this function to save user's answers - to minimize chances of this data getting lost in the event of browser/tab closing or unexpected page navigation (before user submits).
 **Parameters** 
 * **answersJson**: It is an object which contains "instructions" and array of "results" object which contain info about interactionId, question, useranswer, correctanswer etc. answersJson object has the following structure:
-```
+
+```javascript
+//Example
 answersJson = {
                 "directions": "This is a sample instruction for the test", //Instructions for the question
                 "results": resultArray
               }
 ```
+
 Here resultsArray has the following structure:
-```
+
+```javascript
 resultsArray = [{
             itemUID: interactionId, // interactionId
             question: "This is sample question", // Question text
@@ -380,11 +387,13 @@ resultsArray = [{
 ```
 
 * **activityBodyObjectRef**: It is used to uniquely identify a item/test(when multiple items/tests on a single page).
-```
+
+```javascript
 activityBodyObjectRef = $(__constants.DOM_SEL_ACTIVITY_BODY).attr(__constants.ADAPTOR_INSTANCE_IDENTIFIER); 
 ```
 where:
-```
+
+```javascript
 var constants{
 	DOM_SEL_ACTIVITY_BODY: ".activity-body", // CONSTANT for HTML selectors
 	ADAPTOR_INSTANCE_IDENTIFIER: "data-objectid" //CONSTANT for identifier in which Adaptor Instance will be stored
