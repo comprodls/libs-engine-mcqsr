@@ -314,16 +314,18 @@ The AMD **javascript module** conform to a standard **ENGINE interface** which e
 These methods must be defined, as they will invoked by the platform.
 
 ### init()
-First function (main) called by the platform. The responsiblity of the engine to fully initialize and render itself (including bind necessary DOM) - such  that its fully ready to accept inputs (answers) from the student, and provide feedback (as necessary). The engine must explicitly **notify** the platform that initialization is complete, via the callback
+First function (main) called by the platform. The responsiblity of the engine to fully initialize and render itself (including bind necessary DOM) - such  that its fully ready to accept inputs (answers) from the student, and provide feedback (as necessary). It makes the adaptor and questionJsonContent available to the engine which are passed as parameters. The DOM event handlers are setup inside init() which handle user interactions. The engine must explicitly **notify** the platform that initialization is complete, via the callback.
 
 **Parameters** 
-TODO
+* **elRoot**: DOM Element reference where the engine should paint itself.
+* **params**: Startup params like engineName, enginePath, layoutType etc. passed by platform.
+* **adaptor**: An adaptor interface for communication with platform (closeActivity, savePartialResults, getLastResults, etc.).
+* **htmlLayout**: Html layout template of the engine.
+* **jsonContent**: Question json content.
+* **callback**: Function to inform platform that init is complete.
 
 ### getConfig()
 This function is called by the platform, when it needs information on engine's display characteristic or other configuration settings. 
-
-**Parameters** 
-TODO
 
 ### getStatus()
 This function is called by the platform, when it needs to know engine's current state:
@@ -331,24 +333,65 @@ This function is called by the platform, when it needs to know engine's current 
  - It is partially saved i.e. not submitted, but user's inputs are saved
  - Not sumbitted, Not saved i.e. user information could be lost (if browser closes)
 
-**Parameters** 
-TODO
-
 ### handleSubmit() 
-This function is called by the platform, when end user presses SUBMIT.
+This function is called by the platform, when end user presses SUBMIT. This can be used to disable futher interactions by the user and mark the answers. It calls the **activityAdaptor.submitResults()** to inform the platform that item has been submitted.
+
+### updateLastSavedResults() 
+This function is called by the platform to pass user's saved data to the engine. The engine updates the user's answer locally and the user can resume from last saved results.
 
 **Parameters** 
-TODO
-
+* **lastResults**: It is an array of 'answer' and 'interactionId' of last saved results of the user. E.g.:
+```
+lastResults = [{
+		"answer": "This is answer 1",
+		"itemUID": "i1"
+	       },
+	       {
+		"answer": "This is answer 2",
+		"itemUID": "i2"
+	      }]
+```
 
 ### Adaptor (platform) functions 
-The engine can contact the platform via the  functions available in the adaptor object.
+The engine can contact the platform via the  functions available in the adaptor object. 
 
 ### adapter.savePartialResults()
-The engine should call this function to save user's answers - to minimize chances of this data getting lost in the event of browser/tab closing or unexpected page navigation (before user submits)
-
+The engine should call this function to save user's answers - to minimize chances of this data getting lost in the event of browser/tab closing or unexpected page navigation (before user submits).
 **Parameters** 
-TODO
+* **answersJson**: It is an object which contains "instructions" and array of "results" object which contain info about interactionId, question, useranswer, correctanswer etc. answersJson object has the following structure:
+```
+answersJson = {
+                "directions": "This is a sample instruction for the test", //Instructions for the question
+                "results": resultArray
+              }
+```
+Here resultsArray has the following structure:
+```
+resultsArray = [{
+            itemUID: interactionId, // interactionId
+            question: "This is sample question", // Question text
+            correctAnswer: "ChoiceC", // Correct Answer for the interaction
+            score: 1, // Score for the interaction
+            comment: '',// Comments if any
+            end_current_test: false, // Whether to end current test
+            answer: "ChoiceC", //Answer given by the user
+            possible: 1 // Possible score for given interaction
+        }]
+```
+
+* **activityBodyObjectRef**: It is used to uniquely identify a item/test(when multiple items/tests on a single page).
+```
+activityBodyObjectRef = $(__constants.DOM_SEL_ACTIVITY_BODY).attr(__constants.ADAPTOR_INSTANCE_IDENTIFIER); 
+```
+where:
+```
+var constants{
+	DOM_SEL_ACTIVITY_BODY: ".activity-body", // CONSTANT for HTML selectors
+	ADAPTOR_INSTANCE_IDENTIFIER: "data-objectid" //CONSTANT for identifier in which Adaptor Instance will be stored
+}
+```
+
+* **callback**: The function that will be called once the results are saved successfully.
 
 ### adapter.submitResults()
 The engine should call this function to submit user's answers (for grading). There could two types of implementations of SUBMIT.
@@ -356,14 +399,11 @@ The engine should call this function to submit user's answers (for grading). The
 * Platform owns the SUBMIT button - In this the platform will notify the engine by calling its public `handleSubmit` function. Engine is responsible to in-turn call `adaptor.submitResults` as part of the `handleSubmit` processing.
 
 **Parameters** 
-TODO
+
+Same as paramters for **adapter.savePartialResults** mentioned above.
 
 ### adapter.autoResizeActivityIframe()
 The engine should call this function when it wants the platform to resize the container frame. This should be used only if your assessment type dynamic UX elements - for example you have a hidden section/div and when its shown, you should call this function to avoid scrolling - requesting the platform to resize the container. 
-
-**Parameters** 
-TODO
-
 
 ## Understanding the EDITOR interface
 TODO
