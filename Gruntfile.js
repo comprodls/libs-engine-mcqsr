@@ -35,13 +35,13 @@ module.exports = function(grunt) {
         },
 
         // RequireJS optimizer
-        // Create two files - mcq.js and mcq-editor.js
+        // Create two files - mcqsr.js and mcqsr-editor.js
         requirejs: {
             engine: {
                 options: {
                     baseUrl: engine_src,
-                    name: "mcq",
-                    out: dist + "mcq.js",
+                    name: "mcqsr",
+                    out: dist + "mcqsr.js",
                     paths: {
                         'text': bower_components + 'text/text',
                         'css': bower_components + 'require-css/css',
@@ -56,7 +56,7 @@ module.exports = function(grunt) {
                     },
                     exclude: ['normalize'],
                     done: function (done, output) {
-                        console.log('Completed requirejs optimization for mcq renderer successfully.');
+                        console.log('Completed requirejs optimization for mcqsr renderer successfully.');
                         done();
                     }
                 }
@@ -64,8 +64,8 @@ module.exports = function(grunt) {
             engineEditor: {
                 options: {
                     baseUrl: engine_src,
-                    name: "mcq-editor",
-                    out: dist + "mcq-editor.js",
+                    name: "mcqsr-editor",
+                    out: dist + "mcqsr-editor.js",
                     paths: {
                         'jquery':'empty:',
                         'text': bower_components + 'text/text',
@@ -82,7 +82,7 @@ module.exports = function(grunt) {
                     },
                     exclude: ['normalize'],
                     done: function (done, output) {
-                        console.log('Completed requirejs optimization for mcq editor successfully.');
+                        console.log('Completed requirejs optimization for mcqsr editor successfully.');
                         done();
                     }
                 }
