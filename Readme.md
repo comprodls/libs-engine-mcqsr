@@ -17,7 +17,7 @@ Following sections provide more details on how to setup your own assessment (ite
 
 
 ## 1. Getting started - Setup a starter project
-1. Choose a unique **comproDLS&trade; code** for your Assessment type (MCQSR, FIB, DND, etc). Refer to **TODO [comproDLS&trade; Registered Assessment Type]()** for existing codes which can't be used.
+1. Choose a unique **comproDLS&trade; code** for your Assessment type (MCQSR, FIB, DND, etc). Refer to **TODO** for existing codes which can't be used.
 2. Setup a new GitHub repository using the following standard naming convention - **libs-engine-CODE** (all lowercase)
 3. Copy the contents of this repository into the new repository as the initial commit. Your repository folder structure should look like: 
 ``` 
@@ -157,8 +157,8 @@ For more information on the standard comproDLS&trade; schema elements and their 
    <!-- TODO - Display options -->
 </div>
 ```
-* If necessary add **custom styles** to align with your default template in `css/<CODE>.css`. Note **TODO [Bootstrap 3.3.7]**(https://github.com/twbs/bootstrap) is already included as the baseline styling system. You may skip this step initially and simply leverage default bootstrap styles.
-* Now you are ready to start writing your **javascript module** in the files `js/<CODE>.js`. The library  **TODO `jquery 3.2.1`** is available as the baseline. Use the standard AMD module (see http://requirejs.org/docs/whyamd.html#amd ) pattern for specifying additional dependencies. Following is the vanilla starter module which uses RIVETS (for two-way binding and templating).
+* If necessary add **custom styles** to align with your default template in `css/<CODE>.css`. Note **[Bootstrap 3.3.7]**(https://github.com/twbs/bootstrap) is already included as the baseline styling system. You may skip this step initially and simply leverage default bootstrap styles.
+* Now you are ready to start writing your **javascript module** in the files `js/<CODE>.js`. The library  **`jquery 3.2.1`** is available as the baseline. Use the standard AMD module (see http://requirejs.org/docs/whyamd.html#amd ) pattern for specifying additional dependencies. Following is the vanilla starter module which uses RIVETS (for two-way binding and templating).
 
 ```javascript
 /*
@@ -402,9 +402,9 @@ TODO
 2. Make sure you explicity notify the platform when initialization is complete.
 3. Avoid any UX assumptions on WIDTH / HEIGHT or SCROLLBARs. Apply responsive design techniques to ensure best user experience when running in an embedded mode.
 4. Remember that your engine is can launched in multiple modes (design upfront for this):
-* First time (fresh attempt)
-* Resuming 
-* Instructor Review mode
+  * First time (fresh attempt)
+  * Resuming 
+  * Instructor Review mode
 
 ## 6. Integrating your Assessment type(s) with your Delivery Application
 An assessment type may be used in various modes:
