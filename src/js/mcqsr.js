@@ -3,8 +3,8 @@
  * Engine Module
  * -------------
  * 
- * Item Type: MCQ Single Choice Quesion engine
- * Code: MCQ
+ * Item Type: MCQSR Single Choice Quesion engine
+ * Code: MCQSR
  * Interface: ENGINE
  
  *  ENGINE Interface public functions
@@ -28,13 +28,13 @@
  * 2. Boostrap (TODO: version) 
  */
 
-define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) representing the rendering UX
-        'css!../css/mcq.css',  //Custom styles of the engine (applied over bootstrap & front-end-core)
+define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets) representing the rendering UX
+        'css!../css/mcqsr.css',  //Custom styles of the engine (applied over bootstrap & front-end-core)
         'rivets',  // Rivets for data binding
         'sightglass'], //Required by Rivets
-        function (mcqTemplateRef) {
+        function (mcqsrTemplateRef) {
 
-    mcq = function() {
+    mcqsr = function() {
     
     "use strict";
         
@@ -82,8 +82,8 @@ define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) r
         /* CONSTANT for PLATFORM Save Status NO ERROR */
         STATUS_NOERROR: "NO_ERROR",
         TEMPLATES: {
-            /* Regular MCQ Layout */
-            MCQ: mcqTemplateRef
+            /* Regular MCQSR Layout */
+            MCQSR: mcqsrTemplateRef
         }
     };
     // Array of all interaction tags in question
@@ -217,7 +217,7 @@ define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) r
 
      /* ---------------------- JSON PROCESSING FUNCTIONS START ---------------------------------*/
      /**
-     * Parse and Update JSON based on MCQ specific requirements.
+     * Parse and Update JSON based on MCQSR specific requirements.
      */
     function __parseAndUpdateJSONContent(jsonContent, params, htmlLayout) { 
         jsonContent.content.displaySubmit = activityAdaptor.displaySubmit;   
@@ -243,7 +243,7 @@ define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) r
 
     
     /**
-     * Parse and Update Question Set type JSON based on  MCQ specific requirements.
+     * Parse and Update Question Set type JSON based on  MCQSR specific requirements.
      */  
     function __parseAndUpdateQuestionSetTypeJSON(jsonContent) {
 
@@ -251,7 +251,7 @@ define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) r
         var interactionId = "";
         var interactionTag = "";
         /* String present in href of interaction tag. */
-        var interactionReferenceString = "http://www.comprodls.com/m1.0/interaction/mcq";
+        var interactionReferenceString = "http://www.comprodls.com/m1.0/interaction/mcqsr";
         /* Parse questiontext as HTML to get HTML tags. */
         var parsedQuestionArray = $.parseHTML(jsonContent.content.canvas.data.questiondata[0].text);
         $.each( parsedQuestionArray, function(i, el) {
@@ -302,7 +302,7 @@ define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) r
      * Original JSON Object
      * ---------------------
      * 
-     * "MCQ": [
+     * "MCQSR": [
           {
             "choiceA": "She has the flu." 
           },
@@ -314,7 +314,7 @@ define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) r
         Modified JSON Object
         ----------------------
 
-        "MCQ": [
+        "MCQSR": [
           {
               "customAttribs" : {
                     "key" : "choiceA",
@@ -338,7 +338,7 @@ define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) r
     function __parseAndUpdateJSONForRivets(jsonContent){  
        var processedArray = [];
        for(var i=0; i <__interactionIds.length; i++){
-            jsonContent.content.interactions[__interactionIds[i]].MCQ.forEach(function(obj, index){
+            jsonContent.content.interactions[__interactionIds[i]].MCQSR.forEach(function(obj, index){
                 var processedObj = {};
                 processedObj.customAttribs = {};
                 Object.keys(obj).forEach(function(key){
@@ -347,7 +347,7 @@ define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) r
                 });
                 processedArray.push(processedObj);
             });
-            jsonContent.content.interactions[__interactionIds[i]].MCQ = processedArray;  
+            jsonContent.content.interactions[__interactionIds[i]].MCQSR = processedArray;  
        }
     } 
 
@@ -373,7 +373,7 @@ define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) r
         /* This formatter is used to append interaction property to the object
          * and return text of the question for particular interaction
          */
-        rivets.formatters.appendInteraction = function(obj, interaction, MCQ){
+        rivets.formatters.appendInteraction = function(obj, interaction, MCQSR){
             return obj[interaction].text;
         }
 
@@ -381,7 +381,7 @@ define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) r
          * interaction so that rivets can iterate over it.
          */
         rivets.formatters.getArray = function(obj, interaction){
-            return obj[interaction].MCQ;
+            return obj[interaction].MCQSR;
         }
 
         var isMCQImageEngine = false;
@@ -391,7 +391,7 @@ define(['text!../html/mcq.html', //HTML layout(s) template (handlebars/rivets) r
         }
 
         /*Bind the data to template using rivets*/
-        rivets.bind($('#mcq-engine'), {
+        rivets.bind($('#mcqsr-engine'), {
             content: __processedJsonContent.content,
             isMCQImageEngine: isMCQImageEngine
         });

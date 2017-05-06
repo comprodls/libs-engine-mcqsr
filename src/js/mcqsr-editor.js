@@ -3,8 +3,8 @@
  * Engine Module Editor
  * -------------------
  * 
- * Item Type: MCQ Single Choice Quesion engine
- * Code: MCQ
+ * Item Type: MCQSR Single Choice Quesion engine
+ * Code: MCQSR
  * Interface: Editor
  *  
  *  ENGINE EDITOR Interface public functions
@@ -30,15 +30,15 @@
  * 3. Rivets (0.9.6)
  */
 
-define(['text!../html/mcq-editor.html', //Layout of the Editor
-        'css!../css/mcq-editor.css', //Custom CSS of the Editor
+define(['text!../html/mcqsr-editor.html', //Layout of the Editor
+        'css!../css/mcqsr-editor.css', //Custom CSS of the Editor
         'jquery-ui', //Jquery Sortable for reordering
         'css!../../bower_components/jquery-ui/themes/base/jquery-ui.css', //CSS for sortable
         'rivets',   // Rivets for two way data binding
         'sightglass' // Required by Rivets
-        ], function (mcqTemplateRef) {
+        ], function (mcqsrTemplateRef) {
 
-    mcqEditor = function() {
+    mcqsrEditor = function() {
     "use strict";
         
     /*
@@ -73,8 +73,8 @@ define(['text!../html/mcq-editor.html', //Layout of the Editor
         ADAPTOR_INSTANCE_IDENTIFIER: "data-objectid",
         
         TEMPLATES: {
-            /* Regular MCQ Layout */
-            MCQ_EDITOR: mcqTemplateRef
+            /* Regular MCQSR Layout */
+            MCQSR_EDITOR: mcqsrTemplateRef
         }
     };
     
@@ -190,8 +190,8 @@ define(['text!../html/mcq-editor.html', //Layout of the Editor
      *           e.g. ["i1", "i2"]
      *      1.2 __interactionTags (Array of Original interaction texts in questiondata) - This will be used for recreating JSON to original format when "saveItemInEditor" is called.  
      *          e.g. [
-     *             "<a href='http://www.comprodls.com/m1.0/interaction/mcqsc'>i1</a>", 
-     *             "<a href='http://www.comprodls.com/m1.0/interaction/mcqsc'>i2</a>"
+     *             "<a href='http://www.comprodls.com/m1.0/interaction/mcqsr'>i1</a>", 
+     *             "<a href='http://www.comprodls.com/m1.0/interaction/mcqsr'>i2</a>"
      *              ]   
      * 2. Replace the interactionTags in questiondata (__editedJsonContent Object) with BLANKs 
      **/ 
@@ -201,7 +201,7 @@ define(['text!../html/mcq-editor.html', //Layout of the Editor
         var interactionTag;
         for(var i=0; i <__editedJsonContent.content.canvas.data.questiondata.length; i++){
             __parsedQuestionArray = $.parseHTML(__editedJsonContent.content.canvas.data.questiondata[i].text);
-            var interactionReferenceString = "http://www.comprodls.com/m1.0/interaction/mcq";
+            var interactionReferenceString = "http://www.comprodls.com/m1.0/interaction/mcqsr";
             $.each(__parsedQuestionArray, function(index, el) {
               if(this.href === interactionReferenceString) {
                 __interactionIds.push(this.childNodes[0].nodeValue.trim())
@@ -226,7 +226,7 @@ define(['text!../html/mcq-editor.html', //Layout of the Editor
      * Original JSON Object
      * ---------------------
      * 
-     * "MCQ": [
+     * "MCQSR": [
           {
             "choiceA": "She has the flu." 
           },
@@ -238,7 +238,7 @@ define(['text!../html/mcq-editor.html', //Layout of the Editor
         Modified JSON Object
         ----------------------
 
-        "MCQ": [
+        "MCQSR": [
           {
               "customAttribs" : {
                     "key" : "choiceA",
@@ -262,7 +262,7 @@ define(['text!../html/mcq-editor.html', //Layout of the Editor
     function __parseAndUpdateJSONForRivets(){
         for(var i=0; i <__interactionIds.length; i++){
            var processedArray = [];
-           __editedJsonContent.content.interactions[i].MCQ.forEach(function(obj, index){
+           __editedJsonContent.content.interactions[i].MCQSR.forEach(function(obj, index){
                 var processedObj = {};
                 processedObj.customAttribs = {};
                 Object.keys(obj).forEach(function(key){
@@ -278,7 +278,7 @@ define(['text!../html/mcq-editor.html', //Layout of the Editor
                 });
                 processedArray.push(processedObj);
             });
-            __editedJsonContent.content.interactions[i].MCQ = processedArray; 
+            __editedJsonContent.content.interactions[i].MCQSR = processedArray; 
         }
     }
 
@@ -307,7 +307,7 @@ define(['text!../html/mcq-editor.html', //Layout of the Editor
         /* 
          * Bind data to template using rivets
          */
-        rivets.bind($('#mcq-editor'), {
+        rivets.bind($('#mcqsr-editor'), {
             content: __editedJsonContent.content, 
             toggleEditing: __toggleEditing, 
             toggleQuestionTextEditing: __toggleQuestionTextEditing, 
@@ -333,9 +333,9 @@ define(['text!../html/mcq-editor.html', //Layout of the Editor
 
     /* Remove option item */
     function __removeItem(event, element, interaction){
-        __editedJsonContent.content.interactions[interaction].MCQ.splice(element.customAttribs.index,1);
-        for(var option=element.index; option<__editedJsonContent.content.interactions[interaction].MCQ.length; option++){
-            obj.interactions[interaction].MCQ[option].customAttribs.index--;
+        __editedJsonContent.content.interactions[interaction].MCQSR.splice(element.customAttribs.index,1);
+        for(var option=element.index; option<__editedJsonContent.content.interactions[interaction].MCQSR.length; option++){
+            obj.interactions[interaction].MCQSR[option].customAttribs.index--;
         }
         __state.hasUnsavedChanges = true;
         activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm(), uniqueId);
@@ -359,8 +359,8 @@ define(['text!../html/mcq-editor.html', //Layout of the Editor
         newObj.customAttribs.key = __guid();
         newObj.customAttribs.value = "";
         newObj.customAttribs.isEdited = true;
-        newObj.customAttribs.index = content.interactions[interaction].MCQ.length;
-        content.interactions[interaction].MCQ.push(newObj);
+        newObj.customAttribs.index = content.interactions[interaction].MCQSR.length;
+        content.interactions[interaction].MCQSR.push(newObj);
         __state.hasUnsavedChanges = true;
         activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm(), uniqueId);
     }
@@ -397,12 +397,12 @@ define(['text!../html/mcq-editor.html', //Layout of the Editor
                 $(".sortable").sortable("cancel");
 
                 /* Instead do the sorting manually*/
-                var removedItem = __editedJsonContent.content.interactions[interactIndex].MCQ.splice(prevIndex, 1);
-                __editedJsonContent.content.interactions[interactIndex].MCQ.splice(currentIndex,0,removedItem[0]);
+                var removedItem = __editedJsonContent.content.interactions[interactIndex].MCQSR.splice(prevIndex, 1);
+                __editedJsonContent.content.interactions[interactIndex].MCQSR.splice(currentIndex,0,removedItem[0]);
                 
                 /* Update index property of customAttribs for each element*/
-                $.each(__editedJsonContent.content.interactions[interactIndex].MCQ, function(index, value){
-                    __editedJsonContent.content.interactions[interactIndex].MCQ[index].customAttribs.index = index;
+                $.each(__editedJsonContent.content.interactions[interactIndex].MCQSR, function(index, value){
+                    __editedJsonContent.content.interactions[interactIndex].MCQSR[index].customAttribs.index = index;
                 });
                 
                 __state.hasUnsavedChanges = true;
@@ -421,11 +421,11 @@ define(['text!../html/mcq-editor.html', //Layout of the Editor
         $(currentTarget).siblings('.correct-answer').show();
         __state.hasUnsavedChanges = true;
         /* Update the isCorrect property for each option*/
-        __editedJsonContent.content.interactions[interactionIndex].MCQ.forEach(function(obj, index){
-            if(__editedJsonContent.content.interactions[interactionIndex].MCQ[index].customAttribs.key ==  $(currentTarget).attr('key')){
-                __editedJsonContent.content.interactions[interactionIndex].MCQ[index].customAttribs.isCorrect = true;
+        __editedJsonContent.content.interactions[interactionIndex].MCQSR.forEach(function(obj, index){
+            if(__editedJsonContent.content.interactions[interactionIndex].MCQSR[index].customAttribs.key ==  $(currentTarget).attr('key')){
+                __editedJsonContent.content.interactions[interactionIndex].MCQSR[index].customAttribs.isCorrect = true;
             } else{
-                __editedJsonContent.content.interactions[interactionIndex].MCQ[index].customAttribs.isCorrect = false;
+                __editedJsonContent.content.interactions[interactionIndex].MCQSR[index].customAttribs.isCorrect = false;
             }
         });
         __editedJsonContent.responses[__interactionIds[interactionIndex]].correct = $(currentTarget).attr('key');
@@ -440,9 +440,9 @@ define(['text!../html/mcq-editor.html', //Layout of the Editor
         var newObj = {};
         for(var interaction=0;interaction <__finalJSONContent.content.interactions.length; interaction++){
             var content = __finalJSONContent.content.interactions[interaction];
-            for(var option=0;option<content.MCQ.length;option++){
-                content.MCQ[option][content.MCQ[option].customAttribs.key] = content.MCQ[option].customAttribs.value;
-                delete content.MCQ[option].customAttribs;
+            for(var option=0;option<content.MCQSR.length;option++){
+                content.MCQSR[option][content.MCQSR[option].customAttribs.key] = content.MCQSR[option].customAttribs.value;
+                delete content.MCQSR[option].customAttribs;
             }
             newObj[content.key] = content;  
             delete newObj[content.key].key;

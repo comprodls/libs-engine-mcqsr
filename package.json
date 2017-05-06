@@ -1,5 +1,5 @@
 {
-  "name": "libs-frontend-engine-mcq",
+  "name": "libs-engine-mcqsr",
   "version": "0.0.1",
   "description": "Compro MCQ Activity engine",  
   "main": "Gruntfile.js",

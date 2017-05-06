@@ -17,7 +17,7 @@ Following sections provide more details on how to setup your own assessment (ite
 
 
 ## 1. Getting started - Setup a starter project
-1. Choose a unique **comproDLS&trade; code** for your Assessment type (MCQSR, FIB, DND, etc). Refer to **TODO** for existing codes which can't be used.
+1. Choose a unique **comproDLS&trade; code** for your Assessment type (MCSR, FIB, DND, etc). Refer to **TODO** for existing codes which can't be used.
 2. Setup a new GitHub repository using the following standard naming convention - **libs-engine-CODE** (all lowercase)
 3. Copy the contents of this repository into the new repository as the initial commit. Your repository folder structure should look like: 
 ``` 
@@ -45,7 +45,7 @@ Readme.md
 .gitignore
 ```
 4. Rename all the files (as shown above) containing `<CODE>` appropriately. For example if your `CODE` is `QUESTION_TYPE_X` then files under the `js` folder would be renamed to `QUESTION_TYPE_X.js` and `QUESTION_TYPE_X-editor.js`
-5. Open the files listed below and replace all references of `MCQ` (all uppercase) with your unique code i.e. `QUESTION_TYPE_X`(all uppercase) and all references of `mcq`(all lowercase) with your unique code i.e. `question_type_x`(all lowercase)
+5. Open the files listed below and replace all references of `MCQSR` (all uppercase) with your unique code i.e. `QUESTION_TYPE_X`(all uppercase) and all references of `mcqsr`(all lowercase) with your unique code i.e. `question_type_x`(all lowercase)
 ```
 src
      js
@@ -70,10 +70,10 @@ If everything worked fine, you should see an output as follows:
 
 ```
 Running "requirejs:engine" (requirejs) task
-Completed requirejs optimization for mcq renderer successfully.
+Completed requirejs optimization for mcqsr renderer successfully.
 
 Running "requirejs:engineEditor" (requirejs) task
-Completed requirejs optimization for mcq editor successfully.
+Completed requirejs optimization for mcqsr editor successfully.
 
 Running "copy:images" (copy) task
 Copied 1 file
@@ -103,7 +103,7 @@ If you're developing your first assessment type, its strongly recommended that y
 ```json
 {
     "meta": { 
-        "type": "MCQ",
+        "type": "MCQSR",
         "title": "Island Survival Test 1",
         "score": {
             "default": 0,
@@ -117,7 +117,7 @@ If you're developing your first assessment type, its strongly recommended that y
             "html": "Please read the question carefully, and select ONE option as your answer."
         }],
         "canvas": {
-            "layout": "MCQ",
+            "layout": "MCQSR",
             "data": {
                 "questiondata": [{
                     "text": "You are alone in a deserted island and about to die. God appears and gives one wish with pre-defined options. Choose the correct answer?"
@@ -143,7 +143,7 @@ For more information on the standard comproDLS&trade; schema elements and their 
 
 * Based on your UX, define the default layout for your assessment type - `html/<CODE>.html`. Include basic or first-level templating snippets (see http://rivetsjs.com/docs/guide/#usage for details on the RIVETS templating engine) for linking your **question JSON** to your template. Start with the standard schema elements like `content.instructions`, `meta.title` etc. You could use following vanilla template as a starting point.
 ```html
-<div class="well" id="mcq-engine">  <!-- the "id" attribute must set as shown. -->
+<div class="well" id="mcqsr-engine">  <!-- the "id" attribute must set as shown. -->
    <!-- Displaying the Title -->
    <h1 rv-text="jsonContent.meta.title"></h1>
    <!-- Displaying Instructions -->
@@ -166,8 +166,8 @@ For more information on the standard comproDLS&trade; schema elements and their 
  * Engine Module
  * -------------
  * 
- * Item Type: MCQ Single Choice Quesion engine
- * Code: MCQ
+ * Item Type: MCQSR Single Choice Quesion engine
+ * Code: MCQSR
  * Interface: ENGINE
  
  *  ENGINE Interface public functions
@@ -190,12 +190,12 @@ For more information on the standard comproDLS&trade; schema elements and their 
  * 1. JQuery (2.1.1)
  * 2. Boostrap (3.3.7) 
  */
-define(['text!../html/mcq.html', //layout(s) template representing the UX
+define(['text!../html/mcqsr.html', //layout(s) template representing the UX
         'rivets',  // Rivets for data binding
         'sightglass'], //Required by Rivets
-        function (mcqTemplateRef) {
+        function (mcqsrTemplateRef) {
 
-    mcq = function() {
+    mcqsr = function() {
     
     "use strict";
         
@@ -227,8 +227,8 @@ define(['text!../html/mcq.html', //layout(s) template representing the UX
      */
     var __constants = {
         TEMPLATES: {
-            /* Regular MCQ Layout */
-            MCQ: mcqTemplateRef
+            /* Regular MCQSR Layout */
+            MCQSR: mcqsrTemplateRef
         }
     };
         
@@ -254,7 +254,7 @@ define(['text!../html/mcq.html', //layout(s) template representing the UX
         $(elRoot).html(__constants.TEMPLATES[htmlLayout]);
 
         /* Process the template by initializing RIVETs */
-         rivets.bind($('#mcq-engine'), {
+         rivets.bind($('#mcqsr-engine'), {
             jsonContent: jsonContent
         });
         
@@ -340,7 +340,7 @@ This function is called by the platform, when end user presses SUBMIT. This can 
 This function is called by the platform - it is a request to Engine to render the last save results / state. This function is typically called to simulate a RESUME scenario. The engine should expect this function to be called rightafter the completion of init (i.e. the platform callback has been executed). In case FRESH ATTEMPT, this function will NOT be called.
 
 #### 4.1.5 showGrades() 
-This function is called by the platform - it is a request to Engine to show grades (correct / wron g answers). The engine should expect this function to be called rightafter updateLastSavedResults().
+This function is called by the platform - it is a request to Engine to show grades (correct / wron g answers). The engine should expect this function to be called right after updateLastSavedResults().
 
 **Parameters** 
 * **lastResults**: Array of last saved results. Each item of array represent an **interaction**

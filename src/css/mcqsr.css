@@ -17,26 +17,26 @@
  *
  *******************************************************/
 
-.mcq-body .form *{
+.mcqsr-body .form *{
     margin: 0;
     padding: 0;
 }
 
-.mcq-body .form .mcq-img{
+.mcqsr-body .form .mcqsr-img{
     padding-top: 10px;
 }
 
-.mcq-body .form ul li{
+.mcqsr-body .form ul li{
     padding: .7em .4em .7em 1.8em;
     position: relative;
 }
 
-.mcq-body .form ul li.highlight{
+.mcqsr-body .form ul li.highlight{
     background-color: #F2F2F2;
     border-radius: 6px;
 }
 
-.mcq-body .form ul li i{
+.mcqsr-body .form ul li i{
     height: 1.8em;
     width: 1.8em;
     border-radius: 50%;
@@ -49,7 +49,7 @@
     background: #FFF;
 }
 
-.mcq-body .form ul li i:after {
+.mcqsr-body .form ul li i:after {
     background-color: #3276B1;
     content: '';
     border-radius: 50%;
@@ -61,15 +61,15 @@
     opacity: 0;
 }
 
-.mcq-body .form ul li.highlight i{
+.mcqsr-body .form ul li.highlight i{
     border-color: #3276B1;
 }
 
-.mcq-body .form ul li.highlight i:after{
+.mcqsr-body .form ul li.highlight i:after{
     opacity: 1;
 }
 
-.mcq-body .form ul li .radio{
+.mcqsr-body .form ul li .radio{
     line-height: 1.8em;
     font-weight: normal;
     cursor: pointer;
@@ -77,58 +77,58 @@
 }
 
 
-.mcq-body .form ul li .radio input {
+.mcqsr-body .form ul li .radio input {
     position: absolute;
     left: -9999px;
 }
 
-.mcq-body .form ul li .radio.state-error i{
+.mcqsr-body .form ul li .radio.state-error i{
     background: #fff0f0;
     border-color: #a90329;
 }
 
-.mcq-body .form ul li .radio.state-error i:after {
+.mcqsr-body .form ul li .radio.state-error i:after {
     background-color: #a90329;
 }
 
-.mcq-body .form ul li .radio.state-success i{
+.mcqsr-body .form ul li .radio.state-success i{
     background: #f0fff0;
     border-color: #7DC27D;
 }
 
-.mcq-body .form ul li .radio.state-success i:after {
+.mcqsr-body .form ul li .radio.state-success i:after {
     background-color: #7DC27D;
 }
 
-.mcq-body span.correct:before {
+.mcqsr-body span.correct:before {
     content: "\f00c";
     font-family: fontawesome;
     display: inline-block;
     margin: 0 3.5em auto -3.2em;
 }
 
-.mcq-body span.wrong:before {
+.mcqsr-body span.wrong:before {
     content: "\f00d";
     font-family: fontawesome;
     display: inline-block;
     margin: 0 3.6em auto -3.2em;
 }
 
-.mcq-body .answer{
+.mcqsr-body .answer{
     margin-left: 20px;
 }
 
-.mcq-body span.correct, .mcq-body span.wrong{
+.mcqsr-body span.correct, .mcqsr-body span.wrong{
     margin-left: 0;
 }
 
-.mcq-body .col-md-6.last-child {
+.mcqsr-body .col-md-6.last-child {
     min-height: 200px;
     border-left: 1px solid #C2C2C2;
     padding-left: 20px;
 }
 
-.mcq-body .stimulus {
+.mcqsr-body .stimulus {
     margin: 25px 0 25px 0;
 }
 #feedback-area {
@@ -145,7 +145,7 @@
     font-weight: 700;
 }
 /* CORRECT ANSWER icon/mark */
-.mcq-body #feedback-area span.correct:before {
+.mcqsr-body #feedback-area span.correct:before {
     content: "\f00c";
     font-family: fontawesome;
     display: inline-block;
@@ -158,7 +158,7 @@
     border-radius: 16px;
     margin: 10px;
 }
-.mcq-body #feedback-area span.wrong:before {
+.mcqsr-body #feedback-area span.wrong:before {
     content: "\f00d";
     font-family: fontawesome;
     display: inline-block;
