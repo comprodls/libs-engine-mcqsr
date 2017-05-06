@@ -398,10 +398,10 @@ TODO
 
 
 ## DO's & DONT's
-1 Do not inject your own Jquery and Bootstrap. If you need a new version of these dependencies, contact the Iron Fist for more details.
-2 Make sure you explicity notify the platform when initialization is complete.
-3 Avoid any UX assumptions on WIDTH / HEIGHT or SCROLLBARs. Apply responsive design techniques to ensure best user experience when running in an embedded mode.
-4 Remember that your engine is can launched in multiple modes (design upfront for this):
+1. Do not inject your own Jquery and Bootstrap. If you need a new version of these dependencies, contact the Iron Fist for more details.
+2. Make sure you explicity notify the platform when initialization is complete.
+3. Avoid any UX assumptions on WIDTH / HEIGHT or SCROLLBARs. Apply responsive design techniques to ensure best user experience when running in an embedded mode.
+4. Remember that your engine is can launched in multiple modes (design upfront for this):
 * First time (fresh attempt)
 * Resuming 
 * Instructor Review mode
