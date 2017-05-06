@@ -143,18 +143,18 @@ For more information on the standard comproDLS&trade; schema elements and their 
 
 * Based on your UX, define the default layout for your assessment type - `html/<CODE>.html`. Include basic or first-level templating snippets (see http://rivetsjs.com/docs/guide/#usage for details on the RIVETS templating engine) for linking your **question JSON** to your template. Start with the standard schema elements like `content.instructions`, `meta.title` etc. You could use following vanilla template as a starting point.
 ```html
-<div class="well" id="mcq-engine">  <!-- the "id" attribute must set as shown.->
-   <!-- Displaying the Title-->
+<div class="well" id="mcq-engine">  <!-- the "id" attribute must set as shown. -->
+   <!-- Displaying the Title -->
    <h1 rv-text="jsonContent.meta.title"></h1>
-   <!-- Displaying Instructions-->
+   <!-- Displaying Instructions -->
    <div rv-each-instruction="jsonContent.content.instructions">
       <p class="lead" rv-text="instruction.html"></p>
    </div>   
-   <!-- Displaying the question-->
+   <!-- Displaying the question -->
    <div rv-each-question="jsonContent.content.canvas.data.questiondata">
       <h6 rv-text="question.text"></h6>
    </div>   
-   <!-- TODO - Display options-->
+   <!-- TODO - Display options -->
 </div>
 ```
 * If necessary add **custom styles** to align with your default template in `css/<CODE>.css`. Note **TODO [Bootstrap 3.3.7]**(https://github.com/twbs/bootstrap) is already included as the baseline styling system. You may skip this step initially and simply leverage default bootstrap styles.
@@ -337,7 +337,10 @@ This function is called by the platform, when it needs to know engine's current 
 This function is called by the platform, when end user presses SUBMIT. This can be used to disable futher interactions by the user and mark the answers. It calls the **activityAdaptor.submitResults()** to inform the platform that item has been submitted.
 
 #### 4.1.5 updateLastSavedResults() 
-This function is called by the platform - it is a request to Engine to render the last save results / state. This function is typically called to simulate a RESUME scenario. The engine should expect this function to be called right after the completion of init (i.e. the platform callback has been executed). In case FRESH ATTEMPT, this function will NOT be called.
+This function is called by the platform - it is a request to Engine to render the last save results / state. This function is typically called to simulate a RESUME scenario. The engine should expect this function to be called rightafter the completion of init (i.e. the platform callback has been executed). In case FRESH ATTEMPT, this function will NOT be called.
+
+#### 4.1.5 showGrades() 
+This function is called by the platform - it is a request to Engine to show grades (correct / wron g answers). The engine should expect this function to be called rightafter updateLastSavedResults().
 
 **Parameters** 
 * **lastResults**: Array of last saved results. Each item of array represent an **interaction**
@@ -345,10 +348,8 @@ This function is called by the platform - it is a request to Engine to render th
 ```javascript
 
 //Example
-lastResults = [{"itemUID": "i1",
-                "answer": "This is answer 1"},
-	           {"itemUID": "i2",
-                "answer": "This is answer 2"}]
+lastResults = [{"itemUID": "i1","answer": "This is answer 1"},
+	       {"itemUID": "i2", "answer": "This is answer 2"}]
 
 //itemUID - Interaction Id
 //answer - Interaction data/state
@@ -373,10 +374,9 @@ resultsArray = [{
             
         }]
 ```
-
-
-* **uniqueId**: UniqueId.
+* **uniqueId**: UniqueId of the assessment
 * **callback**: The function that will be called once the results are saved successfully.
+
 
 #### 4.2.2 adapter.submitResults()
 The engine should call this function to submit user's answers (for grading). There could two types of implementations of SUBMIT.
@@ -390,18 +390,21 @@ Same as paramters for **adapter.savePartialResults** mentioned above.
 #### 4.2.3 adapter.autoResizeActivityIframe()
 The engine should call this function when it wants the platform to resize the container frame. This should be used only if your assessment type dynamic UX elements - for example you have a hidden section/div and when its shown, you should call this function to avoid scrolling - requesting the platform to resize the container. 
 
+**Parameters** 
+No parameters
+
 ## 5. Understanding the EDITOR interface
 TODO
 
 
 ## DO's & DONT's
-* Do not inject your own Jquery and Bootstrap. If you need a new version of these dependencies, contact the Iron Fist for more details.
-* Make sure you explicity notify the platform when initialization is complete.
-* Avoid any UX assumptions on WIDTH / HEIGHT or SCROLLBARs. Apply responsive design techniques to ensure best user experience when running in an embedded mode.
-* Remember that your engine is can launched in multiple modes (design upfront for this):
- - First time (fresh attempt)
- - Resuming 
- - Instructor Review mode
+1 Do not inject your own Jquery and Bootstrap. If you need a new version of these dependencies, contact the Iron Fist for more details.
+2 Make sure you explicity notify the platform when initialization is complete.
+3 Avoid any UX assumptions on WIDTH / HEIGHT or SCROLLBARs. Apply responsive design techniques to ensure best user experience when running in an embedded mode.
+4 Remember that your engine is can launched in multiple modes (design upfront for this):
+* First time (fresh attempt)
+* Resuming 
+* Instructor Review mode
 
 ## 6. Integrating your Assessment type(s) with your Delivery Application
 An assessment type may be used in various modes:
