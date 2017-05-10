@@ -89,6 +89,11 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
     // Array of all interaction tags in question
     var __interactionIds = [];
     var __processedJsonContent;
+    var __feedback = {
+        'correct' : false,
+        'incorrect' : false,
+        'empty' : false
+    };
         
     /********************************************************/
     /*                  ENGINE-SHELL INIT FUNCTION
@@ -393,7 +398,9 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         /*Bind the data to template using rivets*/
         rivets.bind($('#mcqsr-engine'), {
             content: __processedJsonContent.content,
-            isMCQImageEngine: isMCQImageEngine
+            isMCQImageEngine: isMCQImageEngine,
+            feedback : __processedJsonContent.feedback,
+            showFeedback : __feedback
         });
     }
 
@@ -479,7 +486,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
            radioNo = "" + i;
            __markRadio(radioNo, __content.answersJSON[0], __content.optionsJSON[i]);
         }
-        
+        __generateFeedback();
     }
     /* Add correct or wrong answer classes*/
     function __markRadio(optionNo, correctAnswer, userAnswer) {    
@@ -493,6 +500,19 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
             $($(".answer")[optionNo]).parent().addClass("state-error");
         }
         $(".answer" + optionNo).removeClass("invisible");
+    }
+
+    function __generateFeedback() {
+        for(var prop in __feedback){
+            __feedback[prop] = false;
+        }
+        if(!__content.userAnswersJSON[0]){
+            __feedback.empty = true;
+        } else if(__content.answersJSON[0] === __content.userAnswersJSON[0]){
+            __feedback.correct = true;
+        } else{
+            __feedback.incorrect = true;
+        }
     }
     
     /**

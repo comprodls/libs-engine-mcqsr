@@ -88,6 +88,11 @@ define(['text!../html/mcqsr-editor.html', //Layout of the Editor
     var uniqueId;
     var __quesEdited = {};
     __quesEdited.isEditing = false;
+    var __feedbackEditing={};
+    __feedbackEditing = {
+      correct: false,
+      incorrect: false
+    }
         
     /********************************************************/
     /*                  ENGINE-SHELL INIT FUNCTION
@@ -315,7 +320,11 @@ define(['text!../html/mcqsr-editor.html', //Layout of the Editor
             removeItem: __removeItem,
             addItem: __addItem,
             removeEditing : __removeEditing,
-            interactionIds : __interactionIds
+            interactionIds : __interactionIds,
+            feedback: __editedJsonContent.feedback,
+            feedbackEditing: __feedbackEditing,
+            toggleFeedbackEditing: __toggleFeedbackEditing,
+            removeFeedbackEditing: __removeFeedbackEditing
         });
     }
 
@@ -362,6 +371,16 @@ define(['text!../html/mcqsr-editor.html', //Layout of the Editor
         newObj.customAttribs.index = content.interactions[interaction].MCQSR.length;
         content.interactions[interaction].MCQSR.push(newObj);
         __state.hasUnsavedChanges = true;
+        activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm(), uniqueId);
+    }
+
+    function __toggleFeedbackEditing(event, option) {
+        __feedbackEditing[option] = !__feedbackEditing[option];
+        $(event[0].currentTarget).siblings('.feedback-text-editor').focus();
+    }
+
+    function __removeFeedbackEditing(event, option) {
+        __feedbackEditing[option] = false;
         activityAdaptor.itemChangedInEditor(__transformJSONtoOriginialForm(), uniqueId);
     }
     /*------------------------RIVETS END-------------------------------*/
