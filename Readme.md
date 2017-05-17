@@ -85,7 +85,7 @@ Done.
 2. Open http://assessment.comprodls.com and login using your comproDLS&trade; development account.
 3. Click on "Register New Item" in the left menu bar.
 4. Fill in the register form using your newly created item credentials.
-	* **Path** - External item repository path.
+	* **Path** - External item repository full folder path.
 	* **Item Type** - Your engine CODE.
 	* **Item Name** - Name you want to give to the item.
 	* **Layout** - Enter your Engine CODE here. This is the name of default layout/variation to be used for the item.
