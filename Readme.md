@@ -348,10 +348,10 @@ This function is called by the platform - it is a request to Engine to show grad
 ```javascript
 
 //Example
-lastResults = [{"itemUID": "i1","answer": "This is answer 1"},
-	       {"itemUID": "i2", "answer": "This is answer 2"}]
+lastResults = [{"id": "i1","answer": "This is answer 1"},
+	       {"id": "i2", "answer": "This is answer 2"}]
 
-//itemUID - Interaction Id
+//id - Interaction Id
 //answer - Interaction data/state
 
 ```
@@ -363,15 +363,15 @@ The engine can contact the platform via the  functions available in the adaptor 
 The engine should call this function to save user's answers - to minimize chances of this data getting lost in the event of browser/tab closing or unexpected page navigation (before user submits).
 
 **Parameters** 
-* **resultsArray**: An array of "results" object.
+* **interactionArray**: An array of "interactions" object.
 
 ```javascript
 //Example
-resultsArray = [{
-            itemUID: interactionId, // interactionId
+interactionArray = [{
+            id: interactionId, // interactionId
             answer: "ChoiceC", //Answer given by the user
-            score: 1 // Score for the interaction
-            
+            score: 1, // Score for the interaction
+            maxscore: 1 //Max-score for interaction
         }]
 ```
 * **uniqueId**: UniqueId of the assessment
