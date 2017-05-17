@@ -205,7 +205,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
      * Function to display last result saved in LMS.
      */ 
     function updateLastSavedResults(lastResults) {
-        $.each(lastResults.results, function(num) {
+        $.each(lastResults.interactions, function(num) {
             __content.userAnswersJSON[num] = this.answer.trim();
             for(var i = 0; i < $('input[id^=option]').length; i++) {
                 if($('input[id^=option]')[i].value.trim() === this.answer.trim()) {
@@ -525,10 +525,10 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
 
         var score = 0;
         var answer = "";
-        var results = {};
+        var interactions = {};
         
         /*Setup results array */
-        var resultArray = new Array(1);
+        var interactionArray = new Array(1);
         /* Split questionJSON to get interactionId. */
         var questionData = __content.questionsJSON[0].split("^^");
         var interactionId = questionData[2].trim();
@@ -544,17 +544,21 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
             }
         }   
         
-        results = {
-            itemUID: interactionId,
+        interactions = {
+            id: interactionId,
             answer: answer,           
-            score: score
-           
+            score: score,
+            maxscore: __processedJsonContent.meta.score.max
         };
-        resultArray[0] = results;
+        interactionArray[0] = interactions;
+
+        var response =  {
+            "interactions": interactionArray
+        };    
 
         return {
-            "results": resultArray
-        };    
+            response: response
+        };
     }   
     
     return {
