@@ -72,6 +72,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         optionsJSON: [], /* Contains all the options for a particular question obtained from content JSON. */
         answersJSON: [], /* Contains the answer for a particular question obtained from content JSON. */
         userAnswersJSON: [], /* Contains the user answer for a particular question. */
+        feedbackJSON: {}, /* Contains the feedback for question*/
         activityType: null  /* Type of FIB activity. Possible Values :- FIBPassage.  */    
     };
 
@@ -89,11 +90,6 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
     // Array of all interaction tags in question
     var __interactionIds = [];
     var __processedJsonContent;
-    var __feedback = {
-        'correct' : false,
-        'incorrect' : false,
-        'empty' : false
-    };
         
     /********************************************************/
     /*                  ENGINE-SHELL INIT FUNCTION
@@ -193,9 +189,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
     /**
     * Function to show user grades.
     */
-    function showGrades(savedAnswer, reviewAttempt){
-        /* Show last saved answers. */
-        updateLastSavedResults(savedAnswer);
+    function showGrades(objectId){
         /* Mark answers. */
         __markAnswers();
         $('input[id^=option]').attr("disabled", true);      
@@ -214,7 +208,28 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
                 }
             }
         });
+
+        __content.feedbackJSON = __getFeedbackJSON();
     }
+
+    /**
+     * Function to show feedback in LMS.
+     */ 
+    function showFeedback() {
+        if(!$.isEmptyObject(__content.feedbackJSON)) {
+            var feedbackJSON = __content.feedbackJSON;
+            $(".mcqsr-body #feedback-area").remove();            
+            if(feedbackJSON.status === "correct") {
+                $(".mcqsr-body").append("<div class='alert' id='feedback-area'><span class='correct'></span><h4>Feedback</h4>" + feedbackJSON.content + "</div>");
+            } else {
+                $(".mcqsr-body").append("<div class='alert' id='feedback-area'><a href='#' class='close' data-dismiss='alert' arrayia-label='close' title='close'>x</a><span class='wrong'></span><h4>Feedback</h4>" + feedbackJSON.content + "</div>");                                 
+            }
+            
+            /* Auto resize iframe container. */
+            activityAdaptor.autoResizeActivityIframe();            
+        }
+    }  
+
     /* ---------------------- PUBLIC FUNCTIONS END ----------------------------*/
      
 
@@ -299,7 +314,45 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         content  = $(tempDiv).html();
         $(tempDiv).remove();    
         return content;
-    }      
+    }   
+
+    /* 
+    * Get feedback in the form:
+    * {
+    *    "id": "global.correct",
+    *    "status" : "correct",
+    *    "content" : "Answer is correct"
+    * }
+    */
+    function __getFeedbackJSON() {
+        var feedbackJSON = {};
+        var id = "",  content = "", status = "";
+        var userAnswer = __content.userAnswersJSON[0];
+        var correctAnswer = __content.answersJSON[0];          
+        var feedback = __processedJsonContent.feedback.global;
+        /* If feedback object is not empty than generate userFeedback. */
+        if(feedback !== "" && feedback !== undefined && !($.isEmptyObject(feedback))) {                           
+            if(userAnswer === "") { /* If user answer is empty. */
+                id = "global.empty";
+                status = "incorrect";
+                content = feedback["empty"];
+            } else if(userAnswer === correctAnswer) { /* If user answer contains non-english characters. */
+                id = "global.correct";
+                status = "correct";
+                content = feedback["correct"];                
+            } else if(userAnswer !== correctAnswer) { /* If user answer contains non-english characters. */
+                id = "global.incorrect";
+                status = "incorrect";
+                content = feedback["incorrect"];                
+            }               
+        }                 
+        feedbackJSON = {
+            id: id,
+            status: status,
+            content: content
+        };
+        return feedbackJSON;         
+    }   
 
     /***
      * Function to modify question JSON for easy iteration in template
@@ -398,9 +451,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         /*Bind the data to template using rivets*/
         rivets.bind($('#mcqsr-engine'), {
             content: __processedJsonContent.content,
-            isMCQImageEngine: isMCQImageEngine,
-            feedback : __processedJsonContent.feedback,
-            showFeedback : __feedback
+            isMCQImageEngine: isMCQImageEngine
         });
     }
 
@@ -428,6 +479,8 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         
         var interactionId = __content.questionsJSON[0].split("^^")[2].trim();
 
+        __content.feedbackJSON = __getFeedbackJSON();
+
         $(document).triggerHandler('userAnswered');
     }   
 
@@ -442,6 +495,10 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
 
         /*Getting answer in JSON format*/
         var answerJSON = __getAnswersJSON(false);
+
+        if(!$.isEmptyObject(__content.feedbackJSON)) {
+            answerJSON.response.feedback = __content.feedbackJSON;    
+        }
 
         if(bSubmit===true) {/*Hard Submit*/
 
@@ -486,7 +543,6 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
            radioNo = "" + i;
            __markRadio(radioNo, __content.answersJSON[0], __content.optionsJSON[i]);
         }
-        __generateFeedback();
     }
     /* Add correct or wrong answer classes*/
     function __markRadio(optionNo, correctAnswer, userAnswer) {    
@@ -502,18 +558,6 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         $(".answer" + optionNo).removeClass("invisible");
     }
 
-    function __generateFeedback() {
-        for(var prop in __feedback){
-            __feedback[prop] = false;
-        }
-        if(!__content.userAnswersJSON[0]){
-            __feedback.empty = true;
-        } else if(__content.answersJSON[0] === __content.userAnswersJSON[0]){
-            __feedback.correct = true;
-        } else{
-            __feedback.incorrect = true;
-        }
-    }
     
     /**
      *  Function used to create JSON from user Answers for submit(soft/hard).
@@ -568,7 +612,8 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         "getConfig" : getConfig, /* Shell requests a engines config settings.  */
         "handleSubmit" : handleSubmit,
         "showGrades": showGrades,
-        "updateLastSavedResults": updateLastSavedResults
+        "updateLastSavedResults": updateLastSavedResults,
+        "showFeedback": showFeedback
     };
     };
 });
