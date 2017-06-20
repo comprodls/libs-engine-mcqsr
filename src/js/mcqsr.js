@@ -180,18 +180,13 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         /* Saving Answer. */
         __saveResults(true);
 
-        /* Marking Answers. */
-        if (activityAdaptor.showAnswers) {
-            __markAnswers();
-        }
-
         $('input[class^=mcqsroption]').attr("disabled", true);
     }
 
     /**
     * Function to show user grades.
     */
-    function showGrades(objectId){
+    function showGrades(){
         /* Mark answers. */
         __markAnswers();
         $('input[class^=mcqsroption]').attr("disabled", true);      
