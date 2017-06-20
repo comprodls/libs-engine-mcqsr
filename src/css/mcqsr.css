@@ -35,13 +35,14 @@
     margin-top: 30px;
 }
 
-.mcqsr-body .form ul.img-options li{ 
-    margin-right: 30px;
+.mcqsr-body .form ul li{
+    padding: .7em .4em .4em 1.8em;
+    position: relative;
 }
 
-.mcqsr-body .form ul li{
-    padding: .7em .4em 2em 1.8em;
-    position: relative;
+.mcqsr-body .form ul.img-options li{ 
+    margin-right: 30px;
+    padding-bottom: 2em;
 }
 
 .mcqsr-body .form ul li.highlight{
