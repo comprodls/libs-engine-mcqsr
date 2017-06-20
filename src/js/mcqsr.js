@@ -249,7 +249,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         jsonContent.content.directions = __content.directionsJSON;
         $.each(jsonContent.content.stimulus, function(i) {
             if(this.tag === "image") {
-                jsonContent.content.stimulus.mediaContent =this.image;
+                jsonContent.content.stimulus.mediaContent = params.productAssetsBasePath + this.image;
             }
         });
         __parseAndUpdateQuestionSetTypeJSON(jsonContent);
