@@ -29,10 +29,11 @@
  */
 
 define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets) representing the rendering UX
+        'text!../html/mcqsr-image-options.html',
         'css!../css/mcqsr.css',  //Custom styles of the engine (applied over bootstrap & front-end-core)
         'rivets',  // Rivets for data binding
         'sightglass'], //Required by Rivets
-        function (mcqsrTemplateRef) {
+        function (mcqsrTemplateRef, mcqsrOptionsTemplateRef) {
 
     mcqsr = function() {
     
@@ -84,7 +85,8 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         STATUS_NOERROR: "NO_ERROR",
         TEMPLATES: {
             /* Regular MCQSR Layout */
-            MCQSR: mcqsrTemplateRef
+            MCQSR: mcqsrTemplateRef,
+            MCQ_IMAGE_OPTIONS: mcqsrOptionsTemplateRef
         }
     };
     // Array of all interaction tags in question
@@ -137,7 +139,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         __initRivets();
         /* ---------------------- SETUP EVENTHANDLER STARTS----------------------------*/
             
-        $('input[id^=option]').change(__handleRadioButtonClick); 
+        $('input[class^=mcqsroption]').change(__handleRadioButtonClick); 
 
         $(document).bind('userAnswered', function() {
             __saveResults(false);
@@ -183,7 +185,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
             __markAnswers();
         }
 
-        $('input[id^=option]').attr("disabled", true);
+        $('input[class^=mcqsroption]').attr("disabled", true);
     }
 
     /**
@@ -192,7 +194,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
     function showGrades(objectId){
         /* Mark answers. */
         __markAnswers();
-        $('input[id^=option]').attr("disabled", true);      
+        $('input[class^=mcqsroption]').attr("disabled", true);      
     } 
 
     /**
@@ -201,9 +203,9 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
     function updateLastSavedResults(lastResults) {
         $.each(lastResults.interactions, function(num) {
             __content.userAnswersJSON[num] = this.answer.trim();
-            for(var i = 0; i < $('input[id^=option]').length; i++) {
-                if($('input[id^=option]')[i].value.trim() === this.answer.trim()) {
-                    $('input[id^=option]')[i].checked = true;
+            for(var i = 0; i < $('input[class^=mcqsroption]').length; i++) {
+                if($('input[class^=mcqsroption]')[i].value.trim() === this.answer.trim()) {
+                    $('input[class^=mcqsroption]')[i].checked = true;
                     break;
                 }
             }
@@ -252,7 +254,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         jsonContent.content.directions = __content.directionsJSON;
         $.each(jsonContent.content.stimulus, function(i) {
             if(this.tag === "image") {
-                jsonContent.content.stimulus.mediaContent = params.questionMediaBasePath + this.image;
+                jsonContent.content.stimulus.mediaContent =this.image;
             }
         });
         __parseAndUpdateQuestionSetTypeJSON(jsonContent);
@@ -293,12 +295,12 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         for(var i = 0; i < optionCount; i++) {
             var optionObject = jsonContent.content.interactions[interactionId][interactionType][i];
             var option = optionObject[Object.keys(optionObject)].replace(/^\s+|\s+$/g, '');
-            __content.optionsJSON.push(__getHTMLEscapeValue(option));
+            __content.optionsJSON[Object.keys(optionObject)[0]] = option;
             optionObject[Object.keys(optionObject)] = option;
             /* Update JSON after updating option. */
             jsonContent.content.interactions[interactionId][interactionType][i] = optionObject;
             if(Object.keys(optionObject) == correctAnswerNumber) {
-                __content.answersJSON[0] = optionObject[Object.keys(optionObject)];
+                __content.answersJSON[0] = correctAnswerNumber;
             }
         }
         __content.questionsJSON[0] = questionText + " ^^ " + __content.optionsJSON.toString() + " ^^ " + interactionId;       
@@ -473,7 +475,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         var newAnswer = currentTarget.value.replace(/^\s+|\s+$/g, '');
             
         /* Save new Answer in memory. */
-        __content.userAnswersJSON[0] = newAnswer.replace(/^\s+|\s+$/g, '');  
+        __content.userAnswersJSON[0] = $(event.currentTarget).attr('id');  
         
         __state.radioButtonClicked = true;
         
@@ -539,23 +541,22 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
     function __markAnswers(){
         var radioNo = "";
         /* Looping through answers to show correct answer. */
-        for(var i = 0; i < __content.optionsJSON.length; i++){
-           radioNo = "" + i;
-           __markRadio(radioNo, __content.answersJSON[0], __content.optionsJSON[i]);
+        for(var key in __content.optionsJSON){
+           __markRadio(key, __content.answersJSON[0]);
         }
     }
     /* Add correct or wrong answer classes*/
-    function __markRadio(optionNo, correctAnswer, userAnswer) {    
+    function __markRadio(userAnswer, correctAnswer) {    
         if(userAnswer.trim() === correctAnswer.trim()) {
-            $($(".answer")[optionNo]).removeClass("wrong");
-            $($(".answer")[optionNo]).addClass("correct");
-            $($(".answer")[optionNo]).parent().addClass("state-success");
+            $("#" + userAnswer).siblings('.answer').removeClass("wrong");
+            $("#" + userAnswer).siblings('.answer').addClass("correct");
+            $("#" + userAnswer).parent().addClass("state-success");
         } else {
-            $($(".answer")[optionNo]).removeClass("correct");
-            $($(".answer")[optionNo]).addClass("wrong");
-            $($(".answer")[optionNo]).parent().addClass("state-error");
+            $("#" + userAnswer).siblings('.answer').removeClass("correct");
+            $("#" + userAnswer).siblings('.answer').addClass("wrong");
+            $("#" + userAnswer).parent().addClass("state-error");
         }
-        $(".answer" + optionNo).removeClass("invisible");
+        $("#" + userAnswer).siblings('.answer').removeClass("invisible");
     }
 
     

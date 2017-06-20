@@ -26,6 +26,10 @@
     padding-top: 10px;
 }
 
+.mcqsr-body .form .mcqsr-img-options{
+    padding: 5px;
+}
+
 .mcqsr-body .form ul li{
     padding: .7em .4em .7em 1.8em;
     position: relative;
@@ -114,12 +118,18 @@
     margin: 0 3.6em auto -3.2em;
 }
 
+.mcqsr-body span.wrong.options:before {
+    position: absolute;
+    top: 0;
+}
+
 .mcqsr-body .answer{
     margin-left: 20px;
 }
 
 .mcqsr-body span.correct, .mcqsr-body span.wrong{
     margin-left: 0;
+    width: 0;
 }
 
 .mcqsr-body .col-md-6.last-child {

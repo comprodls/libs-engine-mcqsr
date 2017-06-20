@@ -8,15 +8,15 @@
  <!-- Paint the instructions or question text -->    
             <div rv-text="content.canvas.data.questiondata | appendInteraction %interact%"></div>     
 			<!-- Paint the options -->
-            <img rv-src="content.stimulus.mediaContent" class="col-sm-6 mcqsr-img" rv-show="isMCQImageEngine"></img>
-            <ul class="list-unstyled nested-list col-sm-6">        
-               <li rv-each-element="content.interactions | getArray interact.key">
+            <img rv-src="content.stimulus.mediaContent" class="col-sm-6 mcqsr-img-options img-responsive"></img>
+            <ul class="list-unstyled nested-list col-sm-12">        
+               <li class="col-sm-5" rv-each-element="content.interactions | getArray interact.key">
                   <label class="radio radio-lg">
  					 <!-- Placeholder for radio buttons-->   
                      <i></i>
-                     <span class="answer invisible wrong pull-left"></span>
-                     <input type="radio" name="optionsRadios" class="mcqsroption" rv-id="element.customAttribs.key" rv-value="element.customAttribs.value">
-                     <span class="content" rv-text="element.customAttribs.value"></span>
+                     <span class="answer invisible wrong options pull-left"></span>
+                     <input type="radio" name="optionsRadios" class="mcqsroption" rv-id="element.customAttribs.key">
+                     <img class="content mcqsr-img-options img-responsive" rv-src="element.customAttribs.value"></img>
                   </label>
                </li>                
             </ul> 
