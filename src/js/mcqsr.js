@@ -83,6 +83,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
     var __constants = {
         /* CONSTANT for PLATFORM Save Status NO ERROR */
         STATUS_NOERROR: "NO_ERROR",
+        ACTIVITY_MCQ_IMAGE_OPTIONS: "MCQ_IMAGE_OPTIONS",
         TEMPLATES: {
             /* Regular MCQSR Layout */
             MCQSR: mcqsrTemplateRef,
@@ -239,7 +240,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
     function __parseAndUpdateJSONContent(jsonContent, params, htmlLayout) { 
         jsonContent.content.displaySubmit = activityAdaptor.displaySubmit;   
         
-        __content.activityType = params.engineType;
+        __content.activityType = params.variation;
         __content.layoutType = jsonContent.content.canvas.layout;
 
         /* Activity Instructions. */
@@ -252,7 +253,8 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
                 jsonContent.content.stimulus.mediaContent = params.productAssetsBasePath + this.image;
             }
         });
-        __parseAndUpdateQuestionSetTypeJSON(jsonContent);
+        
+        __parseAndUpdateQuestionSetTypeJSON(jsonContent,params);
         
         /* Returning processed JSON. */
         return jsonContent; 
@@ -262,7 +264,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
     /**
      * Parse and Update Question Set type JSON based on  MCQSR specific requirements.
      */  
-    function __parseAndUpdateQuestionSetTypeJSON(jsonContent) {
+    function __parseAndUpdateQuestionSetTypeJSON(jsonContent,params) {
 
         /* Extract interaction id's and tags from question text. */
         var interactionId = "";
@@ -288,8 +290,12 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
 
         /* Make optionsJSON and answerJSON from JSON. */
         for(var i = 0; i < optionCount; i++) {
+
             var optionObject = jsonContent.content.interactions[interactionId][interactionType][i];
             var option = optionObject[Object.keys(optionObject)].replace(/^\s+|\s+$/g, '');
+            if(__content.activityType === __constants.ACTIVITY_MCQ_IMAGE_OPTIONS) {
+                option = params.productAssetsBasePath + option;
+            }
             __content.optionsJSON[Object.keys(optionObject)[0]] = option;
             optionObject[Object.keys(optionObject)] = option;
             /* Update JSON after updating option. */
