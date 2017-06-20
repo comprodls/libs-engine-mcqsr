@@ -86,6 +86,10 @@
     left: -9999px;
 }
 
+.mcqsr-body .form ul li .radio span.content {
+   padding-left: 10px;
+}
+
 .mcqsr-body .form ul li .radio.state-error i{
     background: #fff0f0;
     border-color: #a90329;
