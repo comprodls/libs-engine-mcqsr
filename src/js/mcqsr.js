@@ -84,6 +84,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         /* CONSTANT for PLATFORM Save Status NO ERROR */
         STATUS_NOERROR: "NO_ERROR",
         ACTIVITY_MCQ_IMAGE_OPTIONS: "MCQ_IMAGE_OPTIONS",
+        DOM_SEL_SUBMIT_BTN: "#submit",
         TEMPLATES: {
             /* Regular MCQSR Layout */
             MCQSR: mcqsrTemplateRef,
@@ -142,6 +143,8 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
             
         $('input[class^=mcqsroption]').change(__handleRadioButtonClick); 
 
+        $(__constants.DOM_SEL_SUBMIT_BTN).click(handleSubmit);
+        
         $(document).bind('userAnswered', function() {
             __saveResults(false);
         });
@@ -182,6 +185,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         __saveResults(true);
 
         $('input[class^=mcqsroption]').attr("disabled", true);
+        $(__constants.DOM_SEL_SUBMIT_BTN).attr('disabled','disabled');
     }
 
     /**

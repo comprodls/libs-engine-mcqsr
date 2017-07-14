@@ -195,3 +195,11 @@
     border-radius: 16px;
     margin: 10px;
 }
+
+.mcqsr-body .activity-toolbar{
+    padding-top: 20px;
+}
+
+.mcqsr-body .activity-toolbar .btn-primary{
+    font-size: 18px;
+}
