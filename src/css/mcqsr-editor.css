@@ -96,6 +96,7 @@
     outline: 0;
     border: 1px solid #BDBDBD;
     background: #FFF;
+    padding: 12px;
 }
 
 #mcqsr-editor .form ul li i:after {
@@ -144,21 +145,27 @@
     font-weight: 700;
 }
 
-#mcqsr-editor .form ul li .editor-icon {
+#mcqsr-editor .form ul li .editor-icon-container{
+    display: inline-block;
+    position: relative;
+    padding-top: 5px;
+}
+
+#mcqsr-editor .form ul li .editor-icon-container .editor-icon {
 	cursor: pointer;
 }
 
-#mcqsr-editor .form ul li .editor-icon.mcqsr-edit{
+#mcqsr-editor .form ul li .editor-icon-container .editor-icon.mcqsr-edit{
 	position: absolute;
+	right: 60px;
+}
+
+#mcqsr-editor .form ul li .editor-icon-container .delete-icon.mcqsr-edit{
 	right: 40px;
 }
 
-#mcqsr-editor .form ul li .delete-icon.mcqsr-edit{
+#mcqsr-editor .form ul li .editor-icon-container .drag-icon.mcqsr-edit{
 	right: 20px;
-}
-
-#mcqsr-editor .form ul li .drag-icon.mcqsr-edit{
-	right: 0px;
 }
 
 #mcqsr-editor .add-container{
