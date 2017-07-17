@@ -56,9 +56,9 @@
                      <span class="invisible wrong pull-left"></span>
                      <input type="radio" name="optionsRadios" class="option mcqsr-option" rv-key="element.customAttribs.key" rv-value="element.customAttribs.value" rv-checked="element.customAttribs.isCorrect"></input>
                      <i></i>
-                     <input class="option-value input-option" rv-show="element.customAttribs.isEdited" rv-value="element.customAttribs.value" rv-on-blur="removeEditing | args element"></input>
-                     <div class="option-value" rv-hide="element.customAttribs.isEdited" rv-text="element.customAttribs.value"></div>
-                     <span class="correct-answer pull-right" rv-show="element.customAttribs.isCorrect">Correct Answer</span>
+                     <input class="option-value input-option  col-sm-6" rv-show="element.customAttribs.isEdited" rv-value="element.customAttribs.value" rv-on-blur="removeEditing | args element"></input>
+                     <div class="option-value col-sm-6" rv-hide="element.customAttribs.isEdited" rv-text="element.customAttribs.value"></div>
+                     <span class="correct-answer col-sm-4" rv-show="element.customAttribs.isCorrect">Correct Answer</span>
                   </label>
                   <span class="editor-icon-container pull-right">
                     <a class="editor-icon mcqsr-edit fa fa-pencil pull-right" rv-on-click="toggleEditing | args element"></a>

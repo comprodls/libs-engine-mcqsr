@@ -337,7 +337,9 @@ define(['text!../html/mcqsr-editor.html', //Layout of the Editor
     /* Toggle between editing and read-only mode for options */
     function __toggleEditing(event, element){
         element.customAttribs.isEdited = !element.customAttribs.isEdited;
-        $(event[0].currentTarget).parent().find('.option-value')[0].focus();
+        if($(event[0].currentTarget).parent().find('.option-value')[0]){
+          $(event[0].currentTarget).parent().find('.option-value')[0].focus();  
+        }
     }
 
     /* Remove option item */
