@@ -248,8 +248,10 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         __content.layoutType = jsonContent.content.canvas.layout;
 
         /* Activity Instructions. */
-        var tagName = jsonContent.content.instructions[0].tag;
-        __content.directionsJSON = jsonContent.content.instructions[0][tagName];
+        if(jsonContent.content.instructions && jsonContent.content.instructions[0] && jsonContent.content.instructions[0].tag) {
+            var tagName = jsonContent.content.instructions[0].tag;
+            __content.directionsJSON = jsonContent.content.instructions[0][tagName];
+        }
         /* Put directions in JSON. */
         jsonContent.content.directions = __content.directionsJSON;
         $.each(jsonContent.content.stimulus, function(i) {
