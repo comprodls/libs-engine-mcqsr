@@ -197,6 +197,39 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         $('input[class^=mcqsroption]').attr("disabled", true);      
     } 
 
+    function clearGrades() {
+        $('input[class^=mcqsroption]').attr("disabled", false);      
+        clearAnswers();        
+        activityAdaptor.autoResizeActivityIframe();
+    }
+
+    function clearAnswers(){
+        var radioNo = "";
+        /* Looping through answers to show correct answer. */
+        for(var key in __content.optionsJSON){
+           markClear(key);
+        }
+    }
+
+    function markClear(optionNo) {    
+        
+            $("#" + optionNo).siblings('.answer').removeClass("wrong");
+            $("#" + optionNo).siblings('.answer').removeClass("correct");
+            $("#" + optionNo).parent().removeClass("state-success");
+            $("#" + optionNo).parent().removeClass("state-error");
+            $("#" + optionNo).siblings('.answer').addClass("invisible");
+            
+            $(".mcqsr-body #feedback-area").remove();    
+    }
+
+    function resetAnswers() {
+        $("label.radio").parent().removeClass("highlight");
+        __state.radioButtonClicked = false; 
+        __content.userAnswersJSON[0] = null;
+        __content.feedbackJSON = {}; 
+    } 
+        
+
     /**
      * Function to display last result saved in LMS.
      */ 
@@ -621,7 +654,9 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         "handleSubmit" : handleSubmit,
         "showGrades": showGrades,
         "updateLastSavedResults": updateLastSavedResults,
-        "showFeedback": showFeedback
+        "showFeedback": showFeedback,
+        "clearGrades": clearGrades,
+        "resetAnswers" : resetAnswers,
     };
     };
 });
