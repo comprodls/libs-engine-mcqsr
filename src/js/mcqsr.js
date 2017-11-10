@@ -198,7 +198,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
     } 
 
     function clearGrades() {
-        $('input[class^=mcqsroption]').attr("disabled", false);      
+        $('input[class^=mcqsroption]').attr("disabled", false);
         clearAnswers();        
         activityAdaptor.autoResizeActivityIframe();
     }
@@ -223,10 +223,15 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
     }
 
     function resetAnswers() {
-        $("label.radio").parent().removeClass("highlight");
-        __state.radioButtonClicked = false; 
-        __content.userAnswersJSON[0] = null;
+        $("label.radio").parent().removeClass("highlight"); 
+        $('input[class^=mcqsroption]').prop("checked", false);
+        __content.userAnswersJSON = [];
         __content.feedbackJSON = {}; 
+
+        __state.currentTries = 0; 
+        __state.activityPariallySubmitted = false; 
+        __state.activitySubmitted = false; 
+        __state.radioButtonClicked = false;
     } 
         
 
