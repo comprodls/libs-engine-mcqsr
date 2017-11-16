@@ -242,8 +242,9 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         $.each(lastResults.interactions, function(num) {
             __content.userAnswersJSON[num] = this.answer.trim();
             for(var i = 0; i < $('input[class^=mcqsroption]').length; i++) {
-                if($('input[class^=mcqsroption]')[i].value.trim() === this.answer.trim()) {
-                    $('input[class^=mcqsroption]')[i].checked = true;
+                if($('input[class^=mcqsroption]')[i].id.trim() === this.answer.trim()) {
+                    $('input[class^=mcqsroption]').prop("checked", false);            
+                    $('input[class^=mcqsroption]')[i].click();
                     break;
                 }
             }
