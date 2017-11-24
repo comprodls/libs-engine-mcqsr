@@ -85,6 +85,13 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         STATUS_NOERROR: "NO_ERROR",
         ACTIVITY_MCQ_IMAGE_OPTIONS: "MCQ_IMAGE_OPTIONS",
         DOM_SEL_SUBMIT_BTN: "#submit",
+        /* CONSTANTS for activity status */
+        ACTIVITY_NOT_ATTEMPTED: "not_attempted", /* Activity not yet Attempted. */
+        ACTIVITY_IN_PROGRESS: "in_progress", /* In Progress Activity. */
+        ACTIVITY_NOT_APPLICABLE: "not_applicable", /* Not Applicable. */         
+        ACTIVITY_PARTIALLY_CORRECT: "partially_correct", /* Partially Correct Activity. */
+        ACTIVITY_CORRECT: "correct", /* Correct Activity. */ 
+        ACTIVITY_INCORRECT: "incorrect", /* Incorrect Activity. */  
         TEMPLATES: {
             /* Regular MCQSR Layout */
             MCQSR: mcqsrTemplateRef,
@@ -617,6 +624,11 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         var score = 0;
         var answer = "";
         var interactions = {};
+        var statusProgress = __constants.ACTIVITY_NOT_ATTEMPTED;
+        var statusEvaluation = __constants.ACTIVITY_NOT_APPLICABLE;
+        var partiallyCorrect = false;
+        var correct = true;  
+        var incorrect = false; 
         
         /*Setup results array */
         var interactionArray = new Array(1);
@@ -628,11 +640,26 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
             answer = "Not Answered";
         } else {
             answer = __content.userAnswersJSON[0];
-
-            /* Calculating scores.*/
-            if(__content.answersJSON[0] === __content.userAnswersJSON[0]){
-                score++;
-            }
+            
+            if(answer) {
+                    /* Calculating scores.*/
+                    if(__content.answersJSON[0] === __content.userAnswersJSON[0]){
+                        score ++;
+                        partiallyCorrect = true;
+                    } else {
+                        incorrect = true;
+                        correct = false;
+                    } 
+                } else {
+                    correct = false;
+                }    
+                if(correct) {
+                    statusEvaluation = __constants.ACTIVITY_CORRECT;
+                } else if(partiallyCorrect) {
+                    statusEvaluation = __constants.ACTIVITY_PARTIALLY_CORRECT;
+                } else if(incorrect) {
+                    statusEvaluation = __constants.ACTIVITY_INCORRECT;
+                }      
         }   
         
         interactions = {
@@ -645,7 +672,12 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
 
         var response =  {
             "interactions": interactionArray
-        };    
+        };
+        if(!skipQuestion) {
+                statusProgress = __constants.ACTIVITY_IN_PROGRESS;
+        }
+        response.statusProgress = statusProgress;
+        response.statusEvaluation = statusEvaluation;    
 
         return {
             response: response
