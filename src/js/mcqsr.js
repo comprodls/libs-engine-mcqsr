@@ -582,7 +582,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
             });
         } else { /*Soft Submit*/
             /*Send Results to platform*/
-            var statements = generateStatements(__constants.STATEMENT_STARTED);
+            var statements = generateStatements(__constants.STATEMENT_ANSWERED);
             sendStatements(statements);
             activityAdaptor.savePartialResults(answerJSON, uniqueId, function(data, status){
                 if(status=== __constants.STATUS_NOERROR){
