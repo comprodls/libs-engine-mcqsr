@@ -158,6 +158,9 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
 
         /* ---------------------- SETUP EVENTHANDLER ENDS------------------------------*/
 
+        var statements=generateStatements("started");
+        sendStatements(statements);
+
         /* Inform the shell that init is complete */
         if(callback) {
             callback();
@@ -201,7 +204,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
     function showGrades(){
         /* Mark answers. */
         __markAnswers();
-        $('input[class^=mcqsroption]').attr("disabled", true);      
+        $('input[class^=mcqsroption]').attr("disabled", true);
     } 
 
     function clearGrades() {
@@ -579,6 +582,8 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
             activityAdaptor.savePartialResults(answerJSON, uniqueId, function(data, status){
                 if(status=== __constants.STATUS_NOERROR){
                     __state.activityPariallySubmitted = true;
+                    var statements=generateStatements("answered");
+                    sendStatements(statements);
                 } else {
                     /* There was an error during platform communication, do nothing for partial saves */
                 }
@@ -587,6 +592,33 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
     }    
 
     /*------------------------OTHER PRIVATE FUNCTIONS------------------------*/
+    
+    /**
+     * Function to generate statements.
+     */ 
+    function generateStatements(verb){
+        var statement={   "timestamp": "",
+                            "verb": {
+                                "id": "abc",
+                                "display": {
+                                    "und": ""
+                                }
+                            }
+                        };
+        
+        var d = new Date();
+        var date=d.getDate();
+        d.setDate(date);
+        statement.timestamp=d;
+        statement.verb.display.und=verb;
+
+        return statement;
+    }
+
+    function sendStatements(statements){
+        var uniqueId = activityAdaptor.getId(); 
+        activityAdaptor.sendStatements(uniqueId,statements);
+    }
 
     /**
      * Function to show correct Answers to User, called on click of Show Answers Button.
