@@ -94,6 +94,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         ACTIVITY_INCORRECT: "incorrect", /* Incorrect Activity. */  
         STATEMENT_STARTED: "started",
         STATEMENT_ANSWERED: "answered",
+        STATEMENT_INTERACTED: "interacted",
         TEMPLATES: {
             /* Regular MCQSR Layout */
             MCQSR: mcqsrTemplateRef,
@@ -562,7 +563,8 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         }
 
         if(bSubmit===true) {/*Hard Submit*/
-
+            var statement = generateStatement(__constants.STATEMENT_INTERACTED);
+            sendStatement(statement);
             /*Send Results to platform*/
             activityAdaptor.submitResults(answerJSON, uniqueId, function(data, status){
                 if(status=== __constants.STATUS_NOERROR){
