@@ -121,11 +121,11 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
 
         /* ---------------------- BEGIN OF INIT ---------------------------------*/
 
-        var statements = generateStatements(STATEMENT_STARTED);
-        sendStatements(statements);
-
         //Store the adaptor  
         activityAdaptor = adaptor;
+
+        var statements = generateStatements(__constants.STATEMENT_STARTED);
+        sendStatements(statements);
 
         //Clone the JSON so that original is preserved.
         var jsonContent = jQuery.extend(true, {}, jsonContentObj);
@@ -582,7 +582,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
             });
         } else { /*Soft Submit*/
             /*Send Results to platform*/
-            var statements = generateStatements(STATEMENT_ANSWERED);
+            var statements = generateStatements(__constants.STATEMENT_STARTED);
             sendStatements(statements);
             activityAdaptor.savePartialResults(answerJSON, uniqueId, function(data, status){
                 if(status=== __constants.STATUS_NOERROR){
