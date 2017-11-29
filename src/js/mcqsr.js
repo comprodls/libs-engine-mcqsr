@@ -124,8 +124,8 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         //Store the adaptor  
         activityAdaptor = adaptor;
 
-        var statements = generateStatements(__constants.STATEMENT_STARTED);
-        sendStatements(statements);
+        var statement = generateStatement(__constants.STATEMENT_STARTED);
+        sendStatement(statement);
 
         //Clone the JSON so that original is preserved.
         var jsonContent = jQuery.extend(true, {}, jsonContentObj);
@@ -582,8 +582,8 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
             });
         } else { /*Soft Submit*/
             /*Send Results to platform*/
-            var statements = generateStatements(__constants.STATEMENT_ANSWERED);
-            sendStatements(statements);
+            var statement = generateStatement(__constants.STATEMENT_ANSWERED);
+            sendStatement(statement);
             activityAdaptor.savePartialResults(answerJSON, uniqueId, function(data, status){
                 if(status=== __constants.STATUS_NOERROR){
                     __state.activityPariallySubmitted = true;
@@ -599,7 +599,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
     /**
      * Function to generate XAPI statements.
      */ 
-    function generateStatements(verb) {
+    function generateStatement(verb) {
         var statement = {   
             "timestamp": new Date(),
             "verb": {
@@ -616,9 +616,9 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
     /**
      * Function to send statements to adaptor.
      */ 
-    function sendStatements(statements) {
+    function sendStatement(statement) {
         var uniqueId = activityAdaptor.getId(); 
-        activityAdaptor.sendStatements(uniqueId, statements);
+        activityAdaptor.sendStatement(uniqueId, statement);
     }
 
     /**
