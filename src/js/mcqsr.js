@@ -92,6 +92,8 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         ACTIVITY_PARTIALLY_CORRECT: "partially_correct", /* Partially Correct Activity. */
         ACTIVITY_CORRECT: "correct", /* Correct Activity. */ 
         ACTIVITY_INCORRECT: "incorrect", /* Incorrect Activity. */  
+        STATEMENT_STARTED: "started",
+        STATEMENT_ANSWERED: "answered",
         TEMPLATES: {
             /* Regular MCQSR Layout */
             MCQSR: mcqsrTemplateRef,
@@ -118,6 +120,10 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
     function init(elRoot, params, adaptor, htmlLayout, jsonContentObj, callback) {        
 
         /* ---------------------- BEGIN OF INIT ---------------------------------*/
+
+        var statements = generateStatements(STATEMENT_STARTED);
+        sendStatements(statements);
+
         //Store the adaptor  
         activityAdaptor = adaptor;
 
@@ -157,9 +163,6 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         });
 
         /* ---------------------- SETUP EVENTHANDLER ENDS------------------------------*/
-
-        var statements=generateStatements("started");
-        sendStatements(statements);
 
         /* Inform the shell that init is complete */
         if(callback) {
@@ -577,13 +580,13 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
                 }
 
             });
-        } else{ /*Soft Submit*/
+        } else { /*Soft Submit*/
             /*Send Results to platform*/
+            var statements = generateStatements(STATEMENT_ANSWERED);
+            sendStatements(statements);
             activityAdaptor.savePartialResults(answerJSON, uniqueId, function(data, status){
                 if(status=== __constants.STATUS_NOERROR){
                     __state.activityPariallySubmitted = true;
-                    var statements=generateStatements("answered");
-                    sendStatements(statements);
                 } else {
                     /* There was an error during platform communication, do nothing for partial saves */
                 }
@@ -594,30 +597,28 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
     /*------------------------OTHER PRIVATE FUNCTIONS------------------------*/
     
     /**
-     * Function to generate statements.
+     * Function to generate XAPI statements.
      */ 
-    function generateStatements(verb){
-        var statement={   "timestamp": "",
-                            "verb": {
-                                "id": "abc",
-                                "display": {
-                                    "und": ""
-                                }
-                            }
-                        };
-        
-        var d = new Date();
-        var date=d.getDate();
-        d.setDate(date);
-        statement.timestamp=d;
-        statement.verb.display.und=verb;
+    function generateStatements(verb) {
+        var statement = {   
+            "timestamp": new Date(),
+            "verb": {
+                "id": "http://comprotechnologies.com/expapi/verbs/" + verb,
+                "display": {
+                    "und": verb
+                }
+            }
+        };
 
         return statement;
     }
 
-    function sendStatements(statements){
+    /**
+     * Function to send statements to adaptor.
+     */ 
+    function sendStatements(statements) {
         var uniqueId = activityAdaptor.getId(); 
-        activityAdaptor.sendStatements(uniqueId,statements);
+        activityAdaptor.sendStatements(uniqueId, statements);
     }
 
     /**
