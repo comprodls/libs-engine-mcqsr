@@ -575,6 +575,8 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
             activityAdaptor.savePartialResults(answerJSON, uniqueId, function(data, status){
                 if(status=== __constants.STATUS_NOERROR){
                     __state.activityPariallySubmitted = true;
+                    var statements=generateStatements("answered");
+                    sendStatements(statements);
                 } else {
                     /* There was an error during platform communication, do nothing for partial saves */
                 }
