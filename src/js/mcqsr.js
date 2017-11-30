@@ -603,7 +603,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
      */ 
     function generateStatement(verb) {
         var statement = {   
-            "timestamp": new Date(),
+            "timestamp": getCurrentDateTime(),
             "verb": {
                 "id": "http://comprotechnologies.com/expapi/verbs/" + verb,
                 "display": {
@@ -611,9 +611,26 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
                 }
             }
         };
-
         return statement;
     }
+
+    /**
+     * Function to generate current local Date and Time.
+     */ 
+    function getCurrentDateTime() {
+        var now = new Date(), 
+        ampm = 'AM', 
+        h = now.getHours(), 
+        m = now.getMinutes(), 
+        s = now.getSeconds();
+        if(h >= 12) {
+            if(h > 12) h -= 12;
+            ampm = 'PM';
+        }
+        if(m<10) m = '0' + m;
+        if(s<10) s = '0' + s;
+        return now.toLocaleDateString() + ' ' + h + ':' + m + ':' + s + ' ' + ampm;
+    }    
 
     /**
      * Function to send statements to adaptor.
