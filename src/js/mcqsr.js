@@ -214,6 +214,8 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
     function clearGrades() {
         $('input[class^=mcqsroption]').attr("disabled", false);
         clearAnswers();        
+        var state = generateState();
+        sendState(state);
         activityAdaptor.autoResizeActivityIframe();
     }
 
@@ -246,6 +248,8 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         __state.activityPariallySubmitted = false; 
         __state.activitySubmitted = false; 
         __state.radioButtonClicked = false;
+        var state = generateState();
+        sendState(state);
     } 
         
 
@@ -536,6 +540,9 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
             
         /* Save new Answer in memory. */
         __content.userAnswersJSON[0] = $(event.currentTarget).attr('id');  
+
+        var state = generateState();
+        sendState(state);
         
         __state.radioButtonClicked = true;
         
@@ -638,6 +645,31 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
     function sendStatement(statement) {
         var uniqueId = activityAdaptor.getId(); 
         activityAdaptor.sendStatement(uniqueId, statement);
+    }
+
+    /**
+     * Function to generate XAPI state.
+     */ 
+    function generateState() {
+        var state = {
+            "stateid": "suspend_data",
+            "interaction": {
+                "items": [{
+                    "items": __content.userAnswersJSON[0]
+                }],
+                "status": ""
+            },
+            "duration": ""
+        };
+        return state;
+    }
+
+    /**
+     * Function to send state to adaptor.
+     */ 
+    function sendState(state) {
+        var uniqueId = activityAdaptor.getId(); 
+        activityAdaptor.sendState(uniqueId, state);
     }
 
     /**
