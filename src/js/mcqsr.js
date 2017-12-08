@@ -669,7 +669,8 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
      */ 
     function sendState(state) {
         var uniqueId = activityAdaptor.getId(); 
-        activityAdaptor.sendState(uniqueId, state);
+        if(activityAdaptor.sendState)
+            activityAdaptor.sendState(uniqueId, state);
     }
 
     /**
