@@ -93,7 +93,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
         ACTIVITY_CORRECT: "correct", /* Correct Activity. */ 
         ACTIVITY_INCORRECT: "incorrect", /* Incorrect Activity. */  
         STATEMENT_STARTED: "started",
-        STATEMENT_ANSWERED: "answered",
+        STATEMENT_ATTEMPTED: "attempted",
         STATEMENT_INTERACTED: "interacted",
         TEMPLATES: {
             /* Regular MCQSR Layout */
@@ -569,8 +569,8 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
             answerJSON.response.feedback = __content.feedbackJSON;    
         }
 
-        if(bSubmit===true) {/*Hard Submit*/
-            var statement = generateStatement(__constants.STATEMENT_INTERACTED);
+        if(bSubmit === true) {/*Hard Submit*/
+            var statement = generateStatement(__constants.STATEMENT_ATTEMPTED);
             sendStatement(statement);
             /*Send Results to platform*/
             activityAdaptor.submitResults(answerJSON, uniqueId, function(data, status){
@@ -591,7 +591,7 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
             });
         } else { /*Soft Submit*/
             /*Send Results to platform*/
-            var statement = generateStatement(__constants.STATEMENT_ANSWERED);
+            var statement = generateStatement(__constants.STATEMENT_INTERACTED);
             sendStatement(statement);
             activityAdaptor.savePartialResults(answerJSON, uniqueId, function(data, status){
                 if(status=== __constants.STATUS_NOERROR){
@@ -610,34 +610,13 @@ define(['text!../html/mcqsr.html', //HTML layout(s) template (handlebars/rivets)
      */ 
     function generateStatement(verb) {
         var statement = {   
-            "timestamp": getCurrentDateTime(),
+            "timestamp": new Date(),
             "verb": {
-                "id": "http://comprotechnologies.com/expapi/verbs/" + verb,
-                "display": {
-                    "und": verb
-                }
+                "id": verb
             }
         };
         return statement;
-    }
-
-    /**
-     * Function to generate current local Date and Time.
-     */ 
-    function getCurrentDateTime() {
-        var now = new Date(), 
-        ampm = 'AM', 
-        h = now.getHours(), 
-        m = now.getMinutes(), 
-        s = now.getSeconds();
-        if(h >= 12) {
-            if(h > 12) h -= 12;
-            ampm = 'PM';
-        }
-        if(m<10) m = '0' + m;
-        if(s<10) s = '0' + s;
-        return now.toLocaleDateString() + ' ' + h + ':' + m + ':' + s + ' ' + ampm;
-    }    
+    }   
 
     /**
      * Function to send statements to adaptor.
