@@ -393,6 +393,41 @@ The engine should call this function when it wants the platform to resize the co
 **Parameters** 
 No parameters
 
+#### 4.2.4 adapter.sendStatement()
+The engine should call this function to send statement to the adapter. Statements should be sent when question is painted , on partial save , on soft submit etc.
+
+**Parameters** 
+* **uniqueId**: UniqueId of the assessment
+* **statementObject**: Statement JSON object.
+
+```javascript
+statement = {
+            	timestamp: new Date(), // timestamp
+            	verb: { id : verb } // verb to be sent (eg. started/interacted/attempted)
+            }
+```
+
+#### 4.2.5 adapter.sendState()
+The engine should call this function to send state to the adapter on each attempt made by the user. Further States should be sent on reset , tryAgain etc. 
+
+**Parameters** 
+* **uniqueId**: UniqueId of the assessment
+* **stateObject**: State JSON object.
+
+```javascript
+//Example
+state = {
+            stateid : stateid, // stateid
+            interaction : { 
+	    			items : [{ 
+						items : ""  //User Answers JSON
+					}],
+			    	status : "" //status		    
+			  }
+	    duration : "" //Time duration spent
+         }
+```
+
 ## 5. Understanding the EDITOR interface
 TODO
 
